@@ -30,11 +30,12 @@ export default function RegisterPage() {
       });
 
       router.push("/login");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      const errorMessage = error.response?.data?.message || "An error occurred. Check if the email already exists.";
       Swal.fire({
         title: "Registration Failed",
-        text: "An error occurred. Check if the email already exists.",
+        text: errorMessage,
         icon: "error",
         background: "#0f172a",
         color: "#ffffff",

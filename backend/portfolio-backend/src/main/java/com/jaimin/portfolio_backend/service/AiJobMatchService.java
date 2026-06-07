@@ -190,10 +190,7 @@ public class AiJobMatchService {
                 roadmapList.add("");
             } else {
                 roadmapList.add("### Roadmap for " + missing);
-                roadmapList.add("Milestone 1: Read the official documentation of " + missing + ".");
-                roadmapList.add("Milestone 2: Set up a local development environment.");
-                roadmapList.add("Milestone 3: Build a simple CRUD or starter project with " + missing + ".");
-                roadmapList.add("Milestone 4: Integrate " + missing + " with a backend / frontend stack.");
+                roadmapList.addAll(generateDynamicRoadmap(missing));
                 roadmapList.add("");
             }
         }
@@ -234,5 +231,15 @@ public class AiJobMatchService {
             }
         }
         return (double) found / matchedSkills.size();
+    }
+
+    private List<String> generateDynamicRoadmap(String skill) {
+        List<String> milestones = new ArrayList<>();
+        String cleanSkill = skill.trim();
+        milestones.add("Milestone 1: Read the official documentation of " + cleanSkill + " to learn syntax and architecture basics.");
+        milestones.add("Milestone 2: Configure a development container or playground to experiment with " + cleanSkill + " APIs.");
+        milestones.add("Milestone 3: Develop a portfolio repository utilizing " + cleanSkill + " for real-world functionality.");
+        milestones.add("Milestone 4: Build test suites and deploy your custom " + cleanSkill + " services to a production cloud instance.");
+        return milestones;
     }
 }

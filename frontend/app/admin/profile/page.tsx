@@ -9,6 +9,8 @@ import {
 } from "@/services/profileService";
 
 import { uploadImage } from "@/services/uploadService";
+import { getImageUrl } from "@/lib/api";
+
 
 export default function ProfilePage() {
   const [profileExists, setProfileExists] =
@@ -43,7 +45,7 @@ export default function ProfilePage() {
         setProfile(data);
 
         setPreview(
-          data.profileImageUrl || ""
+          getImageUrl(data.profileImageUrl) || ""
         );
 
         setProfileExists(true);
@@ -222,7 +224,7 @@ export default function ProfilePage() {
 
           {preview && (
             <img
-              src={preview}
+              src={getImageUrl(preview)}
               alt="Profile"
               className="w-40 h-40 rounded-full object-cover border"
             />

@@ -102,6 +102,15 @@ export default function AdminSidebar() {
               {item.name}
             </Link>
           ))}
+          <button
+            onClick={() => {
+              localStorage.removeItem("token");
+              window.location.href = "/login";
+            }}
+            className="w-full text-left block px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all mt-6 font-semibold border border-red-500/20 cursor-pointer"
+          >
+            Logout
+          </button>
         </nav>
       </aside>
     </>

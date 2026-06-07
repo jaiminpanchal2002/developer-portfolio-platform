@@ -182,28 +182,36 @@ public class JobService {
         List<JobDTO> mockList = new ArrayList<>();
         String currency = getCurrencySymbol(country);
 
-        String kw = keyword.toLowerCase();
-        if (kw.contains("java") || kw.contains("spring") || kw.contains("backend")) {
-            mockList.add(createMockJob("Senior Backend Engineer (Spring Boot)", "Netflix", "Los Gatos, CA", currency + "180,000 - " + currency + "220,000",
-                    "Looking for a Senior Java Developer to optimize and build backend streaming services using Java 21, Spring Boot, Spring Security, Microservices, Kafka, Redis, and AWS. Requires experience containerizing services with Docker and deploying to Kubernetes clusters."));
-            mockList.add(createMockJob("Spring Boot Developer", "Siemens", "Munich, Germany", currency + "85,000 - " + currency + "95,000",
-                    "Siemens is looking for a Spring Boot Developer to join our smart grid team. Core requirements include Java, Spring Boot, Spring Security, Hibernate, JPA, PostgreSQL, REST APIs, and Docker. Experience with CI/CD pipelines and AWS cloud deployment is a plus."));
-            mockList.add(createMockJob("Software Engineer - Core Services", "Stripe", "Dublin, Ireland", currency + "110,000 - " + currency + "130,000",
-                    "Build reliable, scalable APIs using Java, Spring Boot, PostgreSQL, Redis, and Docker. Experience with JWT tokens, Spring Security, JUnit testing, and AWS architecture. Should be ATS-focused and write high-quality, readable code."));
-        } else if (kw.contains("react") || kw.contains("frontend") || kw.contains("next")) {
-            mockList.add(createMockJob("Senior Frontend Developer", "Vercel", "Remote", currency + "140,000 - " + currency + "160,000",
-                    "Vercel is looking for a Next.js and React expert. Optimize dashboard interfaces, build responsive pages, design modern components, and ensure type safety using TypeScript, Tailwind CSS, and Framer Motion. Knowledge of REST APIs, GraphQL, and static site generation required."));
-            mockList.add(createMockJob("UI Developer", "Canva", "Sydney, Australia", currency + "125,000 - " + currency + "145,000",
-                    "Design premium user interfaces. Tech stack: React, TypeScript, Tailwind CSS, Recharts for charts, and GSAP/Framer Motion for smooth animations. Experience with state management (Zustand/Redux) and REST API integration."));
-        } else {
-            // Full stack or generic
-            mockList.add(createMockJob("Full Stack Developer (React & Java)", "Linear", "San Francisco, CA", currency + "150,000 - " + currency + "175,000",
-                    "Join our core product team. You will work on frontend layouts using React, Next.js, TypeScript, and Tailwind CSS, as well as robust backend REST APIs using Java 21, Spring Boot, Hibernate, JPA, and MySQL. Experience containerizing with Docker, deploy to AWS, and configure CI/CD."));
-            mockList.add(createMockJob("Software Developer", "Atlassian", "Sydney, Australia", currency + "115,000 - " + currency + "135,000",
-                    "Join Atlassian to build the next generation of collaboration tools. Tech stack includes TypeScript, React, Node.js, Spring Boot, PostgreSQL, Docker, AWS, and Git. Requires clean architecture knowledge and passion for writing unit tests."));
-            mockList.add(createMockJob("Junior Full Stack Engineer", "Notion", "San Francisco, CA", currency + "90,000 - " + currency + "110,000",
-                    "Notion is seeking a Full Stack Engineer to support editor features. Experience with React, TypeScript, Node.js, Spring Boot, PostgreSQL, Docker, and REST APIs. Familiarity with Tailwind CSS and Framer Motion is a major plus."));
+        // Standardize keyword display
+        String capKeyword = "Developer";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String clean = keyword.trim();
+            capKeyword = clean.substring(0, 1).toUpperCase() + (clean.length() > 1 ? clean.substring(1) : "");
         }
+
+        mockList.add(createMockJob(
+            "Senior " + capKeyword + " Engineer",
+            "GlobalTech Inc",
+            "Bangalore, India",
+            currency + "1,200,000 - " + currency + "1,800,000",
+            "Looking for an experienced engineer specialized in " + capKeyword + ". You will be building scalability features, optimizing backend performance, and integrating " + capKeyword + " services. Strong understanding of architecture, relational databases, and modern software design patterns is highly required."
+        ));
+
+        mockList.add(createMockJob(
+            capKeyword + " Systems Specialist",
+            "Acuity Corp",
+            "Remote",
+            currency + "900,000 - " + currency + "1,300,000",
+            "Join our core engineering team. The ideal candidate has hands-on experience with " + capKeyword + " and cloud environments. You will implement robust APIs, write unit tests, and collaborate to deploy secure " + capKeyword + " modules."
+        ));
+
+        mockList.add(createMockJob(
+            "Full Stack Engineer (" + capKeyword + " & React)",
+            "Linear",
+            "Mumbai, India",
+            currency + "1,000,000 - " + currency + "1,500,000",
+            "We are seeking a versatile Full Stack Developer to build user-friendly interfaces and robust backend logic. Tech stack includes " + capKeyword + ", React, TypeScript, and modern styling libraries. Experience deploying applications to cloud services and managing configurations with " + capKeyword + " is a major advantage."
+        ));
 
         return mockList;
     }

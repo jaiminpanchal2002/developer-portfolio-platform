@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { getImageUrl } from "../lib/api";
 
 interface HeroProps {
   profile: {
@@ -23,19 +24,18 @@ export default function Hero({ profile }: HeroProps) {
       flex
       items-center
       justify-center
-      min-h-screen
-      pt-32
-      pb-20
-      px-6
+      min-h-[85vh]
+      md:min-h-screen
+      text-white
       overflow-hidden
-      bg-gradient-to-r
-      from-slate-950
-      via-blue-950
-      to-purple-950
       "
     >
-      {/* Background Glow */}
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-purple-500/10" />
+      {/* Background Decorative Rings */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[150px] pointer-events-none" />
+
+      {/* Retro scanline overlays */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_4px,3px_100%] pointer-events-none opacity-40 z-20" />
 
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -53,7 +53,7 @@ export default function Hero({ profile }: HeroProps) {
         "
       >
         <img
-          src={profile.profileImageUrl || "/profile.jpg"}
+          src={getImageUrl(profile.profileImageUrl) || "/profile.jpg"}
           alt={profile.fullName}
           className="
           w-40

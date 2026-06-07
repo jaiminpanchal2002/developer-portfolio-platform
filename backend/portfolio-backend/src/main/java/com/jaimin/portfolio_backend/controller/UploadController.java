@@ -43,6 +43,6 @@ public class UploadController {
                 StandardCopyOption.REPLACE_EXISTING);
 
         return ResponseEntity.ok(
-                "http://localhost:8080/uploads/" + fileName);
+                "/uploads/" + fileName);
     }
 }
