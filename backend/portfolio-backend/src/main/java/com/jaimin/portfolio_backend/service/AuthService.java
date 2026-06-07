@@ -20,7 +20,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
      private final JwtService jwtService;
     public String register(RegisterRequest request) {
-
+        if (userRepository.count() > 0) {
+            throw new RuntimeException("Registration is disabled. An admin account already exists.");
+        }
         if (userRepository.existsByEmail(request.getEmail())) {
             return "Email already exists";
         }
