@@ -61,21 +61,27 @@ export const getImageUrl = (url: string | null | undefined): string => {
     return cleanedUrl;
   }
 
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  let hostUrl = backendUrl.endsWith("/api") ? backendUrl.slice(0, -4) : backendUrl;
+  
+  // Force HTTPS if frontend is HTTPS
+  if (typeof window !== "undefined" && window.location.protocol === "https:") {
+    hostUrl = hostUrl.replace("http://", "https://");
+  }
+
   // If the URL is absolute (http:// or https://)
   if (cleanedUrl.startsWith("http://") || cleanedUrl.startsWith("https://")) {
     if (cleanedUrl.includes("localhost:8080")) {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      // Remove '/api' from base URL if it's there, as static files are served from the root context
-      const hostUrl = backendUrl.endsWith("/api") ? backendUrl.slice(0, -4) : backendUrl;
       return cleanedUrl.replace("http://localhost:8080", hostUrl);
+    }
+    // Also upgrade the absolute URL to HTTPS if required
+    if (typeof window !== "undefined" && window.location.protocol === "https:") {
+      return cleanedUrl.replace("http://", "https://");
     }
     return cleanedUrl;
   }
   
   // If the URL is relative (e.g. /uploads/...)
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-  const hostUrl = backendUrl.endsWith("/api") ? backendUrl.slice(0, -4) : backendUrl;
-  
   // Format hostUrl and path correctly
   const cleanHost = hostUrl.endsWith("/") ? hostUrl.slice(0, -1) : hostUrl;
   const cleanPath = cleanedUrl.startsWith("/") ? cleanedUrl : `/${cleanedUrl}`;

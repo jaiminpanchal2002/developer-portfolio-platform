@@ -104,14 +104,10 @@ public class AiJobMatchService {
             jobDescription = "";
         }
 
-        String descriptionLower = jobDescription.toLowerCase();
-        
         // 1. Extract required skills from the job description
         Set<String> requiredSkills = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         for (String tech : TECH_DICTIONARY) {
-            // Match tech as a whole word / bounds
-            String regex = "\\b" + tech.toLowerCase().replace(".", "\\.") + "\\b";
-            if (descriptionLower.matches(".*" + regex + ".*")) {
+            if (containsTech(jobDescription, tech)) {
                 requiredSkills.add(tech);
             }
         }
@@ -210,10 +206,8 @@ public class AiJobMatchService {
         if (source == null || source.isEmpty()) {
             return;
         }
-        String sourceLower = source.toLowerCase();
         for (String tech : TECH_DICTIONARY) {
-            String regex = "\\b" + tech.toLowerCase().replace(".", "\\.") + "\\b";
-            if (sourceLower.matches(".*" + regex + ".*")) {
+            if (containsTech(source, tech)) {
                 target.add(tech);
             }
         }
@@ -241,5 +235,18 @@ public class AiJobMatchService {
         milestones.add("Milestone 3: Develop a portfolio repository utilizing " + cleanSkill + " for real-world functionality.");
         milestones.add("Milestone 4: Build test suites and deploy your custom " + cleanSkill + " services to a production cloud instance.");
         return milestones;
+    }
+
+    private boolean containsTech(String text, String tech) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        String escapedTech = java.util.regex.Pattern.quote(tech);
+        String boundaryStart = Character.isLetterOrDigit(tech.charAt(0)) ? "\\b" : "";
+        String boundaryEnd = Character.isLetterOrDigit(tech.charAt(tech.length() - 1)) ? "\\b" : "";
+        
+        String patternStr = boundaryStart + escapedTech + boundaryEnd;
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(patternStr, java.util.regex.Pattern.CASE_INSENSITIVE);
+        return pattern.matcher(text).find();
     }
 }
