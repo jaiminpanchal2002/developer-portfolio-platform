@@ -98,7 +98,8 @@ public class AiJobMatchService {
             String profileHeadline,
             String experienceText,
             String projectsText,
-            String resumeText) {
+            String resumeText,
+            String certificatesText) {
 
         if (jobDescription == null) {
             jobDescription = "";
@@ -123,11 +124,12 @@ public class AiJobMatchService {
             userTechTerms.addAll(userSkills);
         }
         
-        // Extract terms from projects, experiences, and resume
+        // Extract terms from projects, experiences, resume, and certificates
         extractTechTerms(projectsText, userTechTerms);
         extractTechTerms(experienceText, userTechTerms);
         extractTechTerms(profileHeadline, userTechTerms);
         extractTechTerms(resumeText, userTechTerms);
+        extractTechTerms(certificatesText, userTechTerms);
 
         // 3. Compute match and missing skills
         List<String> matchedSkills = new ArrayList<>();
@@ -143,21 +145,24 @@ public class AiJobMatchService {
 
         // 4. Calculate realistic ATS score
         // We evaluate weighted factors:
-        // - Core skill matches: 50%
+        // - Core skill matches: 40%
         // - Projects tech matches: 20%
         // - Experience relevance: 20%
+        // - Certificate relevance: 10%
         // - Resume overlap: 10%
         
         int skillsScore = requiredSkills.isEmpty() ? 100 : (matchedSkills.size() * 100) / requiredSkills.size();
         
         double projectsOverlap = calculateOverlapFactor(projectsText, matchedSkills);
         double experienceOverlap = calculateOverlapFactor(experienceText, matchedSkills);
+        double certificatesOverlap = calculateOverlapFactor(certificatesText, matchedSkills);
         double resumeOverlap = calculateOverlapFactor(resumeText, matchedSkills);
 
         int finalScore = (int) (
-                (skillsScore * 0.50) +
+                (skillsScore * 0.40) +
                 (projectsOverlap * 20.0) +
                 (experienceOverlap * 20.0) +
+                (certificatesOverlap * 10.0) +
                 (resumeOverlap * 10.0)
         );
 

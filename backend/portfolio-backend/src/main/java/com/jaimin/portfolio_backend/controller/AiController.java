@@ -31,7 +31,6 @@ import com.jaimin.portfolio_backend.service.SkillService;
 
 @RestController
 @RequestMapping("/api/ai")
-@CrossOrigin("*")
 public class AiController {
 
     @Autowired
@@ -260,6 +259,9 @@ public class AiController {
         return qList;
     }
 
+    @Autowired
+    private com.jaimin.portfolio_backend.repository.CertificateRepository certificateRepository;
+
     @PostMapping("/match-job")
     public SkillMatchResult matchJob(@RequestBody Map<String, String> request) {
         List<String> userSkills = skillRepository.findAll()
@@ -281,13 +283,19 @@ public class AiController {
                 .map(p -> p.getTitle() + " " + p.getDescription() + " " + p.getTechnologies())
                 .collect(Collectors.joining(" "));
 
+        String certificates = certificateRepository.findAll()
+                .stream()
+                .map(c -> c.getTitle() + " from " + c.getIssuer())
+                .collect(Collectors.joining(" "));
+
         return aiJobMatchService.calculateMatch(
                 request.get("description"),
                 userSkills,
                 headline,
                 experiences,
                 projects,
-                resume
+                resume,
+                certificates
         );
     }
 

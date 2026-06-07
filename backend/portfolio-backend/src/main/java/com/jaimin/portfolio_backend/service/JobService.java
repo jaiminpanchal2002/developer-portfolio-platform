@@ -30,6 +30,7 @@ public class JobService {
     private final SkillRepository skillRepository;
     private final ProjectRepository projectRepository;
     private final ExperienceRepository experienceRepository;
+    private final com.jaimin.portfolio_backend.repository.CertificateRepository certificateRepository;
     private final ProfileService profileService;
 
     @Value("${adzuna.app.id:}")
@@ -44,12 +45,14 @@ public class JobService {
             SkillRepository skillRepository,
             ProjectRepository projectRepository,
             ExperienceRepository experienceRepository,
+            com.jaimin.portfolio_backend.repository.CertificateRepository certificateRepository,
             ProfileService profileService) {
         this.restTemplate = restTemplate;
         this.aiJobMatchService = aiJobMatchService;
         this.skillRepository = skillRepository;
         this.projectRepository = projectRepository;
         this.experienceRepository = experienceRepository;
+        this.certificateRepository = certificateRepository;
         this.profileService = profileService;
     }
 
@@ -78,7 +81,7 @@ public class JobService {
                         + "&app_key=" + appKey
                         + "&results_per_page=15"
                         + "&what=" + keyword
-                        + "&max_days_old=30"
+                        + "&max_days_old=14"
                         + remoteParam;
 
                 String response = restTemplate.getForObject(url, String.class);
@@ -169,13 +172,19 @@ public class JobService {
                 .map(proj -> proj.getTitle() + ": " + proj.getDescription() + ". Technologies: " + proj.getTechnologies())
                 .collect(Collectors.joining("\n"));
 
+        String certificatesText = certificateRepository.findAll()
+                .stream()
+                .map(c -> c.getTitle() + " from " + c.getIssuer())
+                .collect(Collectors.joining("\n"));
+
         return aiJobMatchService.calculateMatch(
                 description,
                 userSkills,
                 profileHeadline,
                 experienceText,
                 projectsText,
-                resumeText);
+                resumeText,
+                certificatesText);
     }
 
     private List<JobDTO> generateMockJobs(String keyword, String country) {

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/applications")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class JobApplicationController {
 

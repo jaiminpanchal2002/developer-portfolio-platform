@@ -27,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/public")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class PublicAtsController {
 

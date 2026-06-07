@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/resumes")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class ResumeController {
 
