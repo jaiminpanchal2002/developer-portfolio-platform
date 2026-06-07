@@ -1,9 +1,10 @@
 import axios from "axios";
 
-// Configure api client with dynamic baseURL from Vercel env variables
+// Configure api client with dynamic baseURL supporting both common env naming schemes
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api",
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api",
 });
+
 
 
 
