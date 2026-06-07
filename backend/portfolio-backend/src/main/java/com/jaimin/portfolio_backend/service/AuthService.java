@@ -25,20 +25,15 @@ public class AuthService {
     private final JavaMailSender mailSender;
 
     public String register(RegisterRequest request) {
-        if (userRepository.count() > 0) {
-            throw new RuntimeException("Registration is disabled. An admin account already exists.");
-        }
         if (userRepository.existsByEmail(request.getEmail())) {
-            return "Email already exists";
+            throw new RuntimeException("Email already exists");
         }
-
-        Role assignedRole = userRepository.count() == 0 ? Role.ADMIN : Role.USER;
 
         User user = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(assignedRole)
+                .role(Role.ADMIN)
                 .build();
 
         userRepository.save(user);
