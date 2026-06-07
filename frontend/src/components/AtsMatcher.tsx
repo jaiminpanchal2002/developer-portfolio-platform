@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, AlertCircle, FileSearch, Sparkles, ArrowRight } from "lucide-react";
 
@@ -23,7 +23,7 @@ export default function AtsMatcher() {
     setResult(null);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/public/ats-match", {
+      const response = await api.post("/public/ats-match", {
         jobDescription: jd,
       });
       setResult(response.data);

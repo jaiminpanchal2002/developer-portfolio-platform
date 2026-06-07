@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import Swal from "sweetalert2";
 import {
   Mail,
@@ -81,8 +81,9 @@ export default function Contact({ profile }: ContactProps) {
 
     setSending(true);
     try {
-      const response = await axios.post("http://localhost:8080/api/public/contact", formData);
+      const response = await api.post("/public/contact", formData);
       const data = response.data;
+
 
       if (data.googleMeetLink) {
         Swal.fire({
