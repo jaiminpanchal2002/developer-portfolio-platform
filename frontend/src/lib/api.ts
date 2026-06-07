@@ -4,6 +4,13 @@ import axios from "axios";
 const getBaseURL = () => {
   let url = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
   
+  url = url.trim();
+  
+  // Enforce protocol prefix to prevent browsers from treating bare domain names as relative paths
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = "https://" + url;
+  }
+  
   // Strip trailing slash if present
   if (url.endsWith("/")) {
     url = url.slice(0, -1);
