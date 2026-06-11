@@ -65,8 +65,27 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
+  const profileData = profile as any;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Jaimin Panchal",
+    "jobTitle": "Senior Software Engineer & Tech Consultant",
+    "email": profileData.email,
+    "url": "https://jaiminpanchal.com",
+    "sameAs": [
+      profileData.githubUrl || "",
+      profileData.linkedinUrl || ""
+    ].filter(Boolean),
+    "description": "Senior Software Engineer and Technology Consultant specializing in high-performance Spring Boot architectures, React, Next.js, and Cloud Solutions."
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar profile={profile} />
 
       <main className="overflow-x-hidden">

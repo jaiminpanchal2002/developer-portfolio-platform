@@ -92,23 +92,30 @@ public class PublicContactController {
         System.out.println("Saved inquiry/booking to database with ID: " + inquiry.getId());
 
         System.out.println("-------------------------------------------------");
-        System.out.println("DISPATCHING REAL HTML EMAILS...");
+        System.out.println("DISPATCHING REAL HTML EMAILS ASYNCHRONOUSLY...");
 
-        String visitorSubject = scheduleMeeting ? "Meeting Scheduled - Jaimin Panchal" : "Inquiry Received - Jaimin Panchal";
-        String visitorHtml = buildVisitorEmailHtml(name, message, scheduleMeeting, date, time, meetLink);
+        final String visitorEmailAddress = email;
+        final String visitorSubject = scheduleMeeting ? "Meeting Scheduled - Jaimin Panchal" : "Inquiry Received - Jaimin Panchal";
+        final String visitorHtml = buildVisitorEmailHtml(name, message, scheduleMeeting, date, time, meetLink);
 
-        String ownerSubject = scheduleMeeting ? "New Meeting Scheduled - " + name : "New Portfolio Inquiry - " + name;
-        String ownerHtml = buildOwnerEmailHtml(name, email, message, scheduleMeeting, date, time, meetLink);
+        final String ownerSubject = scheduleMeeting ? "New Meeting Scheduled - " + name : "New Portfolio Inquiry - " + name;
+        final String ownerHtml = buildOwnerEmailHtml(name, email, message, scheduleMeeting, date, time, meetLink);
 
-        // Send to visitor
-        sendRealEmail(email, visitorSubject, visitorHtml);
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            try {
+                // Send to visitor
+                sendRealEmail(visitorEmailAddress, visitorSubject, visitorHtml);
 
-        // Send to owner (jaimin@gmail.com or customized)
-        String targetOwner = "jaiminpanchal939@gmail.com";
-        if (senderEmail != null && !senderEmail.equals("your-email@gmail.com") && senderEmail.contains("@")) {
-            targetOwner = senderEmail;
-        }
-        sendRealEmail(targetOwner, ownerSubject, ownerHtml);
+                // Send to owner (jaimin@gmail.com or customized)
+                String targetOwner = "jaiminpanchal939@gmail.com";
+                if (senderEmail != null && !senderEmail.equals("your-email@gmail.com") && senderEmail.contains("@")) {
+                    targetOwner = senderEmail;
+                }
+                sendRealEmail(targetOwner, ownerSubject, ownerHtml);
+            } catch (Exception ex) {
+                System.err.println("Async email dispatch failed: " + ex.getMessage());
+            }
+        });
 
         System.out.println("=================================================");
 
