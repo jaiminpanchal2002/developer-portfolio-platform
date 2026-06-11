@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jaimin.portfolio_backend.entity.ContactInquiry;
+import com.jaimin.portfolio_backend.repository.ContactInquiryRepository;
+
 @RestController
 @RequestMapping("/api/public")
 public class PublicContactController {
@@ -23,11 +26,13 @@ public class PublicContactController {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private ContactInquiryRepository contactInquiryRepository;
+
     @Value("${spring.mail.username:your-email@gmail.com}")
     private String senderEmail;
 
-    // A customizable permanent Google Meet link. 
-    // You can replace this value in application.properties or keep the default
+    // A customizable permanent Google Meet link (unused if Jitsi is generated). 
     @Value("${jaimin.meet.link:https://meet.google.com/ira-yipn-ihu}")
     private String defaultMeetLink;
 
@@ -54,21 +59,37 @@ public class PublicContactController {
         System.out.println("Email: " + email);
         System.out.println("Message: " + message);
 
-        String meetLink = defaultMeetLink;
+        String meetLink = "";
         String date = "";
         String time = "";
 
         if (scheduleMeeting) {
+            String cleanName = name != null ? name.replaceAll("[^a-zA-Z0-9]", "") : "Guest";
+            meetLink = "https://meet.jit.si/DeveloperCounselling-" + cleanName + "-" + (System.currentTimeMillis() % 1000000);
             date = (String) request.get("meetingDate");
             time = (String) request.get("meetingTime");
             response.put("googleMeetLink", meetLink);
 
             System.out.println("-------------------------------------------------");
-            System.out.println("CALENDAR INVITE GENERATED (GOOGLE MEET):");
+            System.out.println("CALENDAR INVITE GENERATED (JITSI MEET):");
             System.out.println("Meeting Link: " + meetLink);
             System.out.println("Scheduled Date: " + date);
             System.out.println("Scheduled Time: " + time);
         }
+
+        // Save inquiry/booking to the database
+        ContactInquiry inquiry = ContactInquiry.builder()
+                .name(name)
+                .email(email)
+                .message(message)
+                .scheduleMeeting(scheduleMeeting)
+                .meetingDate(scheduleMeeting ? date : null)
+                .meetingTime(scheduleMeeting ? time : null)
+                .meetingLink(scheduleMeeting ? meetLink : null)
+                .isRead(false)
+                .build();
+        contactInquiryRepository.save(inquiry);
+        System.out.println("Saved inquiry/booking to database with ID: " + inquiry.getId());
 
         System.out.println("-------------------------------------------------");
         System.out.println("DISPATCHING REAL HTML EMAILS...");
@@ -120,17 +141,17 @@ public class PublicContactController {
             meetingBox = 
                 "      <div style=\"background-color: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; margin: 24px 0;\">" +
                 "        <p style=\"font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; font-family: monospace; letter-spacing: 0.1em; margin: 0 0 12px 0;\">" +
-                "          🎥 Google Meet Confirmed" +
+                "          🎥 Virtual Meeting Confirmed" +
                 "        </p>" +
                 "        <p style=\"font-size: 15px; color: #f1f5f9; margin: 6px 0;\">📅 <b>Date:</b> " + date + "</p>" +
                 "        <p style=\"font-size: 15px; color: #f1f5f9; margin: 6px 0;\">⏰ <b>Time:</b> " + time + "</p>" +
                 "        <div style=\"margin-top: 18px;\">" +
                 "          <a href=\"" + meetLink + "\" target=\"_blank\" style=\"display: inline-block; background-color: #06b6d4; color: #000000; font-weight: 800; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);\">" +
-                "            Join Google Meet" +
+                "            Join Jitsi Meet Room" +
                 "          </a>" +
                 "        </div>" +
                 "        <p style=\"font-size: 12px; color: #64748b; margin: 12px 0 0 0;\">" +
-                "          Meet URL: <a href=\"" + meetLink + "\" style=\"color: #06b6d4; text-decoration: underline;\">" + meetLink + "</a>" +
+                "          Meeting URL: <a href=\"" + meetLink + "\" style=\"color: #06b6d4; text-decoration: underline;\">" + meetLink + "</a>" +
                 "        </p>" +
                 "      </div>";
         }
@@ -171,11 +192,11 @@ public class PublicContactController {
                 "        <p style=\"font-size: 15px; color: #f1f5f9; margin: 6px 0;\">⏰ <b>Time:</b> " + time + "</p>" +
                 "        <div style=\"margin-top: 18px;\">" +
                 "          <a href=\"" + meetLink + "\" target=\"_blank\" style=\"display: inline-block; background-color: #06b6d4; color: #000000; font-weight: 800; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);\">" +
-                "            Enter Google Meet Room" +
+                "            Enter Jitsi Meet Room" +
                 "          </a>" +
                 "        </div>" +
                 "        <p style=\"font-size: 12px; color: #64748b; margin: 12px 0 0 0;\">" +
-                "          Meet URL: <a href=\"" + meetLink + "\" style=\"color: #06b6d4; text-decoration: underline;\">" + meetLink + "</a>" +
+                "          Meeting URL: <a href=\"" + meetLink + "\" style=\"color: #06b6d4; text-decoration: underline;\">" + meetLink + "</a>" +
                 "        </p>" +
                 "      </div>";
         }

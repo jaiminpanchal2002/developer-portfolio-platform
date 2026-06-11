@@ -90,10 +90,10 @@ export default function Contact({ profile }: ContactProps) {
           title: "Meeting Scheduled!",
           html: `
             <div style="text-align: left; font-family: sans-serif; margin-top: 12px;">
-              <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 16px;">Successfully confirmed your inquiry and scheduled a video session!</p>
+              <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 16px;">Successfully confirmed your inquiry and scheduled a video counselling session!</p>
               <div style="padding: 16px; background-color: #020617; border: 1px solid #1e293b; border-radius: 16px; margin-bottom: 16px;">
                 <p style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; font-family: monospace; margin: 0 0 10px 0; display: flex; align-items: center; gap: 6px;">
-                  🎥 Google Meet Invitation
+                  🎥 Jitsi Meet Invitation
                 </p>
                 <div style="height: 1px; background-color: #1e293b; margin-bottom: 12px; width: 100%;"></div>
                 <p style="font-size: 14px; color: #e2e8f0; margin: 6px 0;">📅 <b>Date:</b> ${formData.meetingDate}</p>
@@ -272,7 +272,7 @@ export default function Contact({ profile }: ContactProps) {
               />
               <label htmlFor="scheduleMeeting" className="text-xs font-semibold text-slate-300 cursor-pointer flex items-center gap-1.5">
                 <Video size={14} className="text-cyan-400 animate-pulse" />
-                Schedule a 1-on-1 Google Meet session with Jaimin
+                Schedule a 1-on-1 Counselling & Tech Consulting Session
               </label>
             </div>
 

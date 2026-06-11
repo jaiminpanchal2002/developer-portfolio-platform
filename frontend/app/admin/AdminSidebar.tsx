@@ -17,6 +17,7 @@ import {
   MessageSquare,
   ClipboardList,
   Gauge,
+  Mail,
 } from "lucide-react";
 
 const menu = [
@@ -69,6 +70,11 @@ const menu = [
     name: "Applications",
     href: "/admin/applications",
     icon: ClipboardList,
+  },
+  {
+    name: "Inquiries",
+    href: "/admin/inquiries",
+    icon: Mail,
   },
   {
     name: "Profile Score",

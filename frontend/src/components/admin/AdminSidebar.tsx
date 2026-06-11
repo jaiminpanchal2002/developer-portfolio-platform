@@ -50,6 +50,10 @@ const menu = [
     href: "/admin/applications",
   },
   {
+    name: "Inquiries",
+    href: "/admin/inquiries",
+  },
+  {
     name: "Profile Score",
     href: "/admin/profile-score",
   },
