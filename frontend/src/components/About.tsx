@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 
+import DeveloperTerminal from "./DeveloperTerminal";
+
 interface AboutProps {
   profile: {
     fullName: string;
@@ -132,34 +134,45 @@ export default function About({
           </div>
         </motion.div>
 
-        {/* Statistics Grid Bento Cells */}
-        <div className="lg:col-span-5 grid grid-cols-2 gap-6">
-          {stats.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col justify-between bento-card p-6 md:p-8"
-              >
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border ${item.color}`}>
-                  <Icon size={22} />
-                </div>
-                
-                <div className="mt-10">
-                  <h3 className="text-5xl font-black text-white tracking-tight">
-                    <Counter value={item.value} />+
-                  </h3>
-                  <p className="text-slate-400 text-xs font-semibold tracking-wide mt-2">
-                    {item.label}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+        {/* Statistics Grid & Terminal Bento Cells */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
+          <div className="grid grid-cols-2 gap-6">
+            {stats.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-col justify-between bento-card p-6 md:p-8"
+                >
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border ${item.color}`}>
+                    <Icon size={22} />
+                  </div>
+                  
+                  <div className="mt-10">
+                    <h3 className="text-5xl font-black text-white tracking-tight">
+                      <Counter value={item.value} />+
+                    </h3>
+                    <p className="text-slate-400 text-xs font-semibold tracking-wide mt-2">
+                      {item.label}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <DeveloperTerminal />
+          </motion.div>
         </div>
 
       </div>

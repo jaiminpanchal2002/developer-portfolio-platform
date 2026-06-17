@@ -6,6 +6,8 @@ import { Code } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 import { getImageUrl } from "../lib/api";
 
+import ImageLightbox from "./ImageLightbox";
+
 interface Project {
   id: number;
   title: string;
@@ -17,7 +19,7 @@ interface Project {
   featured?: boolean;
 }
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({ project, onImageClick }: { project: Project; onImageClick: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -54,7 +56,14 @@ function ProjectCard({ project }: { project: Project }) {
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
       className="bento-card group flex flex-col justify-between h-full min-h-[460px] cursor-pointer shadow-2xl p-6 overflow-hidden"
     >
-      <div style={{ transform: "translateZ(30px)" }} className="relative w-full h-48 rounded-2xl overflow-hidden mb-6 bg-slate-900 border border-white/5">
+      <div 
+        style={{ transform: "translateZ(30px)" }} 
+        className="relative w-full h-48 rounded-2xl overflow-hidden mb-6 bg-slate-900 border border-white/5 cursor-zoom-in"
+        onClick={(e) => {
+          e.stopPropagation();
+          onImageClick();
+        }}
+      >
         {project.imageUrl ? (
           <img
             src={getImageUrl(project.imageUrl)}
@@ -133,9 +142,24 @@ function ProjectCard({ project }: { project: Project }) {
 
 export default function Projects({ projects }: { projects: Project[] }) {
   const [showAll, setShowAll] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImgIdx, setCurrentImgIdx] = useState(0);
   const { t } = useLocale();
 
   const displayedProjects = showAll ? projects : projects.slice(0, 4);
+
+  // Filter project images
+  const projectImages = projects
+    .map((p) => (p.imageUrl ? getImageUrl(p.imageUrl) : null))
+    .filter(Boolean) as string[];
+
+  const handleImageClick = (imageUrl: string) => {
+    const idx = projectImages.indexOf(getImageUrl(imageUrl));
+    if (idx !== -1) {
+      setCurrentImgIdx(idx);
+      setLightboxOpen(true);
+    }
+  };
 
   return (
     <section id="projects" className="max-w-7xl mx-auto px-6 py-32">
@@ -168,10 +192,22 @@ export default function Projects({ projects }: { projects: Project[] }) {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
           >
-            <ProjectCard project={project} />
+            <ProjectCard
+              project={project}
+              onImageClick={() => project.imageUrl && handleImageClick(project.imageUrl)}
+            />
           </motion.div>
         ))}
       </div>
+
+      {/* Expanded view image lightbox */}
+      <ImageLightbox
+        images={projectImages}
+        currentIndex={currentImgIdx}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNavigate={(idx) => setCurrentImgIdx(idx)}
+      />
     </section>
   );
 }
