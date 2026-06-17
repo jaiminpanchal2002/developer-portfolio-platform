@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { getImageUrl } from "../lib/api";
 import { useLocale } from "@/lib/localeContext";
@@ -22,6 +22,11 @@ export default function Hero({ profile }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
   const { t } = useLocale();
+  const [imageError, setImageError] = useState(false);
+
+  const getFallbackAvatar = () => {
+    return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><rect width="100%" height="100%" fill="%230a0a0a"/><circle cx="75" cy="75" r="70" fill="none" stroke="%2306b6d4" stroke-width="2"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="44" font-weight="900" fill="%2306b6d4">JP</text></svg>`;
+  };
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -170,7 +175,8 @@ export default function Hero({ profile }: HeroProps) {
             className="relative w-36 h-36 md:w-48 md:h-48 rounded-full p-[3px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 shadow-2xl mb-8"
           >
             <img
-              src={getImageUrl(profile.profileImageUrl) || "/profile.jpg"}
+              src={imageError || !profile.profileImageUrl ? getFallbackAvatar() : getImageUrl(profile.profileImageUrl)}
+              onError={() => setImageError(true)}
               alt={profile.fullName}
               className="w-full h-full object-cover rounded-full bg-slate-950"
             />

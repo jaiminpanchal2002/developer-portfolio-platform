@@ -36,10 +36,10 @@ export default function Navbar({ profile }: NavbarProps) {
     ];
 
     return (
-        <nav className="fixed top-0 w-full z-50 bg-[#030303]/70 backdrop-blur-xl border-b border-white/5">
+        <nav className="fixed top-0 w-full z-50 bg-[#030303]/70 backdrop-blur-xl border-b border-white/5" role="navigation" aria-label="Main Navigation">
             <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
                 
-                <a href="#home" className="font-black text-xl md:text-3xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
+                <a href="#home" className="font-black text-xl md:text-3xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight" aria-label="Jaimin Panchal Portfolio Home">
                     {profile?.fullName || "Jaimin Panchal"}
                 </a>
 
@@ -61,6 +61,9 @@ export default function Navbar({ profile }: NavbarProps) {
                         <button
                             onClick={() => setLangOpen(!langOpen)}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 hover:border-cyan-400/50 bg-white/5 hover:bg-white/10 text-sm font-medium text-gray-300 transition-all cursor-pointer"
+                            aria-expanded={langOpen}
+                            aria-haspopup="true"
+                            aria-label="Select language"
                         >
                             <Globe size={14} className="text-cyan-400" />
                             <span className="uppercase">{locale}</span>
@@ -74,6 +77,8 @@ export default function Navbar({ profile }: NavbarProps) {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 10 }}
                                     className="absolute right-0 mt-2 w-36 rounded-2xl bg-[#0a0a0a] border border-white/10 p-1.5 shadow-2xl z-50"
+                                    role="menu"
+                                    aria-label="Language selection options"
                                 >
                                     {languages.map((lang) => (
                                         <button
@@ -87,6 +92,8 @@ export default function Navbar({ profile }: NavbarProps) {
                                                     ? "bg-cyan-500/15 text-cyan-400"
                                                     : "text-gray-400 hover:bg-white/5 hover:text-white"
                                             }`}
+                                            role="menuitem"
+                                            aria-label={`Switch to ${lang.label}`}
                                         >
                                             {lang.label}
                                         </button>
@@ -106,6 +113,7 @@ export default function Navbar({ profile }: NavbarProps) {
                         }}
                         className="p-2 text-cyan-400 border border-white/10 rounded-full bg-white/5"
                         title="Change Language"
+                        aria-label="Change Language"
                     >
                         <Globe size={18} />
                     </button>
@@ -114,6 +122,8 @@ export default function Navbar({ profile }: NavbarProps) {
                         onClick={() => setIsOpen(!isOpen)}
                         className="p-2 text-cyan-400 hover:text-cyan-300 focus:outline-none cursor-pointer"
                         title="Toggle navigation menu"
+                        aria-label="Toggle navigation menu"
+                        aria-expanded={isOpen}
                     >
                         {isOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
@@ -128,6 +138,8 @@ export default function Navbar({ profile }: NavbarProps) {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         className="md:hidden absolute top-20 left-0 w-full bg-[#030303]/95 backdrop-blur-2xl border-b border-white/5 py-6 px-6 flex flex-col gap-3"
+                        role="menu"
+                        aria-label="Mobile Navigation menu"
                     >
                         {navItems.map((item) => (
                             <a
@@ -135,6 +147,7 @@ export default function Navbar({ profile }: NavbarProps) {
                                 href={item.href}
                                 onClick={() => setIsOpen(false)}
                                 className="text-base font-semibold text-gray-200 hover:text-cyan-400 py-2 border-b border-white/5 transition-all duration-200"
+                                role="menuitem"
                             >
                                 {item.label}
                             </a>

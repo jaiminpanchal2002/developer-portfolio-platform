@@ -101,8 +101,8 @@ export default function About({
           </div>
 
           {/* Quick Details Table */}
-          <div className="grid sm:grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/5 text-sm">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-wrap justify-between gap-6 mt-12 pt-8 border-t border-white/5 text-sm">
+            <div className="flex items-center gap-3 min-w-[150px]">
               <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-cyan-400">
                 <MapPin size={16} />
               </div>
@@ -112,17 +112,17 @@ export default function About({
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-purple-400">
+            <div className="flex items-center gap-3 min-w-[200px]">
+              <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-purple-400 animate-pulse">
                 <Mail size={16} />
               </div>
-              <div>
+              <div className="break-all max-w-[220px]">
                 <span className="text-slate-500 text-xxs uppercase font-bold tracking-wider block">Email</span>
                 <span className="text-slate-200 font-semibold">{profile.email || "jaimin@example.com"}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-[150px]">
               <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-pink-400">
                 <Phone size={16} />
               </div>

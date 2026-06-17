@@ -180,6 +180,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             onClick={() => setSoundEnabled((prev) => !prev)}
             className="ml-2 pl-2 border-l border-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
             title={soundEnabled ? "Mute audio" : "Enable sound cues"}
+            aria-label={soundEnabled ? "Mute audio" : "Enable sound cues"}
           >
             {soundEnabled ? "🔊" : "🔇"}
           </button>

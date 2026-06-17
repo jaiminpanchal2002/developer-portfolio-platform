@@ -23,6 +23,11 @@ function ProjectCard({ project, onImageClick }: { project: Project; onImageClick
   const cardRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+  const [imgError, setImgError] = useState(false);
+
+  const getFallbackBanner = () => {
+    return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200"><rect width="100%" height="100%" fill="%230a0a0a"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20" fill="%2306b6d4">&lt;Code /&gt;</text></svg>`;
+  };
 
   // 3D tilt effects using motion values
   const rotateX = useTransform(y, [-150, 150], [10, -10]);
@@ -64,16 +69,19 @@ function ProjectCard({ project, onImageClick }: { project: Project; onImageClick
           onImageClick();
         }}
       >
-        {project.imageUrl ? (
+        {project.imageUrl && !imgError ? (
           <img
             src={getImageUrl(project.imageUrl)}
+            onError={() => setImgError(true)}
             alt={project.title}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-700">
-            <Code size={48} />
-          </div>
+          <img
+            src={getFallbackBanner()}
+            alt={project.title}
+            className="w-full h-full object-cover transition-transform duration-700"
+          />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent opacity-80" />
       </div>
