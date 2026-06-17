@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Terminal,
 } from "lucide-react";
+import { useLocale } from "../lib/localeContext";
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type Position = [number, number];
@@ -31,6 +32,7 @@ const BUGS = [
 ];
 
 export default function Playground() {
+  const { t } = useLocale();
   const [snake, setSnake] = useState<Position[]>([[7, 7]]);
   const [direction, setDirection] = useState<Direction>("RIGHT");
   const [bug, setBug] = useState<Position>([3, 3]);
@@ -234,25 +236,22 @@ export default function Playground() {
   };
 
   return (
-    <section id="playground" className="max-w-7xl mx-auto px-6 py-24">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-          Interactive Arcade
+    <section id="arcade" className="max-w-7xl mx-auto px-6 py-32">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
+          {t("arcade.title", "Interactive Arcade")}
         </h2>
-        <p className="text-slate-400 mt-3 max-w-xl mx-auto">
-          Need a break from looking at code? Help patch bugs in real-time inside this retro compiler console game!
+        <p className="text-slate-400 mt-4 max-w-xl mx-auto text-sm font-semibold">
+          Need a break from looking at codebase architectures? Patch some compiling issues in real-time inside this retro terminal console!
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-8 items-center">
+      <div className="grid lg:grid-cols-12 gap-8 items-stretch">
         {/* LEFT COLUMN: ARCADE CABINET */}
         <div className="lg:col-span-8 flex justify-center">
-          <div className="w-full max-w-lg bg-[#0b0f19] border border-cyan-500/30 rounded-3xl p-4 md:p-6 shadow-[0_0_50px_rgba(6,182,212,0.15)] relative overflow-hidden">
-            {/* Glossy overlay effect */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none rounded-3xl" />
-            
+          <div className="w-full max-w-lg bento-card p-4 md:p-6 shadow-2xl relative overflow-hidden">
             {/* Header / Brand */}
-            <div className="flex justify-between items-center mb-4 border-b border-cyan-500/20 pb-3 text-cyan-400 font-mono text-sm">
+            <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-3 text-cyan-455 font-mono text-xs font-semibold">
               <span className="flex items-center gap-1.5 font-bold tracking-wider">
                 <Terminal size={16} /> COMPILER_V1.EXE
               </span>

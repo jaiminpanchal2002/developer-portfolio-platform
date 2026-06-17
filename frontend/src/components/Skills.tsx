@@ -14,7 +14,8 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { Code2, Server, Database, Cloud, Star } from "lucide-react";
+import { Code2, Server, Database, Cloud, Star, Cpu } from "lucide-react";
+import { useLocale } from "@/lib/localeContext";
 
 interface Skill {
   id: number;
@@ -24,7 +25,8 @@ interface Skill {
 }
 
 export default function Skills({ skills }: { skills: Skill[] }) {
-  // If no skills are present, render a default set to showcase the portfolio beautifully
+  const { t } = useLocale();
+
   const displaySkills = skills.length > 0 ? skills : [
     { id: 1, name: "Java", category: "Backend", proficiency: 90 },
     { id: 2, name: "Spring Boot", category: "Backend", proficiency: 85 },
@@ -56,114 +58,134 @@ export default function Skills({ skills }: { skills: Skill[] }) {
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case "frontend":
-        return <Code2 className="text-cyan-400" size={24} />;
+        return <Code2 className="text-cyan-400" size={20} />;
       case "backend":
-        return <Server className="text-purple-400" size={24} />;
+        return <Server className="text-purple-400" size={20} />;
       case "database":
-        return <Database className="text-pink-400" size={24} />;
+        return <Database className="text-pink-400" size={20} />;
       case "devops":
       case "cloud":
-        return <Cloud className="text-yellow-400" size={24} />;
+        return <Cloud className="text-yellow-400" size={20} />;
+      case "ai":
+      case "artificial intelligence":
+        return <Cpu className="text-emerald-400" size={20} />;
       default:
-        return <Star className="text-emerald-400" size={24} />;
+        return <Star className="text-blue-400" size={20} />;
     }
   };
 
   return (
-    <section id="skills" className="max-w-7xl mx-auto px-6 py-24">
+    <section id="skills" className="max-w-7xl mx-auto px-6 py-32">
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-          Skills & Expertise
+        <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
+          {t("skills.title", "Skills & Expertise")}
         </h2>
-        <p className="text-slate-400 mt-3 max-w-xl mx-auto">
-          Deep dive into my tech stack and proficiency ratings across frontend, backend, database, and devops layers
+        <p className="text-slate-400 mt-4 max-w-xl mx-auto text-sm font-semibold">
+          Deep dive into my tech stack and proficiency ratings across frontend, backend, database, devops, and AI engineering layers
         </p>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8 items-start">
-        {/* LEFT COLUMN: Skill Categories List */}
-        <div className="lg:col-span-7 space-y-6">
-          {Object.keys(groupedSkills).map((category) => (
+        {/* Bento Grid: Skill categories list */}
+        <div className="lg:col-span-7 grid sm:grid-cols-2 gap-6">
+          {Object.keys(groupedSkills).map((category, idx) => (
             <motion.div
               key={category}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 shadow-xl"
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              className="bento-card p-6 shadow-xl flex flex-col justify-between"
             >
-              <h3 className="text-xl font-bold text-white flex items-center gap-3 mb-6">
-                <span className="p-2 rounded-xl bg-slate-950 border border-slate-850 flex items-center justify-center">
-                  {getCategoryIcon(category)}
-                </span>
-                {category}
-              </h3>
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center gap-2.5 mb-6">
+                  <span className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                    {getCategoryIcon(category)}
+                  </span>
+                  {category}
+                </h3>
 
-              <div className="space-y-5">
-                {groupedSkills[category].map((skill) => (
-                  <div key={skill.id} className="space-y-2">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="font-semibold text-slate-350">{skill.name}</span>
-                      <span className="font-bold text-cyan-400">{skill.proficiency}%</span>
-                    </div>
+                <div className="space-y-4">
+                  {groupedSkills[category].map((skill) => (
+                    <div key={skill.id} className="space-y-1.5">
+                      <div className="flex justify-between items-center text-xs font-semibold">
+                        <span className="text-slate-300">{skill.name}</span>
+                        <span className="text-cyan-450">{skill.proficiency}%</span>
+                      </div>
 
-                    <div className="w-full bg-slate-950 border border-slate-850 h-3 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${skill.proficiency}%` }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                        className="bg-gradient-to-r from-cyan-500 to-blue-500 h-3 rounded-full"
-                      />
+                      <div className="w-full bg-white/5 border border-white/5 h-2 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${skill.proficiency}%` }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                          className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full"
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* RIGHT COLUMN: Recharts Distribution Chart */}
+        {/* Radar/Bar distribution chart */}
         <div className="lg:col-span-5 lg:sticky lg:top-28">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 shadow-xl flex flex-col justify-between"
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="bento-card p-6 md:p-8 shadow-2xl flex flex-col justify-between"
           >
-            <h3 className="text-xl font-bold text-white mb-6">Stack Breakdown</h3>
+            <h3 className="text-lg font-bold text-white mb-6 tracking-tight">
+              {t("skills.radar", "Skill Alignment")}
+            </h3>
 
             <div className="h-[350px] w-full flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 {chartData.length >= 3 ? (
-                  // Radar Chart
                   <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
-                    <PolarGrid stroke="#334155" />
-                    <PolarAngleAxis dataKey="category" stroke="#94a3b8" fontSize={12} />
-                    <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#475569" />
+                    <PolarGrid stroke="rgba(255,255,255,0.05)" />
+                    <PolarAngleAxis dataKey="category" stroke="#94a3b8" fontSize={11} fontWeight={600} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="rgba(255,255,255,0.1)" tick={{ fontSize: 9 }} />
                     <Radar
                       name="Proficiency"
                       dataKey="Proficiency"
                       stroke="#06b6d4"
-                      fill="#06b6d4"
-                      fillOpacity={0.25}
+                      fill="url(#radarGlow)"
+                      fillOpacity={0.4}
                     />
+                    <defs>
+                      <radialGradient id="radarGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.1} />
+                        <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.5} />
+                      </radialGradient>
+                    </defs>
                   </RadarChart>
                 ) : (
-                  // Fallback Bar Chart if not enough categories for Radar
                   <BarChart data={chartData}>
-                    <XAxis dataKey="category" stroke="#94a3b8" />
-                    <YAxis domain={[0, 100]} stroke="#94a3b8" />
+                    <XAxis dataKey="category" stroke="#94a3b8" fontSize={10} tickLine={false} />
+                    <YAxis domain={[0, 100]} stroke="#94a3b8" fontSize={10} tickLine={false} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#0f172a", borderColor: "#1e293b", borderRadius: "12px" }}
-                      itemStyle={{ color: "#06b6d4" }}
+                      contentStyle={{ backgroundColor: "#0a0a0a", borderColor: "rgba(255,255,255,0.1)", borderRadius: "16px" }}
+                      itemStyle={{ color: "#06b6d4", fontSize: 12 }}
                     />
-                    <Bar dataKey="Proficiency" fill="#06b6d4" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="Proficiency" fill="url(#barGradient)" radius={[8, 8, 0, 0]} />
+                    <defs>
+                      <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#06b6d4" />
+                        <stop offset="100%" stopColor="#8b5cf6" />
+                      </linearGradient>
+                    </defs>
                   </BarChart>
                 )}
               </ResponsiveContainer>
             </div>
             
-            <p className="text-xs text-slate-500 text-center mt-6">
-              Averages are calculated automatically from individual skill ratings
+            <p className="text-xxs text-slate-500 text-center mt-6 font-semibold">
+              Category indicators demonstrate composite engineering focus
             </p>
           </motion.div>
         </div>

@@ -1,33 +1,168 @@
 @import "tailwindcss";
 
+:root {
+  --font-display: 'Outfit', 'Satoshi', 'Inter', sans-serif;
+  --bg-color: #030303;
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
+  --glass-bg: rgba(10, 10, 10, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-glow: rgba(6, 182, 212, 0.1);
+}
+
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto; /* Required for Lenis smooth scroll */
+  background-color: var(--bg-color);
+  color: #f8fafc;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
-
-  background:
-    radial-gradient(circle at top left,
-      rgba(6,182,212,.15),
-      transparent 35%),
-    radial-gradient(circle at bottom right,
-      rgba(168,85,247,.15),
-      transparent 35%),
-    #020617;
-
-  color: white;
+  font-family: var(--font-display);
+  background: var(--bg-color);
+  position: relative;
 }
 
-* {
-  box-sizing: border-box;
+/* Noise overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 9999;
 }
 
-img {
-  max-width: 100%;
-  display: block;
+/* Animated Mesh Gradient Aurora Background */
+.aurora-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -10;
+  pointer-events: none;
+}
+
+.aurora-glow {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  animation: float 25s infinite alternate ease-in-out;
+}
+
+.glow-1 {
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%);
+  top: -10%;
+  left: -10%;
+  animation-duration: 20s;
+}
+
+.glow-2 {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, transparent 70%);
+  bottom: 10%;
+  right: -10%;
+  animation-duration: 25s;
+  animation-delay: -5s;
+}
+
+.glow-3 {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+  top: 40%;
+  left: 30%;
+  animation-duration: 30s;
+  animation-delay: -10s;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate(100px, 80px) scale(1.1) rotate(180deg);
+  }
+  100% {
+    transform: translate(-50px, -50px) scale(0.9) rotate(360deg);
+  }
+}
+
+/* Premium Bento Grid and Glassmorphism */
+.bento-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card:hover {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 10px 30px -10px var(--glass-glow);
+  transform: translateY(-4px);
+}
+
+.bento-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 255, 255, 0.06), transparent 40%);
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: difference;
+  transition: width 0.2s, height 0.2s;
+}
+
+.custom-cursor-follower {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.08s ease-out, background 0.3s, border-color 0.3s;
+}
+
+/* Hover scales follower */
+.hovering .custom-cursor-follower {
+  transform: translate(-50%, -50%) scale(1.5);
+  background: rgba(6, 182, 212, 0.1);
+  border-color: var(--accent-cyan);
 }
 
 ::-webkit-scrollbar {
@@ -35,10 +170,10 @@ img {
 }
 
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: var(--bg-color);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #06b6d4;
+  background: linear-gradient(var(--accent-cyan), var(--accent-purple));
   border-radius: 999px;
 }

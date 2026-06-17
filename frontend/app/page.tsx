@@ -12,7 +12,6 @@ import Education from "@/components/Education";
 import Certificates from "@/components/Certificates";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import Stats from "@/components/Stats";
 import Playground from "@/components/Playground";
 import AtsMatcher from "@/components/AtsMatcher";
 
@@ -70,14 +69,14 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Jaimin Panchal",
-    "jobTitle": "Senior Software Engineer & Tech Consultant",
+    "jobTitle": "Jaimin Panchal - Full Stack AI Developer",
     "email": profileData.email,
     "url": "https://jaiminpanchal.com",
     "sameAs": [
       profileData.githubUrl || "",
       profileData.linkedinUrl || ""
     ].filter(Boolean),
-    "description": "Senior Software Engineer and Technology Consultant specializing in high-performance Spring Boot architectures, React, Next.js, and Cloud Solutions."
+    "description": "Full Stack AI Developer specializing in production-ready, scalable SaaS and AI systems using Spring Boot, Node.js, Python, and cloud architectures."
   };
 
   return (
@@ -90,13 +89,13 @@ export default function Home() {
 
       <main className="overflow-x-hidden">
         <Hero profile={profile} />
-        <Stats
+        <About
+          profile={profile}
           projectsCount={projects.length}
           experiencesCount={experiences.length}
           certificatesCount={certificates.length}
           educationsCount={educations.length}
         />
-        <About profile={profile} />
         <Skills skills={skills} />
         <Projects projects={projects} />
         <Playground />
