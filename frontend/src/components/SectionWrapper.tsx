@@ -10,7 +10,7 @@ export default function SectionWrapper({
   const shouldReduceMotion = useReducedMotion();
 
   // If prefers-reduced-motion is true, display a simple fade reveal.
-  const variants = shouldReduceMotion
+  const variants: any = shouldReduceMotion
     ? {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { duration: 0.6 } },
