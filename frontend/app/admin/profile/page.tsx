@@ -99,15 +99,24 @@ export default function ProfilePage() {
   ) => {
     e.preventDefault();
 
+    // Normalize URLs before sending
+    const normalizedProfile = { ...profile };
+    if (normalizedProfile.githubUrl && !normalizedProfile.githubUrl.startsWith("http")) {
+      normalizedProfile.githubUrl = `https://${normalizedProfile.githubUrl}`;
+    }
+    if (normalizedProfile.linkedinUrl && !normalizedProfile.linkedinUrl.startsWith("http")) {
+      normalizedProfile.linkedinUrl = `https://${normalizedProfile.linkedinUrl}`;
+    }
+
     try {
       if (profileExists) {
-        await updateProfile(profile);
+        await updateProfile(normalizedProfile);
 
         alert(
           "Profile Updated Successfully"
         );
       } else {
-        await createProfile(profile);
+        await createProfile(normalizedProfile);
 
         alert(
           "Profile Created Successfully"

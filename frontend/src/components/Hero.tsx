@@ -241,7 +241,7 @@ export default function Hero({ profile }: HeroProps) {
         >
           {profile.githubUrl && (
             <a
-              href={profile.githubUrl}
+              href={profile.githubUrl.startsWith("http") ? profile.githubUrl : `https://${profile.githubUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-slate-400 hover:text-cyan-400 transition-colors duration-200"
@@ -252,7 +252,7 @@ export default function Hero({ profile }: HeroProps) {
 
           {profile.linkedinUrl && (
             <a
-              href={profile.linkedinUrl}
+              href={profile.linkedinUrl.startsWith("http") ? profile.linkedinUrl : `https://${profile.linkedinUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-slate-400 hover:text-cyan-400 transition-colors duration-200"

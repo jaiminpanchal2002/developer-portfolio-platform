@@ -240,6 +240,9 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
     localStorage.setItem("portfolio_locale", newLocale);
+    if (typeof window !== "undefined") {
+      window.location.reload();
+    }
   };
 
   const t = (key: string, fallback?: string): string => {

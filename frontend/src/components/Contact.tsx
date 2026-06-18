@@ -196,9 +196,9 @@ export default function Contact({ profile }: ContactProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-slate-800">
               {profile.githubUrl && (
                 <a
-                  href={profile.githubUrl}
+                  href={profile.githubUrl.startsWith("http") ? profile.githubUrl : `https://${profile.githubUrl}`}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-cyan-500/50 hover:bg-slate-900 transition-all font-semibold text-sm cursor-pointer"
                 >
                   <Globe size={18} className="text-cyan-400" />
@@ -208,9 +208,9 @@ export default function Contact({ profile }: ContactProps) {
 
               {profile.linkedinUrl && (
                 <a
-                  href={profile.linkedinUrl}
+                  href={profile.linkedinUrl.startsWith("http") ? profile.linkedinUrl : `https://${profile.linkedinUrl}`}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-cyan-500/50 hover:bg-slate-900 transition-all font-semibold text-sm cursor-pointer"
                 >
                   <LinkIcon size={18} className="text-cyan-400" />
