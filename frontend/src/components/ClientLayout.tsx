@@ -59,6 +59,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       smoothWheel: true,
     });
 
+    if (typeof window !== "undefined") {
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "manual";
+      }
+      window.scrollTo(0, 0);
+      lenis.scrollTo(0, { immediate: true });
+    }
+
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);

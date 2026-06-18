@@ -30,8 +30,24 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public Project getProjectById(@PathVariable Long id) {
-        return projectService.getProjectById(id);
+    public Project getProjectById(@PathVariable Long id, @RequestHeader(value = "Accept-Language", required = false) String locale) {
+        Project project = projectService.getProjectById(id);
+        if (project != null) {
+            String locTitle = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(project.getTitle(), locale);
+            String locDesc = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(project.getDescription(), locale);
+            return Project.builder()
+                .id(project.getId())
+                .title(locTitle)
+                .description(locDesc)
+                .githubUrl(project.getGithubUrl())
+                .liveUrl(project.getLiveUrl())
+                .imageUrl(project.getImageUrl())
+                .technologies(project.getTechnologies())
+                .featured(project.getFeatured())
+                .createdAt(project.getCreatedAt())
+                .build();
+        }
+        return project;
     }
 
     @PutMapping("/{id}")
@@ -51,8 +67,23 @@ public class ProjectController {
     }
 
     @GetMapping
-public List<Project> getAllProjects() {
-    return projectService.getAllProjects();
-}
+    public List<Project> getAllProjects(@RequestHeader(value = "Accept-Language", required = false) String locale) {
+        List<Project> all = projectService.getAllProjects();
+        return all.stream().map(project -> {
+            String locTitle = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(project.getTitle(), locale);
+            String locDesc = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(project.getDescription(), locale);
+            return Project.builder()
+                .id(project.getId())
+                .title(locTitle)
+                .description(locDesc)
+                .githubUrl(project.getGithubUrl())
+                .liveUrl(project.getLiveUrl())
+                .imageUrl(project.getImageUrl())
+                .technologies(project.getTechnologies())
+                .featured(project.getFeatured())
+                .createdAt(project.getCreatedAt())
+                .build();
+        }).collect(java.util.stream.Collectors.toList());
+    }
 
 }

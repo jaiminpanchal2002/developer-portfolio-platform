@@ -30,4 +30,7 @@ public class JobDTO {
     private String recruiterEmail;
 
     private String roadmap;
+
+    private String createdAt;
+    private String source;
 }

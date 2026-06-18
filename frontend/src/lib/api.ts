@@ -38,6 +38,10 @@ api.interceptors.request.use((config) => {
     if (token && token !== "undefined" && token !== "null") {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    const savedLocale = localStorage.getItem("portfolio_locale") || "en";
+    config.headers["Accept-Language"] = savedLocale;
+  } else {
+    config.headers["Accept-Language"] = "en";
   }
   return config;
 }, (error) => {

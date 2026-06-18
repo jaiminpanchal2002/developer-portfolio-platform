@@ -14,6 +14,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import Playground from "@/components/Playground";
 import AtsMatcher from "@/components/AtsMatcher";
+import SectionWrapper from "@/components/SectionWrapper";
 
 import { getProfile } from "@/services/profileService";
 import { getProjects } from "@/services/projectService";
@@ -34,9 +35,7 @@ export default function Home() {
   useEffect(() => {
 
     const fetchData = async () => {
-
       try {
-
         const profileData = await getProfile();
         const projectData = await getProjects();
         const skillData = await getSkills();
@@ -51,6 +50,9 @@ export default function Home() {
         setEducations(educationData);
         setCertificates(certificateData);
 
+        if (typeof window !== "undefined") {
+          window.scrollTo(0, 0);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -89,21 +91,48 @@ export default function Home() {
 
       <main className="overflow-x-hidden">
         <Hero profile={profile} />
-        <About
-          profile={profile}
-          projectsCount={projects.length}
-          experiencesCount={experiences.length}
-          certificatesCount={certificates.length}
-          educationsCount={educations.length}
-        />
-        <Skills skills={skills} />
-        <Projects projects={projects} />
-        <Playground />
-        <Experience experiences={experiences} />
-        <Education educations={educations} />
-        <Certificates certificates={certificates} />
-        <AtsMatcher />
-        <Contact profile={profile} />
+        
+        <SectionWrapper id="about">
+          <About
+            profile={profile}
+            projectsCount={projects.length}
+            experiencesCount={experiences.length}
+            certificatesCount={certificates.length}
+            educationsCount={educations.length}
+          />
+        </SectionWrapper>
+
+        <SectionWrapper id="skills">
+          <Skills skills={skills} />
+        </SectionWrapper>
+
+        <SectionWrapper id="projects">
+          <Projects projects={projects} />
+        </SectionWrapper>
+
+        <SectionWrapper id="arcade">
+          <Playground />
+        </SectionWrapper>
+
+        <SectionWrapper id="experience">
+          <Experience experiences={experiences} />
+        </SectionWrapper>
+
+        <SectionWrapper id="education">
+          <Education educations={educations} />
+        </SectionWrapper>
+
+        <SectionWrapper id="certificates">
+          <Certificates certificates={certificates} />
+        </SectionWrapper>
+
+        <SectionWrapper id="ats-matcher">
+          <AtsMatcher />
+        </SectionWrapper>
+
+        <SectionWrapper id="contact">
+          <Contact profile={profile} />
+        </SectionWrapper>
       </main>
 
       <Footer profile={profile} />

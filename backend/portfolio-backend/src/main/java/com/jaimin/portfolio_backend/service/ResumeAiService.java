@@ -42,17 +42,27 @@ public class ResumeAiService {
         // 1. Check for Contact Details
         boolean hasEmail = Pattern.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}").matcher(resumeText).find();
         boolean hasPhone = Pattern.compile("(\\+?\\d{1,3}[- ]?)?\\d{10}").matcher(resumeText).find() || textLower.contains("phone") || textLower.contains("mobile");
+        boolean hasLinkedIn = textLower.contains("linkedin.com") || textLower.contains("linkedin");
+        boolean hasGitHub = textLower.contains("github.com") || textLower.contains("github");
         
         if (hasEmail && hasPhone) {
             strengths.add("Contact Information: Email and Phone number are clearly visible.");
             score += 10;
         } else {
-            weaknesses.add("Missing Contact Information: Ensure your email and phone number are present and easily readable.");
+            weaknesses.add("Missing Core Contact Details: Ensure your email and phone number are present and easily readable.");
             score -= 5;
         }
 
+        if (hasLinkedIn || hasGitHub) {
+            strengths.add("Online Presence: Profile links (LinkedIn/GitHub) detected.");
+            score += 5;
+        } else {
+            weaknesses.add("Missing Social Anchors: Adding a GitHub/LinkedIn link increases ATS trust.");
+            score -= 2;
+        }
+
         // 2. Check for key sections
-        if (textLower.contains("experience") || textLower.contains("work history") || textLower.contains("employment")) {
+        if (textLower.contains("experience") || textLower.contains("work history") || textLower.contains("employment") || textLower.contains("career history")) {
             strengths.add("Work Experience Section: Defined career history.");
             score += 15;
         } else {
@@ -60,7 +70,7 @@ public class ResumeAiService {
             score -= 10;
         }
 
-        if (textLower.contains("education") || textLower.contains("university") || textLower.contains("college") || textLower.contains("degree")) {
+        if (textLower.contains("education") || textLower.contains("university") || textLower.contains("college") || textLower.contains("degree") || textLower.contains("academic")) {
             strengths.add("Education Section: Stated academic background.");
             score += 10;
         } else {
@@ -68,7 +78,7 @@ public class ResumeAiService {
             score -= 5;
         }
 
-        if (textLower.contains("project") || textLower.contains("portfolio")) {
+        if (textLower.contains("project") || textLower.contains("portfolio") || textLower.contains("personal projects")) {
             strengths.add("Projects Section: Highlighted practical assignments.");
             score += 10;
         } else {
@@ -76,7 +86,7 @@ public class ResumeAiService {
             score -= 5;
         }
 
-        if (textLower.contains("skills") || textLower.contains("technolog")) {
+        if (textLower.contains("skills") || textLower.contains("technolog") || textLower.contains("technical skills") || textLower.contains("expertise")) {
             strengths.add("Skills Section: Defined skill list.");
             score += 10;
         } else {
@@ -84,10 +94,29 @@ public class ResumeAiService {
             score -= 10;
         }
 
-        // 3. Keyword Match Analysis
+        // 3. Keyword Match Analysis + Synonym Mapping
         int foundKeywordsCount = 0;
         for (String keyword : ATS_KEYWORDS) {
+            boolean found = false;
+            // Exact keyword check
             if (textLower.contains(keyword.toLowerCase())) {
+                found = true;
+            } else {
+                // Semantic synonym maps check
+                if (keyword.equalsIgnoreCase("Spring Boot") && (textLower.contains("spring framework") || textLower.contains("spring boot") || textLower.contains("spring MVC"))) {
+                    found = true;
+                } else if (keyword.equalsIgnoreCase("React") && textLower.contains("next.js")) {
+                    found = true;
+                } else if (keyword.equalsIgnoreCase("CI/CD") && (textLower.contains("jenkins") || textLower.contains("github actions") || textLower.contains("gitlab ci"))) {
+                    found = true;
+                } else if (keyword.equalsIgnoreCase("PostgreSQL") && textLower.contains("postgres")) {
+                    found = true;
+                } else if (keyword.equalsIgnoreCase("Cloud") && (textLower.contains("aws") || textLower.contains("azure") || textLower.contains("gcp") || textLower.contains("cloud computing"))) {
+                    found = true;
+                }
+            }
+
+            if (found) {
                 foundKeywordsCount++;
             } else {
                 missingKeywords.add(keyword);
@@ -95,26 +124,25 @@ public class ResumeAiService {
         }
 
         int keywordMatchPercentage = (foundKeywordsCount * 100) / ATS_KEYWORDS.size();
-        score += (int) (keywordMatchPercentage * 0.25); // Weight of keyword overlap
+        score += (int) (keywordMatchPercentage * 0.35); // Weight of keyword overlap (max +35)
 
-        // Bound scores
-        int atsScore = Math.max(25, Math.min(score - 5, 98));
-        int resumeScore = Math.max(30, Math.min(score, 100));
+        // Contact info detail bonus/penalty adjustments
+        int atsScore = Math.max(25, Math.min(score, 98));
+        int resumeScore = Math.max(30, Math.min(score + 2, 100));
 
         if (keywordMatchPercentage > 50) {
-            strengths.add("Tech Stack Keyword Density: Strong matching for roles using " + 
-                ATS_KEYWORDS.stream().filter(textLower::contains).limit(3).toList());
+            strengths.add("Tech Stack Keyword Density: Strong matching for developer technology terms (" + keywordMatchPercentage + "% coverage).");
         } else {
-            weaknesses.add("Low Keyword Density: Your resume matches less than 50% of typical developer tech terms.");
+            weaknesses.add("Low Keyword Density: Add more relevant industry buzzwords (" + keywordMatchPercentage + "% coverage).");
         }
 
         // Actionable Recommendation
         String recommendation;
         if (atsScore >= 80) {
-            recommendation = "Excellent! Your resume is highly optimized for ATS. Consider applying to roles immediately. Keep it updated.";
+            recommendation = "Excellent! Your resume is highly optimized for ATS scanners. Keep it updated and target high-end engineering positions.";
         } else if (atsScore >= 60) {
             recommendation = "Good! Your resume has core structures. To improve, integrate missing keywords (like " + 
-                (missingKeywords.isEmpty() ? "Docker" : missingKeywords.get(0)) + ") and describe your achievements using action verbs.";
+                (missingKeywords.isEmpty() ? "Docker" : String.join(", ", missingKeywords.stream().limit(3).toList())) + ") and describe achievements with numbers and metrics.";
         } else {
             recommendation = "Needs Work. Make sure to structure your resume using standard headers (Experience, Projects, Education, Skills). Add key technology terms relative to the roles you are targeting.";
         }

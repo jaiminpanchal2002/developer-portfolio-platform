@@ -96,7 +96,10 @@ public class JobService {
                         String location = node.path("location").path("display_name").asText("Remote");
                         String description = node.path("description").asText("");
                         String applyLink = node.path("redirect_url").asText("https://www.adzuna.com");
-                        
+                        String rawCreated = node.path("created").asText(""); // e.g. "2026-06-10T12:00:00Z"
+                        String postingDate = rawCreated.length() >= 10 ? rawCreated.substring(0, 10) : "Recent";
+                        String jobSource = "Adzuna";
+
                         double salaryMin = node.path("salary_min").asDouble(0);
                         double salaryMax = node.path("salary_max").asDouble(0);
                         String salary = "Competitive";
@@ -122,6 +125,8 @@ public class JobService {
                                 .recommendation(match.getRecommendation())
                                 .roadmap(match.getRoadmap())
                                 .recruiterEmail("hr@" + company.toLowerCase().replaceAll("[^a-z]", "") + ".com")
+                                .createdAt(postingDate)
+                                .source(jobSource)
                                 .build());
                     }
                 }
@@ -239,6 +244,8 @@ public class JobService {
                 .recommendation(match.getRecommendation())
                 .roadmap(match.getRoadmap())
                 .recruiterEmail("hiring@" + company.toLowerCase().replaceAll("[^a-z]", "") + ".com")
+                .createdAt(java.time.LocalDate.now().minusDays(2).toString())
+                .source("Premium Mock Database")
                 .build();
     }
 

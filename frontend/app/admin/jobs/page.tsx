@@ -230,6 +230,12 @@ export default function JobsPage() {
                       <DollarSign size={16} className="text-slate-500" />
                       {job.salary}
                     </span>
+                    {job.createdAt && (
+                      <span className="flex items-center gap-1 text-xs bg-slate-950 px-2 py-0.5 rounded border border-white/5 font-mono">
+                        <Calendar size={12} className="text-slate-500" />
+                        {job.createdAt} ({job.source || "Adzuna"})
+                      </span>
+                    )}
                   </div>
                 </div>
 

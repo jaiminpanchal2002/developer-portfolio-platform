@@ -23,8 +23,30 @@ public class ProfileController {
     }
 
     @GetMapping
-    public Profile getProfile() {
-        return profileService.getProfile();
+    public Profile getProfile(@RequestHeader(value = "Accept-Language", required = false) String locale) {
+        Profile profile = profileService.getProfile();
+        if (profile != null) {
+            String localizedHeadline = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(profile.getHeadline(), locale);
+            String localizedAbout = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(profile.getAbout(), locale);
+            String localizedLocation = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(profile.getLocation(), locale);
+            
+            return Profile.builder()
+                .id(profile.getId())
+                .fullName(profile.getFullName())
+                .headline(localizedHeadline)
+                .about(localizedAbout)
+                .email(profile.getEmail())
+                .phone(profile.getPhone())
+                .location(localizedLocation)
+                .linkedinUrl(profile.getLinkedinUrl())
+                .githubUrl(profile.getGithubUrl())
+                .resumeUrl(profile.getResumeUrl())
+                .profileImageUrl(profile.getProfileImageUrl())
+                .resumeText(profile.getResumeText())
+                .resumeName(profile.getResumeName())
+                .build();
+        }
+        return profile;
     }
 
     @PutMapping

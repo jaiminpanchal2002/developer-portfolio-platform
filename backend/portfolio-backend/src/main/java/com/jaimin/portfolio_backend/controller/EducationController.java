@@ -25,16 +25,42 @@ public class EducationController {
     }
 
     @GetMapping
-    public List<Education> getAllEducations() {
-
-        return educationService.getAllEducations();
+    public List<Education> getAllEducations(@RequestHeader(value = "Accept-Language", required = false) String locale) {
+        List<Education> all = educationService.getAllEducations();
+        return all.stream().map(edu -> {
+            String locDegree = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(edu.getDegree(), locale);
+            String locField = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(edu.getFieldOfStudy(), locale);
+            return Education.builder()
+                .id(edu.getId())
+                .institution(edu.getInstitution())
+                .degree(locDegree)
+                .fieldOfStudy(locField)
+                .startYear(edu.getStartYear())
+                .endYear(edu.getEndYear())
+                .grade(edu.getGrade())
+                .build();
+        }).collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public Education getEducationById(
-            @PathVariable Long id) {
+            @PathVariable Long id, @RequestHeader(value = "Accept-Language", required = false) String locale) {
 
-        return educationService.getEducationById(id);
+        Education edu = educationService.getEducationById(id);
+        if (edu != null) {
+            String locDegree = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(edu.getDegree(), locale);
+            String locField = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(edu.getFieldOfStudy(), locale);
+            return Education.builder()
+                .id(edu.getId())
+                .institution(edu.getInstitution())
+                .degree(locDegree)
+                .fieldOfStudy(locField)
+                .startYear(edu.getStartYear())
+                .endYear(edu.getEndYear())
+                .grade(edu.getGrade())
+                .build();
+        }
+        return edu;
     }
 
     @PutMapping("/{id}")

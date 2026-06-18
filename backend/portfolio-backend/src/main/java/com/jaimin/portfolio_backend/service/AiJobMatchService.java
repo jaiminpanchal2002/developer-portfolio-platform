@@ -136,7 +136,35 @@ public class AiJobMatchService {
         List<String> missingSkills = new ArrayList<>();
 
         for (String req : requiredSkills) {
+            boolean found = false;
+            // Direct set checking
             if (userTechTerms.contains(req)) {
+                found = true;
+            } else {
+                // Semantic synonym checks
+                String reqLower = req.toLowerCase();
+                for (String userTerm : userTechTerms) {
+                    String userLower = userTerm.toLowerCase();
+                    if (userLower.contains(reqLower) || reqLower.contains(userLower)) {
+                        found = true;
+                        break;
+                    }
+                    if (reqLower.contains("postgres") && userLower.contains("postgres")) {
+                        found = true;
+                        break;
+                    }
+                    if (reqLower.contains("spring") && userLower.contains("spring")) {
+                        found = true;
+                        break;
+                    }
+                    if (reqLower.contains("react") && userLower.contains("next")) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (found) {
                 matchedSkills.add(req);
             } else {
                 missingSkills.add(req);

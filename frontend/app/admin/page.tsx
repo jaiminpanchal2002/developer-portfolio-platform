@@ -122,89 +122,127 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-          Dashboard
-        </h1>
-
-        <p className="text-slate-400 mt-2">
-          Portfolio Analytics & Recruiting Control
-        </p>
+    <div className="space-y-8 text-white">
+      {/* Top Welcome Title */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+        <div>
+          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent tracking-tight">
+            Dashboard
+          </h1>
+          <p className="text-slate-400 mt-2 text-sm font-semibold">
+            Portfolio Analytics & Recruiting Control Hub
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={loadStats}
+            className="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-xl text-xs font-bold transition-all cursor-pointer"
+          >
+            Refresh Stats
+          </button>
+        </div>
       </div>
 
-      {/* Cards */}
-
-      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
+      {/* Stats Cards Section */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((item) => {
           const Icon = item.icon;
 
           return (
             <div
               key={item.title}
-              className="rounded-3xl bg-slate-900 border border-slate-800 p-6 flex flex-col justify-between"
+              className="group relative rounded-3xl bg-slate-900/50 border border-slate-850 p-6 flex flex-col justify-between hover:border-cyan-500/30 transition-all duration-300 backdrop-blur-xl shadow-xl overflow-hidden"
             >
-              <div
-                className={`w-14 h-14 rounded-2xl bg-gradient-to-r ${item.color}
-                flex items-center justify-center`}
-              >
-                <Icon size={26} />
-              </div>
-
-              <div>
-                <p className="mt-5 text-slate-400 text-sm">
-                  {item.title}
-                </p>
-
-                <h2 className="text-3xl font-extrabold mt-2 text-white">
-                  {item.value}
-                </h2>
+              {/* Card border glow decoration */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-cyan-500/10 transition-colors" />
+              
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-slate-450 text-xs font-extrabold uppercase tracking-widest font-mono">
+                    {item.title}
+                  </p>
+                  <h2 className="text-3.5xl font-black mt-2 text-white font-mono">
+                    {item.value}
+                  </h2>
+                </div>
+                <div
+                  className={`w-12 h-12 rounded-2xl bg-gradient-to-r ${item.color}
+                  flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-black/30`}
+                >
+                  <Icon size={20} className="text-white" />
+                </div>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Charts */}
-
+      {/* Visual Analytics Charts */}
       <div className="grid lg:grid-cols-2 gap-8">
-        <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800">
-          <h2 className="text-2xl font-bold mb-6">
-            Portfolio Statistics
+        {/* Left Chart panel */}
+        <div className="bg-slate-900/40 rounded-3xl p-6 border border-slate-850 backdrop-blur-xl shadow-xl">
+          <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
+            Portfolio Metrics distribution
           </h2>
 
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={chartData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value" fill="#06b6d4" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[350px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} />
+                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#030303",
+                    borderColor: "rgba(255,255,255,0.08)",
+                    borderRadius: "16px",
+                  }}
+                  labelStyle={{ color: "#fff", fontWeight: "bold" }}
+                />
+                <Bar dataKey="value" fill="#06b6d4" radius={[6, 6, 0, 0]}>
+                  {chartData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800">
-          <h2 className="text-2xl font-bold mb-6">
-            Distribution
+        {/* Right Distribution Chart panel */}
+        <div className="bg-slate-900/40 rounded-3xl p-6 border border-slate-850 backdrop-blur-xl shadow-xl">
+          <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
+            Inventory Allocation
           </h2>
 
-          <ResponsiveContainer width="100%" height={350}>
-            <PieChart>
-              <Pie
-                data={chartData}
-                dataKey="value"
-                outerRadius={120}
-              >
-                {chartData.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={COLORS[index]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="h-[350px] w-full flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  outerRadius={105}
+                  innerRadius={65}
+                  paddingAngle={3}
+                >
+                  {chartData.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#030303",
+                    borderColor: "rgba(255,255,255,0.08)",
+                    borderRadius: "16px",
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

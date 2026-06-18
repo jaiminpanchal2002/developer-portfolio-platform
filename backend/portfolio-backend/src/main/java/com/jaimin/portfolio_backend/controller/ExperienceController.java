@@ -25,16 +25,42 @@ public class ExperienceController {
     }
 
     @GetMapping
-    public List<Experience> getAllExperiences() {
-
-        return experienceService.getAllExperiences();
+    public List<Experience> getAllExperiences(@RequestHeader(value = "Accept-Language", required = false) String locale) {
+        List<Experience> all = experienceService.getAllExperiences();
+        return all.stream().map(e -> {
+            String locPos = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(e.getPosition(), locale);
+            String locDesc = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(e.getDescription(), locale);
+            return Experience.builder()
+                .id(e.getId())
+                .company(e.getCompany())
+                .position(locPos)
+                .description(locDesc)
+                .startDate(e.getStartDate())
+                .endDate(e.getEndDate())
+                .currentlyWorking(e.getCurrentlyWorking())
+                .build();
+        }).collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public Experience getExperienceById(
-            @PathVariable Long id) {
+            @PathVariable Long id, @RequestHeader(value = "Accept-Language", required = false) String locale) {
 
-        return experienceService.getExperienceById(id);
+        Experience e = experienceService.getExperienceById(id);
+        if (e != null) {
+            String locPos = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(e.getPosition(), locale);
+            String locDesc = com.jaimin.portfolio_backend.util.LocalizationUtils.getLocalizedValue(e.getDescription(), locale);
+            return Experience.builder()
+                .id(e.getId())
+                .company(e.getCompany())
+                .position(locPos)
+                .description(locDesc)
+                .startDate(e.getStartDate())
+                .endDate(e.getEndDate())
+                .currentlyWorking(e.getCurrentlyWorking())
+                .build();
+        }
+        return e;
     }
 
     @PutMapping("/{id}")
