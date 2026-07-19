@@ -61,9 +61,11 @@ api.interceptors.response.use(
   }
 );
 
+const isLocalHost = (value: string) => /^https?:\/\/(localhost|127\.0\.0\.1)/.test(value);
+
 export const getImageUrl = (url: string | null | undefined): string => {
   if (!url) return "";
-  
+
   // Clean up any legacy double slashes or odd formats
   const cleanedUrl = url.trim();
 
@@ -74,30 +76,36 @@ export const getImageUrl = (url: string | null | undefined): string => {
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
   let hostUrl = backendUrl.endsWith("/api") ? backendUrl.slice(0, -4) : backendUrl;
-  
-  // Force HTTPS if frontend is HTTPS
-  if (typeof window !== "undefined" && window.location.protocol === "https:") {
+
+  // Prefer HTTPS for any real (non-localhost) host. This must not depend on
+  // `window`/`document.location` — this function also runs during server
+  // rendering, and a server/client mismatch here can crash the render.
+  if (hostUrl.startsWith("http://") && !isLocalHost(hostUrl)) {
     hostUrl = hostUrl.replace("http://", "https://");
   }
+
+  let resolved: string;
 
   // If the URL is absolute (http:// or https://)
   if (cleanedUrl.startsWith("http://") || cleanedUrl.startsWith("https://")) {
     if (cleanedUrl.includes("localhost:8080")) {
-      return cleanedUrl.replace("http://localhost:8080", hostUrl);
+      resolved = cleanedUrl.replace("http://localhost:8080", hostUrl);
+    } else if (!isLocalHost(cleanedUrl)) {
+      resolved = cleanedUrl.replace(/^http:\/\//, "https://");
+    } else {
+      resolved = cleanedUrl;
     }
-    // Also upgrade the absolute URL to HTTPS if required
-    if (typeof window !== "undefined" && window.location.protocol === "https:") {
-      return cleanedUrl.replace("http://", "https://");
-    }
-    return cleanedUrl;
+  } else {
+    // If the URL is relative (e.g. /uploads/...)
+    // Format hostUrl and path correctly
+    const cleanHost = hostUrl.endsWith("/") ? hostUrl.slice(0, -1) : hostUrl;
+    const cleanPath = cleanedUrl.startsWith("/") ? cleanedUrl : `/${cleanedUrl}`;
+    resolved = `${cleanHost}${cleanPath}`;
   }
-  
-  // If the URL is relative (e.g. /uploads/...)
-  // Format hostUrl and path correctly
-  const cleanHost = hostUrl.endsWith("/") ? hostUrl.slice(0, -1) : hostUrl;
-  const cleanPath = cleanedUrl.startsWith("/") ? cleanedUrl : `/${cleanedUrl}`;
-  
-  return `${cleanHost}${cleanPath}`;
+
+  // Encode spaces/special characters (e.g. uploaded filenames with spaces)
+  // that strict URL consumers like next/image reject outright.
+  return encodeURI(resolved);
 };
 
 export default api;
