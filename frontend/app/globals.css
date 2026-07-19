@@ -10,6 +10,18 @@
   --glass-bg: rgba(10, 10, 10, 0.5);
   --glass-border: rgba(255, 255, 255, 0.05);
   --glass-glow: rgba(6, 182, 212, 0.1);
+
+  /* Premium/cinematic system — introduced with the Hero redesign.
+     Scoped under --noir-* so it can be adopted section by section
+     without colliding with the tokens above. */
+  --noir-bg: #0a0a0b;
+  --noir-bg-elevated: #131315;
+  --noir-fg: #f3f1ed;
+  --noir-fg-muted: #a3a09a;
+  --noir-fg-subtle: #67645e;
+  --noir-accent: #c9a876;
+  --noir-accent-soft: rgba(201, 168, 118, 0.14);
+  --noir-border: rgba(243, 241, 237, 0.08);
 }
 
 html {
