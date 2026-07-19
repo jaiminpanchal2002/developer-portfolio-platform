@@ -19,6 +19,7 @@ export default function ThemeToggle() {
             onClick={() =>
                 setTheme(theme === "dark" ? "light" : "dark")
             }
+            aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
             className="
         p-3
         rounded-xl

@@ -35,7 +35,7 @@ export default function AtsMatcher() {
   };
 
   return (
-    <section id="ats-matcher" className="max-w-7xl mx-auto px-6 py-24 relative overflow-hidden">
+    <div className="relative overflow-hidden">
       {/* Decorative Glows */}
       <div className="absolute top-1/2 left-1/4 w-80 h-80 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
       <div className="absolute top-1/2 right-1/4 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
@@ -54,11 +54,12 @@ export default function AtsMatcher() {
         <div className="lg:col-span-6">
           <form onSubmit={handleMatch} className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
             <div>
-              <label className="block text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
+              <label htmlFor="ats-jd" className="block text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
                 <FileSearch size={18} className="text-cyan-400" />
                 Paste Job Description
               </label>
               <textarea
+                id="ats-jd"
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}
                 placeholder="Paste the details, roles, and skills required for the job here..."
@@ -70,7 +71,7 @@ export default function AtsMatcher() {
             <button
               type="submit"
               disabled={loading || !jd.trim()}
-              className="w-full bg-cyan-500 text-black py-4 rounded-2xl font-extrabold hover:scale-[1.01] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-cyan-500 text-black py-4 rounded-2xl font-extrabold hover:scale-[1.01] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -95,7 +96,7 @@ export default function AtsMatcher() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-900/20 border border-dashed border-slate-800 rounded-3xl min-h-[360px]"
+                className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-900/20 border border-dashed border-slate-800 rounded-3xl min-h-[280px] md:min-h-[360px]"
               >
                 <Sparkles className="text-slate-600 mb-4 animate-pulse" size={40} />
                 <h4 className="text-slate-400 font-bold mb-1">Waiting for Scan</h4>
@@ -110,7 +111,7 @@ export default function AtsMatcher() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-900/40 border border-slate-800 rounded-3xl min-h-[360px] space-y-4"
+                className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-900/40 border border-slate-800 rounded-3xl min-h-[280px] md:min-h-[360px] space-y-4"
               >
                 <div className="relative w-24 h-24 flex items-center justify-center">
                   <div className="absolute inset-0 rounded-full border-4 border-cyan-500/20 border-t-cyan-500 animate-spin" />
@@ -213,6 +214,6 @@ export default function AtsMatcher() {
           </AnimatePresence>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

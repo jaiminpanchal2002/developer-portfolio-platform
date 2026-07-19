@@ -236,7 +236,7 @@ export default function Playground() {
   };
 
   return (
-    <section id="arcade" className="max-w-7xl mx-auto px-6 py-32">
+    <div>
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
           {t("arcade.title", "Interactive Arcade")}
@@ -294,7 +294,7 @@ export default function Playground() {
                   return (
                     <div
                       key={i}
-                      className={`relative rounded-[3px] transition-all duration-75 ${
+                      className={`relative rounded-[3px] transition duration-75 ${
                         isHead
                           ? "bg-cyan-400 shadow-[0_0_10px_#22d3ee]"
                           : isBody
@@ -331,7 +331,7 @@ export default function Playground() {
 
                     <button
                       onClick={handleStartRestart}
-                      className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-2 cursor-pointer text-sm"
+                      className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold rounded-xl shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 cursor-pointer text-sm"
                     >
                       {isGameOver ? (
                         <>
@@ -467,6 +467,6 @@ export default function Playground() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

@@ -50,7 +50,7 @@ export default function Navbar({ profile }: NavbarProps) {
                             <li key={item.href}>
                                 <a href={item.href} className="hover:text-cyan-400 transition-colors duration-250 relative group py-2">
                                     {item.label}
-                                    <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-cyan-400 transition-all duration-300 group-hover:w-full" />
+                                    <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-cyan-400 transition duration-300 group-hover:w-full" />
                                 </a>
                             </li>
                         ))}
@@ -60,7 +60,7 @@ export default function Navbar({ profile }: NavbarProps) {
                     <div className="relative">
                         <button
                             onClick={() => setLangOpen(!langOpen)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 hover:border-cyan-400/50 bg-white/5 hover:bg-white/10 text-sm font-medium text-gray-300 transition-all cursor-pointer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 hover:border-cyan-400/50 bg-white/5 hover:bg-white/10 text-sm font-medium text-gray-300 transition cursor-pointer"
                             aria-expanded={langOpen}
                             aria-haspopup="true"
                             aria-label="Select language"
@@ -73,9 +73,11 @@ export default function Navbar({ profile }: NavbarProps) {
                         <AnimatePresence>
                             {langOpen && (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
+                                    initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                                    transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                                    style={{ transformOrigin: "top right" }}
                                     className="absolute right-0 mt-2 w-36 rounded-2xl bg-[#0a0a0a] border border-white/10 p-1.5 shadow-2xl z-50"
                                     role="menu"
                                     aria-label="Language selection options"
@@ -134,9 +136,10 @@ export default function Navbar({ profile }: NavbarProps) {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                         className="md:hidden absolute top-20 left-0 w-full bg-[#030303]/95 backdrop-blur-2xl border-b border-white/5 py-6 px-6 flex flex-col gap-3"
                         role="menu"
                         aria-label="Mobile Navigation menu"
@@ -146,7 +149,7 @@ export default function Navbar({ profile }: NavbarProps) {
                                 key={item.href}
                                 href={item.href}
                                 onClick={() => setIsOpen(false)}
-                                className="text-base font-semibold text-gray-200 hover:text-cyan-400 py-2 border-b border-white/5 transition-all duration-200"
+                                className="text-base font-semibold text-gray-200 hover:text-cyan-400 py-2 border-b border-white/5 transition duration-200"
                                 role="menuitem"
                             >
                                 {item.label}

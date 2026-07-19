@@ -5,9 +5,10 @@ import ProjectTable from "@/components/admin/ProjectTable";
 import ProjectForm from "@/components/admin/ProjectForm";
 import EditProjectForm from "@/components/admin/EditProjectForm";
 import { getProjects } from "@/services/projectService";
+import { Project } from "@/types";
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [showModal, setShowModal] = useState(false);
 
   const [selectedProject, setSelectedProject] =

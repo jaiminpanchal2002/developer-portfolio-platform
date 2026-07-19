@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, Variants } from "framer-motion";
 
 export default function SectionWrapper({
   children,
@@ -10,7 +10,7 @@ export default function SectionWrapper({
   const shouldReduceMotion = useReducedMotion();
 
   // If prefers-reduced-motion is true, display a simple fade reveal.
-  const variants: any = shouldReduceMotion
+  const variants: Variants = shouldReduceMotion
     ? {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { duration: 0.6 } },

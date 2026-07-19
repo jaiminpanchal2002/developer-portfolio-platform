@@ -17,15 +17,10 @@ import { useLocale } from "@/lib/localeContext";
 
 import DeveloperTerminal from "./DeveloperTerminal";
 
+import { Profile } from "@/types";
+
 interface AboutProps {
-  profile: {
-    fullName: string;
-    headline: string;
-    about: string;
-    email?: string;
-    phone?: string;
-    location?: string;
-  };
+  profile: Profile;
   projectsCount: number;
   experiencesCount: number;
   certificatesCount: number;
@@ -78,7 +73,7 @@ export default function About({
   ];
 
   return (
-    <section id="about" className="max-w-7xl mx-auto px-6 py-32">
+    <div>
       <div className="grid lg:grid-cols-12 gap-8 items-stretch">
         
         {/* Bio Bento Card */}
@@ -176,6 +171,6 @@ export default function About({
         </div>
 
       </div>
-    </section>
+    </div>
   );
 }

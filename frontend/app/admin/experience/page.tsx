@@ -7,9 +7,10 @@ import ExperienceForm from "@/components/admin/ExperienceForm";
 import EditExperienceForm from "@/components/admin/EditExperienceForm";
 
 import { getExperiences } from "@/services/experienceService";
+import { Experience } from "@/types";
 
 export default function ExperiencePage() {
-  const [experiences, setExperiences] = useState([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedExperience, setSelectedExperience] = useState<any>(null);

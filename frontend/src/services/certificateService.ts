@@ -1,18 +1,19 @@
 import api from "@/lib/api";
+import { Certificate } from "@/types";
 
-export const getCertificates = async () => {
+export const getCertificates = async (): Promise<Certificate[]> => {
   const response = await api.get("/certificates");
   return response.data;
 };
 
-export const createCertificate = async (data: any) => {
+export const createCertificate = async (data: Omit<Certificate, "id">) => {
   const response = await api.post("/certificates", data);
   return response.data;
 };
 
 export const updateCertificate = async (
   id: number,
-  data: any
+  data: Partial<Certificate>
 ) => {
   const response = await api.put(
     `/certificates/${id}`,

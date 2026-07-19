@@ -16,13 +16,7 @@ import {
 } from "recharts";
 import { Code2, Server, Database, Cloud, Star, Cpu } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
-
-interface Skill {
-  id: number;
-  name: string;
-  category: string;
-  proficiency: number;
-}
+import { Skill } from "@/types";
 
 export default function Skills({ skills }: { skills: Skill[] }) {
   const { t } = useLocale();
@@ -75,7 +69,7 @@ export default function Skills({ skills }: { skills: Skill[] }) {
   };
 
   return (
-    <section id="skills" className="max-w-7xl mx-auto px-6 py-32">
+    <div>
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
           {t("skills.title", "Skills & Expertise")}
@@ -94,7 +88,7 @@ export default function Skills({ skills }: { skills: Skill[] }) {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
               className="bento-card p-6 shadow-xl flex flex-col justify-between"
             >
               <div>
@@ -115,11 +109,12 @@ export default function Skills({ skills }: { skills: Skill[] }) {
 
                       <div className="w-full bg-white/5 border border-white/5 h-2 rounded-full overflow-hidden">
                         <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${skill.proficiency}%` }}
+                          initial={{ scaleX: 0 }}
+                          whileInView={{ scaleX: skill.proficiency / 100 }}
                           viewport={{ once: true }}
-                          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                          className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full"
+                          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                          style={{ transformOrigin: "left" }}
+                          className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full w-full rounded-full"
                         />
                       </div>
                     </div>
@@ -136,7 +131,7 @@ export default function Skills({ skills }: { skills: Skill[] }) {
             initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="bento-card p-6 md:p-8 shadow-2xl flex flex-col justify-between"
           >
             <h3 className="text-lg font-bold text-white mb-6 tracking-tight">
@@ -190,6 +185,6 @@ export default function Skills({ skills }: { skills: Skill[] }) {
           </motion.div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

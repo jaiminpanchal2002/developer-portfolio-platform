@@ -57,7 +57,7 @@ export default function Stats({
               p-8
               text-center
               hover:scale-105
-              transition-all
+              transition
               duration-300
             "
                     >

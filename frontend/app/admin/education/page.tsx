@@ -7,9 +7,10 @@ import EducationForm from "@/components/admin/EducationForm";
 import EditEducationForm from "@/components/admin/EditEducationForm";
 
 import { getEducations } from "@/services/educationService";
+import { Education } from "@/types";
 
 export default function EducationPage() {
-  const [educations, setEducations] = useState([]);
+  const [educations, setEducations] = useState<Education[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 

@@ -2,22 +2,12 @@
 
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useState, useRef } from "react";
-import { Code } from "lucide-react";
+import Image from "next/image";
 import { useLocale } from "@/lib/localeContext";
 import { getImageUrl } from "../lib/api";
 
 import ImageLightbox from "./ImageLightbox";
-
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  githubUrl: string;
-  liveUrl: string;
-  imageUrl?: string;
-  technologies?: string;
-  featured?: boolean;
-}
+import { Project } from "@/types";
 
 function ProjectCard({ project, onImageClick }: { project: Project; onImageClick: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -70,17 +60,21 @@ function ProjectCard({ project, onImageClick }: { project: Project; onImageClick
         }}
       >
         {project.imageUrl && !imgError ? (
-          <img
+          <Image
             src={getImageUrl(project.imageUrl)}
             onError={() => setImgError(true)}
             alt={project.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
-          <img
+          <Image
             src={getFallbackBanner()}
             alt={project.title}
-            className="w-full h-full object-cover transition-transform duration-700"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover transition-transform duration-700"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent opacity-80" />
@@ -170,7 +164,7 @@ export default function Projects({ projects }: { projects: Project[] }) {
   };
 
   return (
-    <section id="projects" className="max-w-7xl mx-auto px-6 py-32">
+    <div>
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-16 gap-6">
         <div>
           <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
@@ -184,7 +178,7 @@ export default function Projects({ projects }: { projects: Project[] }) {
         {projects.length > 4 && (
           <button
             onClick={() => setShowAll(!showAll)}
-            className="px-6 py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-cyan-500/20"
+            className="px-6 py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-cyan-500/20"
           >
             {showAll ? "Show Less" : "View More Projects"}
           </button>
@@ -198,7 +192,7 @@ export default function Projects({ projects }: { projects: Project[] }) {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
           >
             <ProjectCard
               project={project}
@@ -216,6 +210,6 @@ export default function Projects({ projects }: { projects: Project[] }) {
         onClose={() => setLightboxOpen(false)}
         onNavigate={(idx) => setCurrentImgIdx(idx)}
       />
-    </section>
+    </div>
   );
 }

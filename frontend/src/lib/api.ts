@@ -65,7 +65,7 @@ export const getImageUrl = (url: string | null | undefined): string => {
   if (!url) return "";
   
   // Clean up any legacy double slashes or odd formats
-  let cleanedUrl = url.trim();
+  const cleanedUrl = url.trim();
 
   // Handle blob or base64 data URLs directly
   if (cleanedUrl.startsWith("blob:") || cleanedUrl.startsWith("data:")) {

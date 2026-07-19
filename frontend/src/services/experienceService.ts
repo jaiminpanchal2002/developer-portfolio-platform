@@ -1,18 +1,19 @@
 import api from "@/lib/api";
+import { Experience } from "@/types";
 
-export const getExperiences = async () => {
+export const getExperiences = async (): Promise<Experience[]> => {
   const response = await api.get("/experiences");
   return response.data;
 };
 
-export const createExperience = async (data: any) => {
+export const createExperience = async (data: Omit<Experience, "id">) => {
   const response = await api.post("/experiences", data);
   return response.data;
 };
 
 export const updateExperience = async (
   id: number,
-  data: any
+  data: Partial<Experience>
 ) => {
   const response = await api.put(
     `/experiences/${id}`,

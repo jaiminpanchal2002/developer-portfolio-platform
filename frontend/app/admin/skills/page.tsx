@@ -7,9 +7,10 @@ import SkillForm from "@/components/admin/SkillForm";
 import EditSkillForm from "@/components/admin/EditSkillForm";
 
 import { getSkills } from "@/services/skillService";
+import { Skill } from "@/types";
 
 export default function SkillsPage() {
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<any>(null);

@@ -10,6 +10,7 @@ import {
 
 import { uploadImage } from "@/services/uploadService";
 import { getImageUrl } from "@/lib/api";
+import { Profile } from "@/types";
 
 
 export default function ProfilePage() {
@@ -20,7 +21,7 @@ export default function ProfilePage() {
     useState("");
 
   const [profile, setProfile] =
-    useState({
+    useState<Partial<Profile>>({
       fullName: "",
       headline: "",
       about: "",

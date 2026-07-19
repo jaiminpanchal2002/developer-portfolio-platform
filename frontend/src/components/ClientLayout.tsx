@@ -89,14 +89,34 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     };
     window.addEventListener("scroll", handleScroll);
 
-    // Custom Cursor follower logic (only bind if not touch)
-    const handleMouseMove = (e: MouseEvent) => {
-      if (cursorRef.current && followerRef.current) {
-        cursorRef.current.style.left = `${e.clientX}px`;
-        cursorRef.current.style.top = `${e.clientY}px`;
+    // Custom Cursor + Bento glow: track raw pointer position, apply DOM
+    // writes at most once per animation frame instead of once per pixel.
+    const pointer = { x: 0, y: 0 };
+    let rafPending = false;
 
-        followerRef.current.style.left = `${e.clientX}px`;
-        followerRef.current.style.top = `${e.clientY}px`;
+    const applyFrame = () => {
+      rafPending = false;
+      if (cursorRef.current && followerRef.current) {
+        cursorRef.current.style.left = `${pointer.x}px`;
+        cursorRef.current.style.top = `${pointer.y}px`;
+
+        followerRef.current.style.left = `${pointer.x}px`;
+        followerRef.current.style.top = `${pointer.y}px`;
+      }
+
+      document.querySelectorAll<HTMLElement>(".bento-card").forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mouse-x", `${pointer.x - rect.left}px`);
+        card.style.setProperty("--mouse-y", `${pointer.y - rect.top}px`);
+      });
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(applyFrame);
       }
     };
 
@@ -118,23 +138,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       }
     };
 
-    if (!("ontouchstart" in window || navigator.maxTouchPoints > 0)) {
+    const isHoverCapable = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (isHoverCapable && !("ontouchstart" in window || navigator.maxTouchPoints > 0)) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseover", handleMouseOver);
     }
-
-    // Track cursor-following spotlight on Bento grid elements
-    const handleBentoGridGlow = (e: MouseEvent) => {
-      const cards = document.querySelectorAll(".bento-card");
-      cards.forEach((card) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        (card as HTMLElement).style.setProperty("--mouse-x", `${x}px`);
-        (card as HTMLElement).style.setProperty("--mouse-y", `${y}px`);
-      });
-    };
-    window.addEventListener("mousemove", handleBentoGridGlow);
 
     // Konami code implementation (Up Up Down Down Left Right Left Right B A)
     const konamiSequence = [
@@ -167,7 +175,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseover", handleMouseOver);
-      window.removeEventListener("mousemove", handleBentoGridGlow);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [soundEnabled]);
@@ -176,12 +183,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     <LocaleProvider>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
         {/* Fixed Scroll XP Progress Bar */}
-        <div className="fixed top-0 left-0 right-0 h-1 z-[110] bg-white/5">
+        <div className="fixed top-0 left-0 right-0 h-1 z-60 bg-white/5">
           <div className="xp-progress-bar h-full" style={{ width: `${scrollPercent}%` }} />
         </div>
 
         {/* Floating XP Score badge */}
-        <div className="fixed top-24 right-6 md:right-8 z-40 bg-black/60 border border-white/10 hover:border-cyan-400/50 backdrop-blur-md rounded-2xl px-3.5 py-1.5 flex items-center gap-2 text-xxs font-mono font-bold transition-all shadow-xl">
+        <div className="fixed top-24 right-6 md:right-8 z-40 bg-black/60 border border-white/10 hover:border-cyan-400/50 backdrop-blur-md rounded-2xl px-3.5 py-1.5 flex items-center gap-2 text-xxs font-mono font-bold transition shadow-xl">
           <span className="text-cyan-400">XP</span>
           <span className="text-white">{scrollPercent * 10}</span>
           <button
@@ -195,7 +202,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </div>
 
         {/* Toast Achievements Container */}
-        <div className="fixed bottom-6 right-6 z-[120] flex flex-col gap-3 max-w-sm pointer-events-none">
+        <div className="fixed bottom-6 right-6 z-[200] flex flex-col gap-3 max-w-sm pointer-events-none">
           {toasts.map((t) => (
             <div
               key={t.id}

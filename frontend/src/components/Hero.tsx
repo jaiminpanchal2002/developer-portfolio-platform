@@ -1,21 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { getImageUrl } from "../lib/api";
 import { useLocale } from "@/lib/localeContext";
+import { Profile } from "@/types";
 import * as THREE from "three";
 
 interface HeroProps {
-  profile: {
-    fullName: string;
-    headline: string;
-    about: string;
-    profileImageUrl?: string;
-    githubUrl?: string;
-    linkedinUrl?: string;
-    resumeUrl?: string;
-  };
+  profile: Profile;
 }
 
 export default function Hero({ profile }: HeroProps) {
@@ -23,13 +17,14 @@ export default function Hero({ profile }: HeroProps) {
   const mouseRef = useRef({ x: 0, y: 0 });
   const { t } = useLocale();
   const [imageError, setImageError] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   const getFallbackAvatar = () => {
     return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><rect width="100%" height="100%" fill="%230a0a0a"/><circle cx="75" cy="75" r="70" fill="none" stroke="%2306b6d4" stroke-width="2"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="44" font-weight="900" fill="%2306b6d4">JP</text></svg>`;
   };
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || shouldReduceMotion) return;
 
     // Set up vanilla Three.js scene
     const container = containerRef.current;
@@ -100,11 +95,24 @@ export default function Hero({ profile }: HeroProps) {
     };
     window.addEventListener("resize", handleResize);
 
+    // Pause the render loop while the hero is scrolled out of view
+    let isVisible = true;
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+      },
+      { threshold: 0 }
+    );
+    visibilityObserver.observe(container);
+
     // Animation Loop
     let animationFrameId: number;
     let clock = new THREE.Clock();
 
     const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+      if (!isVisible) return;
+
       const elapsedTime = clock.getElapsedTime();
       const posArray = geometry.attributes.position.array as Float32Array;
 
@@ -134,12 +142,12 @@ export default function Hero({ profile }: HeroProps) {
 
       geometry.attributes.position.needsUpdate = true;
       renderer.render(scene, camera);
-      animationFrameId = requestAnimationFrame(animate);
     };
     animate();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      visibilityObserver.disconnect();
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
@@ -147,7 +155,7 @@ export default function Hero({ profile }: HeroProps) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, []);
+  }, [shouldReduceMotion]);
 
   return (
     <section
@@ -174,11 +182,14 @@ export default function Hero({ profile }: HeroProps) {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="relative w-36 h-36 md:w-48 md:h-48 rounded-full p-[3px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 shadow-2xl mb-8"
           >
-            <img
+            <Image
               src={imageError || !profile.profileImageUrl ? getFallbackAvatar() : getImageUrl(profile.profileImageUrl)}
               onError={() => setImageError(true)}
               alt={profile.fullName}
-              className="w-full h-full object-cover rounded-full bg-slate-950"
+              fill
+              sizes="(max-width: 768px) 144px, 192px"
+              priority
+              className="object-cover rounded-full bg-slate-950"
             />
           </motion.div>
         )}
@@ -219,14 +230,14 @@ export default function Hero({ profile }: HeroProps) {
         >
           <a
             href="#projects"
-            className="px-8 py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/20"
+            className="px-8 py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/20"
           >
             {t("hero.cta.view", "View Projects")}
           </a>
 
           <a
             href="#contact"
-            className="px-8 py-4 rounded-2xl border border-cyan-400/30 hover:border-cyan-400 text-cyan-300 hover:bg-cyan-500/10 font-bold transition-all duration-300 transform hover:-translate-y-1"
+            className="px-8 py-4 rounded-2xl border border-cyan-400/30 hover:border-cyan-400 text-cyan-300 hover:bg-cyan-500/10 font-bold transition duration-300 transform hover:-translate-y-1"
           >
             {t("hero.cta.contact", "Contact Me")}
           </a>

@@ -7,9 +7,10 @@ import CertificateForm from "@/components/admin/CertificateForm";
 import EditCertificateForm from "@/components/admin/EditCertificateForm";
 
 import { getCertificates } from "@/services/certificateService";
+import { Certificate } from "@/types";
 
 export default function CertificatesPage() {
-  const [certificates, setCertificates] = useState([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCertificate, setSelectedCertificate] =

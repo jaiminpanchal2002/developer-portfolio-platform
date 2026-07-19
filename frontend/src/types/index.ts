@@ -4,9 +4,12 @@ export interface Profile {
   headline: string;
   about: string;
   email: string;
+  phone?: string;
   location: string;
   githubUrl: string;
   linkedinUrl: string;
+  profileImageUrl?: string;
+  resumeUrl?: string;
 }
 
 export interface Skill {
@@ -22,6 +25,9 @@ export interface Project {
   description: string;
   githubUrl: string;
   liveUrl: string;
+  imageUrl?: string;
+  technologies?: string;
+  featured?: boolean;
 }
 
 export interface Experience {
@@ -29,16 +35,24 @@ export interface Experience {
   company: string;
   position: string;
   description: string;
+  startDate: string;
+  endDate: string;
+  currentlyWorking: boolean;
 }
 
 export interface Education {
   id: number;
   institution: string;
   degree: string;
+  fieldOfStudy: string;
+  startYear: number;
+  endYear: number;
+  grade: string;
 }
 
 export interface Certificate {
   id: number;
   title: string;
   issuer: string;
+  certificateUrl: string;
 }

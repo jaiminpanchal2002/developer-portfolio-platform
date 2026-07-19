@@ -14,8 +14,6 @@ export default function AuthGuard({
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    console.log("TOKEN:", token);
-
     if (!token || token === "undefined" || token === "null") {
       localStorage.removeItem("token");
       router.replace("/login");

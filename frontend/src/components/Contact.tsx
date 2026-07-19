@@ -14,15 +14,19 @@ import {
   Video,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Profile } from "@/types";
 
 interface ContactProps {
-  profile: {
-    email: string;
-    location: string;
-    githubUrl: string;
-    linkedinUrl: string;
-  };
+  profile: Profile;
 }
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 export default function Contact({ profile }: ContactProps) {
   const todayStr = new Date().toLocaleDateString('en-CA');
@@ -86,6 +90,12 @@ export default function Contact({ profile }: ContactProps) {
 
 
       if (data.googleMeetLink) {
+        const safeMeetLink = escapeHtml(String(data.googleMeetLink));
+        const safeUserEmail = escapeHtml(formData.email);
+        const safeOwnerEmail = escapeHtml(profile.email);
+        const safeDate = escapeHtml(formData.meetingDate);
+        const safeTime = escapeHtml(formData.meetingTime);
+
         Swal.fire({
           title: "Meeting Scheduled!",
           html: `
@@ -96,17 +106,17 @@ export default function Contact({ profile }: ContactProps) {
                   🎥 Jitsi Meet Invitation
                 </p>
                 <div style="height: 1px; background-color: #1e293b; margin-bottom: 12px; width: 100%;"></div>
-                <p style="font-size: 14px; color: #e2e8f0; margin: 6px 0;">📅 <b>Date:</b> ${formData.meetingDate}</p>
-                <p style="font-size: 14px; color: #e2e8f0; margin: 6px 0;">⏰ <b>Time:</b> ${formData.meetingTime}</p>
+                <p style="font-size: 14px; color: #e2e8f0; margin: 6px 0;">📅 <b>Date:</b> ${safeDate}</p>
+                <p style="font-size: 14px; color: #e2e8f0; margin: 6px 0;">⏰ <b>Time:</b> ${safeTime}</p>
                 <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed #1e293b;">
                   <span style="font-size: 11px; color: #64748b; font-weight: bold; font-family: monospace; display: block; margin-bottom: 4px;">MEETING LINK:</span>
-                  <a href="${data.googleMeetLink}" target="_blank" style="color: #22d3ee; font-weight: 600; font-size: 13px; word-break: break-all; text-decoration: underline;">
-                    ${data.googleMeetLink}
+                  <a href="${safeMeetLink}" target="_blank" style="color: #22d3ee; font-weight: 600; font-size: 13px; word-break: break-all; text-decoration: underline;">
+                    ${safeMeetLink}
                   </a>
                 </div>
               </div>
               <p style="color: #94a3b8; font-size: 12px; line-height: 1.6; margin: 0;">
-                Confirmation invites containing this direct meeting link have been dispatched to <b>${formData.email}</b> and <b>${profile.email}</b>.
+                Confirmation invites containing this direct meeting link have been dispatched to <b>${safeUserEmail}</b> and <b>${safeOwnerEmail}</b>.
               </p>
             </div>
           `,
@@ -151,7 +161,7 @@ export default function Contact({ profile }: ContactProps) {
   };
 
   return (
-    <section id="contact" className="max-w-7xl mx-auto px-6 py-24">
+    <div>
       <div className="rounded-3xl bg-slate-900/80 backdrop-blur-xl border border-cyan-500/10 p-8 md:p-12 shadow-2xl relative overflow-hidden">
         {/* Glow Effects */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -199,7 +209,7 @@ export default function Contact({ profile }: ContactProps) {
                   href={profile.githubUrl.startsWith("http") ? profile.githubUrl : `https://${profile.githubUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-cyan-500/50 hover:bg-slate-900 transition-all font-semibold text-sm cursor-pointer"
+                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-cyan-500/50 hover:bg-slate-900 transition font-semibold text-sm cursor-pointer"
                 >
                   <Globe size={18} className="text-cyan-400" />
                   GitHub
@@ -211,7 +221,7 @@ export default function Contact({ profile }: ContactProps) {
                   href={profile.linkedinUrl.startsWith("http") ? profile.linkedinUrl : `https://${profile.linkedinUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-cyan-500/50 hover:bg-slate-900 transition-all font-semibold text-sm cursor-pointer"
+                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-cyan-500/50 hover:bg-slate-900 transition font-semibold text-sm cursor-pointer"
                 >
                   <LinkIcon size={18} className="text-cyan-400" />
                   LinkedIn
@@ -223,10 +233,11 @@ export default function Contact({ profile }: ContactProps) {
           {/* RIGHT COLUMN: CONTACT FORM */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-1">
+              <label htmlFor="contact-name" className="block text-sm font-semibold text-slate-300 mb-1">
                 Your Name
               </label>
               <input
+                id="contact-name"
                 type="text"
                 placeholder="e.g. John Doe"
                 value={formData.name}
@@ -236,10 +247,11 @@ export default function Contact({ profile }: ContactProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-1">
+              <label htmlFor="contact-email" className="block text-sm font-semibold text-slate-300 mb-1">
                 Your Email
               </label>
               <input
+                id="contact-email"
                 type="email"
                 placeholder="e.g. john@example.com"
                 value={formData.email}
@@ -249,10 +261,11 @@ export default function Contact({ profile }: ContactProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-1">
+              <label htmlFor="contact-message" className="block text-sm font-semibold text-slate-300 mb-1">
                 Your Message
               </label>
               <textarea
+                id="contact-message"
                 rows={4}
                 placeholder="Type your message here..."
                 value={formData.message}
@@ -280,17 +293,19 @@ export default function Contact({ profile }: ContactProps) {
             <AnimatePresence>
               {formData.scheduleMeeting && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="grid grid-cols-2 gap-4 overflow-hidden pt-2"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="grid grid-cols-2 gap-4 pt-2"
                 >
                   <div>
-                    <label className="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1">
+                    <label htmlFor="contact-meeting-date" className="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1">
                       <Calendar size={12} className="text-cyan-400" />
                       Select Date
                     </label>
                     <input
+                      id="contact-meeting-date"
                       type="date"
                       value={formData.meetingDate}
                       min={todayStr}
@@ -300,11 +315,12 @@ export default function Contact({ profile }: ContactProps) {
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1">
+                    <label htmlFor="contact-meeting-time" className="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1">
                       <Clock size={12} className="text-cyan-400" />
                       Select Time
                     </label>
                     <input
+                      id="contact-meeting-time"
                       type="time"
                       value={formData.meetingTime}
                       onChange={(e) => setFormData({ ...formData, meetingTime: e.target.value })}
@@ -318,7 +334,7 @@ export default function Contact({ profile }: ContactProps) {
             <button
               type="submit"
               disabled={sending}
-              className="w-full bg-cyan-500 text-black py-3.5 rounded-xl font-bold hover:scale-[1.01] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 disabled:opacity-50"
+              className="w-full bg-cyan-500 text-black py-3.5 rounded-xl font-bold hover:scale-[1.01] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 disabled:opacity-50"
             >
               {sending ? (
                 <>
@@ -335,6 +351,6 @@ export default function Contact({ profile }: ContactProps) {
           </form>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
