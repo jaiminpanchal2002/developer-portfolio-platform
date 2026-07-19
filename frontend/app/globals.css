@@ -9,7 +9,7 @@
   --accent-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
   --glass-bg: rgba(10, 10, 10, 0.5);
   --glass-border: rgba(255, 255, 255, 0.05);
-  --glass-glow: rgba(6, 182, 212, 0.1);
+  --glass-glow: rgba(201, 168, 118, 0.15);
 
   /* Premium/cinematic system — introduced with the Hero redesign.
      Scoped under --noir-* so it can be adopted section by section
@@ -126,7 +126,7 @@ body::before {
 }
 
 .bento-card:hover {
-  border-color: rgba(6, 182, 212, 0.3);
+  border-color: rgba(201, 168, 118, 0.35);
   box-shadow: 0 10px 30px -10px var(--glass-glow);
   transform: translateY(-4px);
 }

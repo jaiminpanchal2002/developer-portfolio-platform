@@ -1,9 +1,21 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ThemeProvider } from "next-themes";
 import { LocaleProvider } from "@/lib/localeContext";
+
+const PersistentScene = dynamic(() => import("@/components/scene/PersistentScene"), {
+  ssr: false,
+  loading: () => null,
+});
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -67,11 +79,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       lenis.scrollTo(0, { immediate: true });
     }
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    // Drive Lenis from GSAP's own ticker (instead of a separate raw rAF
+    // loop) so ScrollTrigger — used for the persistent 3D scene's scroll
+    // sync — stays perfectly in step with the smooth-scroll position.
+    const tick = (time: number) => lenis.raf(time * 1000);
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
 
     // Track scroll height for XP progress bar
     let milestoneReached = false;
@@ -171,6 +185,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      gsap.ticker.remove(tick);
+      lenis.off("scroll", ScrollTrigger.update);
       lenis.destroy();
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("mousemove", handleMouseMove);
@@ -233,6 +249,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </div>
 
         {children}
+
+        {/* Mounted after children so its effect runs once Hero/About
+            already exist in the DOM; -z-10 keeps it visually behind
+            everything regardless of mount order. */}
+        <PersistentScene />
       </ThemeProvider>
     </LocaleProvider>
   );
