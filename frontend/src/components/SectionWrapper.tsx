@@ -1,3 +1,5 @@
+"use client";
+
 import { motion, useReducedMotion, Variants } from "framer-motion";
 
 export default function SectionWrapper({
