@@ -21,7 +21,11 @@ import { getExperiences } from "@/services/experienceService";
 import { getEducations } from "@/services/educationService";
 import { getCertificates } from "@/services/certificateService";
 
-export const revalidate = 300;
+// Content is managed live via the admin panel and framer-motion's client
+// hooks (e.g. useReducedMotion) don't survive Next's build-time static
+// prerender pass when reached through this Server Component boundary, so
+// this route renders per-request instead of being statically generated.
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const [profile, projects, skills, experiences, educations, certificates] =
