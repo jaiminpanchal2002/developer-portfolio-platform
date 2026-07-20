@@ -25,14 +25,17 @@ export default function Footer({ profile }: FooterProps) {
     ].filter(Boolean) as { href: string; label: string; icon: typeof Mail }[];
 
     return (
-        <footer className="mt-32 border-t border-white/10">
+        <footer className="mt-32 border-t" style={{ borderColor: "var(--noir-border)" }}>
             <div className="max-w-7xl mx-auto px-6 py-16">
 
-                <h3 className="text-3xl font-bold text-center">
+                <h3
+                    className="font-[family-name:var(--font-serif)] italic text-3xl text-center"
+                    style={{ color: "var(--noir-fg)" }}
+                >
                     {profile?.fullName || "Portfolio"}
                 </h3>
 
-                <p className="text-center text-gray-400 mt-3">
+                <p className="text-center mt-3" style={{ color: "var(--noir-fg-muted)" }}>
                     {profile?.headline || "Full Stack Developer"}
                 </p>
 
@@ -45,7 +48,8 @@ export default function Footer({ profile }: FooterProps) {
                                 target={href.startsWith("mailto:") ? undefined : "_blank"}
                                 rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                                 aria-label={label}
-                                className="text-gray-400 hover:text-cyan-400 transition-colors"
+                                className="transition-colors hover:opacity-70"
+                                style={{ color: "var(--noir-fg-muted)" }}
                             >
                                 <Icon size={22} />
                             </a>
@@ -53,7 +57,7 @@ export default function Footer({ profile }: FooterProps) {
                     </div>
                 )}
 
-                <p className="text-center text-gray-500 mt-8">
+                <p className="text-center mt-8 text-sm" style={{ color: "var(--noir-fg-subtle)" }}>
                     © {new Date().getFullYear()} {profile?.fullName || "Portfolio"}. All Rights Reserved.
                 </p>
 

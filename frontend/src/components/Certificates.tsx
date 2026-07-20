@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { Award, ExternalLink } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 import { Certificate } from "@/types";
+import SectionHeading from "@/components/ui/SectionHeading";
+
+const easeOut = [0.16, 1, 0.3, 1] as const;
 
 export default function Certificates({
     certificates,
@@ -16,14 +19,12 @@ export default function Certificates({
 
     return (
         <div>
-            <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
-                    {t("certificates.title", "Certifications")}
-                </h2>
-                <p className="text-slate-400 mt-4 max-w-xl mx-auto text-sm font-semibold">
-                    {t("certificates.subtitle", "Credentials validating hands-on expertise across the stack")}
-                </p>
-            </div>
+            <SectionHeading
+                kicker={t("certificates.kicker", "Credentials")}
+                title={t("certificates.title", "Certifications")}
+                align="center"
+                className="mb-16 mx-auto max-w-xl"
+            />
 
             <div className="grid md:grid-cols-2 gap-6">
                 {certificates.map((cert, idx) => (
@@ -35,21 +36,27 @@ export default function Certificates({
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.5, delay: idx * 0.06, ease: easeOut }}
                         className="bento-card group flex items-start gap-4 p-6"
                     >
-                        <div className="p-3 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 shrink-0">
+                        <div
+                            className="p-3 rounded-xl border shrink-0"
+                            style={{ background: "var(--noir-accent-soft)", borderColor: "var(--noir-border)", color: "var(--noir-accent)" }}
+                        >
                             <Award size={22} />
                         </div>
 
                         <div className="min-w-0 flex-1">
-                            <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">
+                            <h3 className="text-lg font-semibold transition-opacity group-hover:opacity-80" style={{ color: "var(--noir-fg)" }}>
                                 {cert.title}
                             </h3>
-                            <p className="text-cyan-400 text-sm mt-1 font-semibold">
+                            <p className="text-sm mt-1 font-semibold" style={{ color: "var(--noir-accent)" }}>
                                 {cert.issuer}
                             </p>
-                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 group-hover:text-cyan-300 transition-colors mt-4">
+                            <span
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold transition-opacity group-hover:opacity-70 mt-4"
+                                style={{ color: "var(--noir-fg-muted)" }}
+                            >
                                 {t("certificates.view", "View Certificate")}
                                 <ExternalLink size={12} />
                             </span>

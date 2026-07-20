@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Profile } from "@/types";
+import { useLocale } from "@/lib/localeContext";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 interface ContactProps {
   profile: Profile;
@@ -29,6 +31,7 @@ const escapeHtml = (value: string) =>
     .replace(/'/g, "&#039;");
 
 export default function Contact({ profile }: ContactProps) {
+  const { t } = useLocale();
   const todayStr = new Date().toLocaleDateString('en-CA');
   const [formData, setFormData] = useState({
     name: "",
@@ -162,56 +165,55 @@ export default function Contact({ profile }: ContactProps) {
 
   return (
     <div>
-      <div className="rounded-3xl bg-slate-900/80 backdrop-blur-xl border border-cyan-500/10 p-8 md:p-12 shadow-2xl relative overflow-hidden">
+      <div className="bento-card p-8 md:p-12 shadow-2xl relative overflow-hidden">
         {/* Glow Effects */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(201,168,118,0.06)" }} />
+        <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(243,241,237,0.03)" }} />
 
-        <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-12 text-center md:text-left bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-          Let's Connect
-        </h2>
+        <SectionHeading kicker={t("contact.kicker", "Get In Touch")} title={t("contact.title", "Let's Connect")} className="mb-12" />
 
         <div className="grid md:grid-cols-2 gap-12 relative z-10">
           {/* LEFT COLUMN: CONTACT DETAILS */}
           <div className="space-y-8 flex flex-col justify-between">
             <div className="space-y-6">
-              <p className="text-slate-400 leading-relaxed text-base md:text-lg">
-                I'm open to new developer roles, freelance opportunities, and technology collaborations. Drop me a line, and let's build something awesome together!
+              <p className="leading-relaxed text-base md:text-lg" style={{ color: "var(--noir-fg-muted)" }}>
+                {t("contact.intro", "I'm open to new developer roles, freelance opportunities, and technology collaborations. Drop me a line, and let's build something great together!")}
               </p>
 
               <div className="flex items-center gap-4 max-w-full overflow-hidden">
-                <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 shrink-0">
-                  <Mail className="text-cyan-400" size={24} />
+                <div className="p-4 rounded-2xl border shrink-0" style={{ background: "var(--noir-accent-soft)", borderColor: "var(--noir-border)" }}>
+                  <Mail style={{ color: "var(--noir-accent)" }} size={24} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-slate-450 text-xs uppercase font-bold tracking-wider">Email</p>
-                  <a href={`mailto:${profile.email}`} className="text-white hover:text-cyan-400 transition-colors font-semibold text-base md:text-lg block break-all">
+                  <p className="text-xs uppercase font-semibold tracking-wider" style={{ color: "var(--noir-fg-subtle)" }}>{t("contact.email", "Email")}</p>
+                  <a href={`mailto:${profile.email}`} className="transition-opacity hover:opacity-70 font-semibold text-base md:text-lg block break-all" style={{ color: "var(--noir-fg)" }}>
                     {profile.email}
                   </a>
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="p-4 rounded-2xl bg-pink-500/10 border border-pink-500/20">
-                  <MapPin className="text-pink-400" size={24} />
+                <div className="p-4 rounded-2xl border" style={{ background: "var(--noir-accent-soft)", borderColor: "var(--noir-border)" }}>
+                  <MapPin style={{ color: "var(--noir-accent)" }} size={24} />
                 </div>
                 <div>
-                  <p className="text-slate-450 text-xs uppercase font-bold tracking-wider">Location</p>
-                  <p className="text-white font-semibold text-lg">{profile.location}</p>
+                  <p className="text-xs uppercase font-semibold tracking-wider" style={{ color: "var(--noir-fg-subtle)" }}>{t("contact.location", "Location")}</p>
+                  <p className="font-semibold text-lg" style={{ color: "var(--noir-fg)" }}>{profile.location}</p>
                 </div>
               </div>
             </div>
 
             {/* Social Profile Links */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-slate-800">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t" style={{ borderColor: "var(--noir-border)" }}>
               {profile.githubUrl && (
                 <a
                   href={profile.githubUrl.startsWith("http") ? profile.githubUrl : `https://${profile.githubUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-cyan-500/50 hover:bg-slate-900 transition font-semibold text-sm cursor-pointer"
+                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl border transition font-semibold text-sm cursor-pointer hover:opacity-80"
+                  style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
                 >
-                  <Globe size={18} className="text-cyan-400" />
+                  <Globe size={18} style={{ color: "var(--noir-accent)" }} />
                   GitHub
                 </a>
               )}
@@ -221,9 +223,10 @@ export default function Contact({ profile }: ContactProps) {
                   href={profile.linkedinUrl.startsWith("http") ? profile.linkedinUrl : `https://${profile.linkedinUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-cyan-500/50 hover:bg-slate-900 transition font-semibold text-sm cursor-pointer"
+                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl border transition font-semibold text-sm cursor-pointer hover:opacity-80"
+                  style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
                 >
-                  <LinkIcon size={18} className="text-cyan-400" />
+                  <LinkIcon size={18} style={{ color: "var(--noir-accent)" }} />
                   LinkedIn
                 </a>
               )}
@@ -233,8 +236,8 @@ export default function Contact({ profile }: ContactProps) {
           {/* RIGHT COLUMN: CONTACT FORM */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="contact-name" className="block text-sm font-semibold text-slate-300 mb-1">
-                Your Name
+              <label htmlFor="contact-name" className="block text-sm font-semibold mb-1" style={{ color: "var(--noir-fg-muted)" }}>
+                {t("contact.form.name", "Your Name")}
               </label>
               <input
                 id="contact-name"
@@ -242,13 +245,14 @@ export default function Contact({ profile }: ContactProps) {
                 placeholder="e.g. John Doe"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:border-cyan-500 focus:outline-none transition-colors text-sm"
+                className="w-full rounded-xl px-4 py-3 focus:outline-none transition-colors text-sm border"
+                style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
               />
             </div>
 
             <div>
-              <label htmlFor="contact-email" className="block text-sm font-semibold text-slate-300 mb-1">
-                Your Email
+              <label htmlFor="contact-email" className="block text-sm font-semibold mb-1" style={{ color: "var(--noir-fg-muted)" }}>
+                {t("contact.form.email", "Your Email")}
               </label>
               <input
                 id="contact-email"
@@ -256,13 +260,14 @@ export default function Contact({ profile }: ContactProps) {
                 placeholder="e.g. john@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:border-cyan-500 focus:outline-none transition-colors text-sm"
+                className="w-full rounded-xl px-4 py-3 focus:outline-none transition-colors text-sm border"
+                style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
               />
             </div>
 
             <div>
-              <label htmlFor="contact-message" className="block text-sm font-semibold text-slate-300 mb-1">
-                Your Message
+              <label htmlFor="contact-message" className="block text-sm font-semibold mb-1" style={{ color: "var(--noir-fg-muted)" }}>
+                {t("contact.form.message", "Your Message")}
               </label>
               <textarea
                 id="contact-message"
@@ -270,22 +275,24 @@ export default function Contact({ profile }: ContactProps) {
                 placeholder="Type your message here..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 focus:border-cyan-500 focus:outline-none transition-colors text-sm resize-none"
+                className="w-full rounded-xl p-4 focus:outline-none transition-colors text-sm resize-none border"
+                style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
               />
             </div>
 
             {/* Google Meet Toggle */}
-            <div className="flex items-center gap-3 p-4 bg-slate-950 border border-slate-850 rounded-2xl mt-2 select-none hover:border-slate-800 transition-colors">
+            <div className="flex items-center gap-3 p-4 rounded-2xl mt-2 select-none transition-colors border" style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)" }}>
               <input
                 type="checkbox"
                 id="scheduleMeeting"
                 checked={formData.scheduleMeeting}
                 onChange={(e) => setFormData({ ...formData, scheduleMeeting: e.target.checked })}
-                className="w-4 h-4 rounded text-cyan-500 accent-cyan-500 border-slate-700 bg-slate-950 cursor-pointer"
+                className="w-4 h-4 rounded cursor-pointer"
+                style={{ accentColor: "var(--noir-accent)" }}
               />
-              <label htmlFor="scheduleMeeting" className="text-xs font-semibold text-slate-300 cursor-pointer flex items-center gap-1.5">
-                <Video size={14} className="text-cyan-400 animate-pulse" />
-                Schedule a 1-on-1 Counselling & Tech Consulting Session
+              <label htmlFor="scheduleMeeting" className="text-xs font-semibold cursor-pointer flex items-center gap-1.5" style={{ color: "var(--noir-fg-muted)" }}>
+                <Video size={14} style={{ color: "var(--noir-accent)" }} />
+                {t("contact.form.schedule", "Schedule a 1-on-1 Counselling & Tech Consulting Session")}
               </label>
             </div>
 
@@ -300,9 +307,9 @@ export default function Contact({ profile }: ContactProps) {
                   className="grid grid-cols-2 gap-4 pt-2"
                 >
                   <div>
-                    <label htmlFor="contact-meeting-date" className="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1">
-                      <Calendar size={12} className="text-cyan-400" />
-                      Select Date
+                    <label htmlFor="contact-meeting-date" className="text-xs font-semibold mb-1 flex items-center gap-1" style={{ color: "var(--noir-fg-muted)" }}>
+                      <Calendar size={12} style={{ color: "var(--noir-accent)" }} />
+                      {t("contact.form.date", "Select Date")}
                     </label>
                     <input
                       id="contact-meeting-date"
@@ -310,21 +317,23 @@ export default function Contact({ profile }: ContactProps) {
                       value={formData.meetingDate}
                       min={todayStr}
                       onChange={(e) => setFormData({ ...formData, meetingDate: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-slate-200 focus:border-cyan-500 focus:outline-none transition-colors text-xs"
+                      className="w-full rounded-xl px-4 py-2 focus:outline-none transition-colors text-xs border"
+                      style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="contact-meeting-time" className="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1">
-                      <Clock size={12} className="text-cyan-400" />
-                      Select Time
+                    <label htmlFor="contact-meeting-time" className="text-xs font-semibold mb-1 flex items-center gap-1" style={{ color: "var(--noir-fg-muted)" }}>
+                      <Clock size={12} style={{ color: "var(--noir-accent)" }} />
+                      {t("contact.form.time", "Select Time")}
                     </label>
                     <input
                       id="contact-meeting-time"
                       type="time"
                       value={formData.meetingTime}
                       onChange={(e) => setFormData({ ...formData, meetingTime: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-slate-200 focus:border-cyan-500 focus:outline-none transition-colors text-xs"
+                      className="w-full rounded-xl px-4 py-2 focus:outline-none transition-colors text-xs border"
+                      style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
                     />
                   </div>
                 </motion.div>
@@ -334,16 +343,17 @@ export default function Contact({ profile }: ContactProps) {
             <button
               type="submit"
               disabled={sending}
-              className="w-full bg-cyan-500 text-black py-3.5 rounded-xl font-bold hover:scale-[1.01] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 disabled:opacity-50"
+              className="w-full py-3.5 rounded-xl font-semibold hover:scale-[1.01] transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              style={{ background: "var(--noir-accent)", color: "#0a0a0b" }}
             >
               {sending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
-                  Sending...
+                  {t("contact.form.sending", "Sending...")}
                 </>
               ) : (
                 <>
-                  Send Message
+                  {t("contact.form.submit", "Send Message")}
                   <Send size={16} />
                 </>
               )}

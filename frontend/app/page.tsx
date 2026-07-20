@@ -10,7 +10,6 @@ import Education from "@/components/Education";
 import Certificates from "@/components/Certificates";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import Playground from "@/components/Playground";
 import AtsMatcher from "@/components/AtsMatcher";
 import SectionWrapper from "@/components/SectionWrapper";
 
@@ -81,10 +80,6 @@ export default async function Home() {
 
         <SectionWrapper id="projects">
           <Projects projects={projects} />
-        </SectionWrapper>
-
-        <SectionWrapper id="arcade">
-          <Playground />
         </SectionWrapper>
 
         <SectionWrapper id="experience">
