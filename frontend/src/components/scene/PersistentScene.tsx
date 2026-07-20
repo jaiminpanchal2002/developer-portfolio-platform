@@ -49,21 +49,39 @@ function FloatingComposition() {
       <Float speed={1.4} rotationIntensity={0.5} floatIntensity={0.9}>
         <mesh castShadow>
           <icosahedronGeometry args={[1.35, 0]} />
-          <meshStandardMaterial color="#c9a876" roughness={0.35} metalness={0.3} />
+          <meshStandardMaterial
+            color="#c9a876"
+            roughness={0.35}
+            metalness={0.3}
+            emissive="#c9a876"
+            emissiveIntensity={0.5}
+          />
         </mesh>
       </Float>
 
       <Float speed={1.1} rotationIntensity={0.7} floatIntensity={1.3}>
         <mesh position={[1.1, 0.9, -1.2]} rotation={[0.4, 0.2, 0]} castShadow>
           <torusGeometry args={[0.55, 0.16, 32, 96]} />
-          <meshStandardMaterial color="#4a463e" roughness={0.5} metalness={0.2} />
+          <meshStandardMaterial
+            color="#4a463e"
+            roughness={0.5}
+            metalness={0.2}
+            emissive="#8a8270"
+            emissiveIntensity={0.35}
+          />
         </mesh>
       </Float>
 
       <Float speed={1.8} rotationIntensity={0.4} floatIntensity={1.6}>
         <mesh position={[-1, -0.6, -0.6]} castShadow>
           <sphereGeometry args={[0.4, 48, 48]} />
-          <meshStandardMaterial color="#f3f1ed" roughness={0.25} metalness={0.05} />
+          <meshStandardMaterial
+            color="#f3f1ed"
+            roughness={0.25}
+            metalness={0.05}
+            emissive="#f3f1ed"
+            emissiveIntensity={0.4}
+          />
         </mesh>
       </Float>
     </group>
@@ -125,7 +143,11 @@ export default function PersistentScene() {
   if (!enabled) return null;
 
   return (
-    <div className="fixed inset-0 z-[-5] pointer-events-none" aria-hidden="true">
+    // TEMPORARY diagnostic z-index: rendered in FRONT of everything
+    // (instead of the intended z-[-5], behind content) so we can confirm
+    // whether the scene renders/positions correctly at all, independent
+    // of any stacking-context issue. Revert to behind-content once confirmed.
+    <div className="fixed inset-0 z-[999] pointer-events-none" aria-hidden="true">
       <Canvas
         dpr={[1, 1.5]}
         shadows
