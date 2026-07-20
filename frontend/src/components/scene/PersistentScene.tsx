@@ -98,7 +98,6 @@ export default function PersistentScene() {
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isDesktop = window.matchMedia("(min-width: 768px)").matches;
-    console.info("[PersistentScene] gating check", { prefersReducedMotion, isDesktop, innerWidth: window.innerWidth });
     if (prefersReducedMotion || !isDesktop) return;
 
     setEnabled(true);
@@ -143,11 +142,20 @@ export default function PersistentScene() {
   if (!enabled) return null;
 
   return (
-    // TEMPORARY diagnostic z-index: rendered in FRONT of everything
-    // (instead of the intended z-[-5], behind content) so we can confirm
-    // whether the scene renders/positions correctly at all, independent
-    // of any stacking-context issue. Revert to behind-content once confirmed.
-    <div className="fixed inset-0 z-[999] pointer-events-none" aria-hidden="true">
+    // Confirmed by the front-of-everything diagnostic pass: the scene was
+    // never a rendering/positioning problem, it was pure stacking — a
+    // negative z-index on a `position: fixed` element didn't reliably
+    // paint above the page's content in this stack. Using a low *positive*
+    // z-index here instead, with page.tsx's <main>/<Footer> wrappers given
+    // an explicit `relative z-10` so real content deterministically stacks
+    // above this rather than depending on default/negative z-index rules.
+    // Also fades out once scrolled past the Hero->About range instead of
+    // freezing visible (frameloop paused) for the rest of the page.
+    <div
+      className="fixed inset-0 z-[1] pointer-events-none transition-opacity duration-700"
+      style={{ opacity: active ? 1 : 0 }}
+      aria-hidden="true"
+    >
       <Canvas
         dpr={[1, 1.5]}
         shadows

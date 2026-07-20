@@ -62,7 +62,7 @@ export default async function Home() {
       />
       <Navbar profile={profile} />
 
-      <main className="overflow-x-hidden">
+      <main className="relative z-10 overflow-x-hidden">
         <Hero profile={profile} />
 
         <SectionWrapper id="about">
@@ -108,7 +108,9 @@ export default async function Home() {
         </SectionWrapper>
       </main>
 
-      <Footer profile={profile} />
+      <div className="relative z-10">
+        <Footer profile={profile} />
+      </div>
     </>
   );
 }
