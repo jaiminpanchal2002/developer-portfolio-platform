@@ -89,7 +89,7 @@ function FloatingComposition() {
 }
 
 // Mounted once, fixed behind the whole page. Its composition morphs (via
-// heroSceneProgress, driven by a ScrollTrigger spanning Hero -> About) as
+// heroSceneProgress, driven by a ScrollTrigger spanning Hero -> Skills) as
 // the user scrolls, instead of each section owning its own WebGL context.
 export default function PersistentScene() {
   const [enabled, setEnabled] = useState(false);
@@ -108,9 +108,13 @@ export default function PersistentScene() {
 
     const setup = () => {
       const heroEl = document.getElementById("home");
-      const aboutEl = document.getElementById("about");
+      // The object's journey now spans Hero through the end of Skills —
+      // it settles gradually across both sections instead of finishing at
+      // the end of About — then recedes for Projects onward, where the
+      // project showcase itself should be the visual focus.
+      const endEl = document.getElementById("skills");
 
-      if (!heroEl || !aboutEl) {
+      if (!heroEl || !endEl) {
         if (attempts++ < 30) frameId = requestAnimationFrame(setup);
         return;
       }
@@ -118,7 +122,7 @@ export default function PersistentScene() {
       trigger = ScrollTrigger.create({
         trigger: heroEl,
         start: "top top",
-        endTrigger: aboutEl,
+        endTrigger: endEl,
         end: "bottom top",
         scrub: true,
         onUpdate: (self) => {
@@ -149,7 +153,7 @@ export default function PersistentScene() {
     // z-index here instead, with page.tsx's <main>/<Footer> wrappers given
     // an explicit `relative z-10` so real content deterministically stacks
     // above this rather than depending on default/negative z-index rules.
-    // Also fades out once scrolled past the Hero->About range instead of
+    // Also fades out once scrolled past the Hero->Skills range instead of
     // freezing visible (frameloop paused) for the rest of the page.
     <div
       className="fixed inset-0 z-[1] pointer-events-none transition-opacity duration-700"
