@@ -80,6 +80,7 @@ export default function PersistentScene() {
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+    console.info("[PersistentScene] gating check", { prefersReducedMotion, isDesktop, innerWidth: window.innerWidth });
     if (prefersReducedMotion || !isDesktop) return;
 
     setEnabled(true);

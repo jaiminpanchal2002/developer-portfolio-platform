@@ -79,14 +79,14 @@ body::before {
 }
 
 .glow-1 {
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(201, 168, 118, 0.35) 0%, transparent 70%);
   top: -10%;
   left: -10%;
   animation-duration: 20s;
 }
 
 .glow-2 {
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(74, 70, 62, 0.4) 0%, transparent 70%);
   bottom: 10%;
   right: -10%;
   animation-duration: 25s;
@@ -94,7 +94,7 @@ body::before {
 }
 
 .glow-3 {
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(163, 160, 154, 0.25) 0%, transparent 70%);
   top: 40%;
   left: 30%;
   animation-duration: 30s;
@@ -144,37 +144,41 @@ body::before {
   border-radius: inherit;
 }
 
-/* Custom Cursor */
+/* Custom Cursor — position is written entirely via JS `transform`
+   (translate3d, compositor-only) every frame; no `left`/`top` and no
+   CSS `transition` on transform (that would fight the per-frame JS
+   updates). Only the discrete hover-state visuals transition here. */
 .custom-cursor {
   width: 8px;
   height: 8px;
   background: #fff;
   border-radius: 50%;
   position: fixed;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
   pointer-events: none;
   z-index: 10000;
   mix-blend-mode: difference;
-  transition: width 0.2s, height 0.2s;
+  will-change: transform;
 }
 
 .custom-cursor-follower {
   width: 40px;
   height: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(243, 241, 237, 0.3);
   border-radius: 50%;
   position: fixed;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
   pointer-events: none;
   z-index: 9999;
-  transition: transform 0.08s ease-out, background 0.3s, border-color 0.3s;
+  transition: background 0.3s, border-color 0.3s;
+  will-change: transform;
 }
 
-/* Hover scales follower */
-.hovering .custom-cursor-follower {
-  transform: translate(-50%, -50%) scale(1.5);
-  background: rgba(6, 182, 212, 0.1);
-  border-color: var(--accent-cyan);
+.custom-cursor-follower.hovering {
+  background: rgba(201, 168, 118, 0.14);
+  border-color: var(--noir-accent);
 }
 
 ::-webkit-scrollbar {
@@ -186,7 +190,7 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--accent-cyan), var(--accent-purple));
+  background: var(--noir-accent);
   border-radius: 999px;
 }
 
@@ -204,51 +208,11 @@ body::before {
 
 /* Custom Accessibility Outline */
 *:focus-visible {
-  outline: 2px solid var(--accent-cyan);
+  outline: 2px solid var(--noir-accent);
   outline-offset: 4px;
 }
 
 /* Keyboard navigable outline bypass */
 .no-outline:focus {
   outline: none;
-}
-
-/* Toast Notifications */
-.toast-notification {
-  box-shadow: 0 10px 40px -10px rgba(6, 182, 212, 0.3);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes slideInUp {
-  0% { transform: translateY(100%) scale(0.9); opacity: 0; }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-/* Dynamic XP Bar */
-.xp-progress-bar {
-  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-  transition: width 0.1s ease-out;
-}
-
-/* Mini Terminal Styles */
-.terminal-window {
-  font-family: 'Fira Code', 'Courier New', Courier, monospace;
-}
-
-.terminal-cursor {
-  display: inline-block;
-  width: 8px;
-  height: 15px;
-  background-color: var(--accent-cyan);
-  animation: blink 1s step-end infinite;
-  vertical-align: middle;
-  margin-left: 4px;
-}
-
-@keyframes blink {
-  from, to { background-color: transparent; }
-  50% { background-color: var(--accent-cyan); }
 }
