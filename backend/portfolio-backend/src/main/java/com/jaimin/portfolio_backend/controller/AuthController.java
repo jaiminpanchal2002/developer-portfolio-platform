@@ -29,16 +29,20 @@ public class AuthController {
 
         String message = authService.register(request);
 
-        return new AuthResponse(message);
+        return AuthResponse.builder().message(message).build();
     }
 
     @PostMapping("/login")
     public AuthResponse login(
             @RequestBody LoginRequest request) {
 
-        String token = authService.login(request);
+        return authService.login(request);
+    }
 
-        return new AuthResponse(token);
+    /** Second step of 2FA login: email + TOTP code -> token. Public by design. */
+    @PostMapping("/2fa/verify")
+    public AuthResponse verifyTwoFactor(@RequestBody Map<String, String> body) {
+        return authService.verifyTwoFactor(body.get("email"), body.get("code"));
     }
 
     @PostMapping("/forgot-password")

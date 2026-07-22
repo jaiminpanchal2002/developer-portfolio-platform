@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login, forgotPassword } from "../../src/services/authService";
+import {
+  login,
+  forgotPassword,
+  verifyTwoFactor,
+} from "../../src/services/authService";
 import Swal from "sweetalert2";
 
 export default function LoginPage() {
@@ -15,6 +19,47 @@ export default function LoginPage() {
   });
   const [resetEmail, setResetEmail] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Two-factor second step
+  const [twoFactorStep, setTwoFactorStep] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+
+  const completeLogin = () => {
+    Swal.fire({
+      title: "Welcome Back!",
+      text: "Logged in successfully.",
+      icon: "success",
+      timer: 1500,
+      showConfirmButton: false,
+      background: "#0f172a",
+      color: "#ffffff",
+    });
+    router.push("/admin");
+  };
+
+  const handleVerifyTwoFactor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await verifyTwoFactor(formData.email, twoFactorCode);
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        completeLogin();
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        title: "Verification Failed",
+        text: "That authentication code is invalid or expired.",
+        icon: "error",
+        background: "#0f172a",
+        color: "#ffffff",
+        confirmButtonColor: "#ef4444",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,19 +109,18 @@ export default function LoginPage() {
     } else {
       try {
         const response = await login(formData);
-        localStorage.setItem("token", response.token);
 
-        Swal.fire({
-          title: "Welcome Back!",
-          text: "Logged in successfully.",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
-          background: "#0f172a",
-          color: "#ffffff",
-        });
+        // 2FA enabled: withhold navigation until the code step succeeds.
+        if (response.twoFactorRequired) {
+          setTwoFactorStep(true);
+          setLoading(false);
+          return;
+        }
 
-        router.push("/admin");
+        if (response.token) {
+          localStorage.setItem("token", response.token);
+          completeLogin();
+        }
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -95,19 +139,71 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
+      {twoFactorStep ? (
+        <form
+          onSubmit={handleVerifyTwoFactor}
+          className="bg-slate-900 border border-slate-800 p-8 rounded-2xl w-full max-w-md space-y-6 shadow-2xl relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600" />
+          <div>
+            <h1 className="text-3xl font-extrabold text-white">
+              Two-Factor Auth
+            </h1>
+            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              Enter the 6-digit code from your authenticator app.
+            </p>
+          </div>
+
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            placeholder="000000"
+            required
+            autoFocus
+            className="w-full p-3.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-center text-2xl tracking-[0.5em] placeholder-slate-600 focus:border-cyan-500 focus:outline-none transition-colors"
+            value={twoFactorCode}
+            onChange={(e) =>
+              setTwoFactorCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+            }
+          />
+
+          <button
+            type="submit"
+            disabled={loading || twoFactorCode.length !== 6}
+            className="w-full bg-cyan-500 text-black py-3.5 rounded-xl font-bold hover:scale-[1.01] hover:bg-cyan-400 transition-all cursor-pointer shadow-lg shadow-cyan-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Verifying..." : "Verify & Sign In"}
+          </button>
+
+          <div className="text-center pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                setTwoFactorStep(false);
+                setTwoFactorCode("");
+              }}
+              className="text-cyan-400 hover:underline text-sm font-semibold bg-transparent border-none cursor-pointer"
+            >
+              Back to Login
+            </button>
+          </div>
+        </form>
+      ) : (
       <form
         onSubmit={handleSubmit}
         className="bg-slate-900 border border-slate-800 p-8 rounded-2xl w-full max-w-md space-y-6 shadow-2xl relative overflow-hidden"
       >
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600" />
-        
+
         <div>
           <h1 className="text-3xl font-extrabold text-white">
             {isResetMode ? "Reset Password" : "Admin Login"}
           </h1>
           <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-            {isResetMode 
-              ? "Enter your email. If it exists in our records, we will send a temporary password." 
+            {isResetMode
+              ? "Enter your email. If it exists in our records, we will send a temporary password."
               : "Access the developer portfolio control panel."}
           </p>
         </div>
@@ -174,6 +270,7 @@ export default function LoginPage() {
           </button>
         </div>
       </form>
+      )}
     </div>
   );
 }

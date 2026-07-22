@@ -38,4 +38,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    /** TOTP two-factor. NULL/false = disabled. */
+    private Boolean twoFactorEnabled;
+
+    /** Base32 TOTP secret. Present once setup begins; only trusted after enable. */
+    private String twoFactorSecret;
 }

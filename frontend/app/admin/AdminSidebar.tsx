@@ -19,6 +19,7 @@ import {
   Mail,
   Quote,
   PenLine,
+  ShieldCheck,
 } from "lucide-react";
 
 const menu = [
@@ -101,6 +102,11 @@ const menu = [
     name: "Profile Score",
     href: "/admin/profile-score",
     icon: Gauge,
+  },
+  {
+    name: "Security",
+    href: "/admin/security",
+    icon: ShieldCheck,
   },
 ];
 

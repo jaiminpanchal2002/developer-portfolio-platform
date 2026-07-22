@@ -3,12 +3,12 @@ package com.jaimin.portfolio_backend.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.jaimin.portfolio_backend.security.JwtService;
+import com.jaimin.portfolio_backend.dto.AuthResponse;
 import com.jaimin.portfolio_backend.dto.LoginRequest;
 import com.jaimin.portfolio_backend.dto.RegisterRequest;
 import com.jaimin.portfolio_backend.entity.Role;
 import com.jaimin.portfolio_backend.entity.User;
 import com.jaimin.portfolio_backend.repository.UserRepository;
-import com.jaimin.portfolio_backend.security.JwtService;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -23,6 +23,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final JavaMailSender mailSender;
+    private final TotpService totpService;
+
+    private static final String ISSUER = "Jaimin Panchal Portfolio";
 
     public String register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -41,7 +44,7 @@ public class AuthService {
         return "User Registered Successfully";
     }
 
-    public String login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -54,7 +57,79 @@ public class AuthService {
             throw new RuntimeException("Invalid Password");
         }
 
-        return jwtService.generateToken(user.getEmail());
+        // Password correct: if 2FA is on, withhold the token until the code
+        // is verified via /api/auth/2fa/verify.
+        if (Boolean.TRUE.equals(user.getTwoFactorEnabled())) {
+            return AuthResponse.builder().twoFactorRequired(true).build();
+        }
+
+        return AuthResponse.builder()
+                .token(jwtService.generateToken(user.getEmail()))
+                .build();
+    }
+
+    /** Second login step: exchange email + TOTP code for a token. */
+    public AuthResponse verifyTwoFactor(String email, String code) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!Boolean.TRUE.equals(user.getTwoFactorEnabled())) {
+            throw new RuntimeException("Two-factor authentication is not enabled");
+        }
+        if (!totpService.verify(user.getTwoFactorSecret(), code)) {
+            throw new RuntimeException("Invalid authentication code");
+        }
+        return AuthResponse.builder()
+                .token(jwtService.generateToken(user.getEmail()))
+                .build();
+    }
+
+    /** Begin enrollment: generate (but don't yet trust) a secret. */
+    public java.util.Map<String, String> setupTwoFactor(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        String secret = totpService.generateSecret();
+        user.setTwoFactorSecret(secret);
+        user.setTwoFactorEnabled(false);
+        userRepository.save(user);
+        return java.util.Map.of(
+                "secret", secret,
+                "otpauthUrl", totpService.otpauthUrl(secret, user.getEmail(), ISSUER));
+    }
+
+    /** Finish enrollment: only flips the flag once a code proves the secret works. */
+    public String enableTwoFactor(String email, String code) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (user.getTwoFactorSecret() == null) {
+            throw new RuntimeException("Start setup before enabling two-factor");
+        }
+        if (!totpService.verify(user.getTwoFactorSecret(), code)) {
+            throw new RuntimeException("Invalid authentication code");
+        }
+        user.setTwoFactorEnabled(true);
+        userRepository.save(user);
+        return "Two-factor authentication enabled";
+    }
+
+    /** Disable, requiring a valid current code so a hijacked session can't turn it off silently. */
+    public String disableTwoFactor(String email, String code) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (Boolean.TRUE.equals(user.getTwoFactorEnabled())
+                && !totpService.verify(user.getTwoFactorSecret(), code)) {
+            throw new RuntimeException("Invalid authentication code");
+        }
+        user.setTwoFactorEnabled(false);
+        user.setTwoFactorSecret(null);
+        userRepository.save(user);
+        return "Two-factor authentication disabled";
+    }
+
+    public boolean isTwoFactorEnabled(String email) {
+        return userRepository.findByEmail(email)
+                .map(u -> Boolean.TRUE.equals(u.getTwoFactorEnabled()))
+                .orElse(false);
     }
 
     public String forgotPassword(String email) {
