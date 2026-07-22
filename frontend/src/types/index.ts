@@ -63,6 +63,22 @@ export interface Education {
   grade: string;
 }
 
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content?: string;
+  coverImageUrl?: string;
+  tags?: string;
+  readMinutes?: number;
+  /** false = draft (hidden from the public list); undefined counts as published */
+  published?: boolean;
+  publishedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface Testimonial {
   id: number;
   authorName: string;

@@ -9,9 +9,11 @@ interface NavbarProps {
     profile?: {
         fullName?: string;
     };
+    /** Show the Writing link only when at least one post is published. */
+    showBlog?: boolean;
 }
 
-export default function Navbar({ profile }: NavbarProps) {
+export default function Navbar({ profile, showBlog }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const { t } = useLocale();
 
@@ -21,6 +23,7 @@ export default function Navbar({ profile }: NavbarProps) {
         { label: t("nav.skills", "Skills"), href: "#skills" },
         { label: t("nav.projects", "Projects"), href: "#projects" },
         { label: t("nav.experience", "Experience"), href: "#experience" },
+        ...(showBlog ? [{ label: t("nav.blog", "Writing"), href: "/blog" }] : []),
         { label: t("nav.contact", "Contact"), href: "#contact" },
     ];
 

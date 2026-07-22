@@ -18,6 +18,7 @@ import {
   Gauge,
   Mail,
   Quote,
+  PenLine,
 } from "lucide-react";
 
 const menu = [
@@ -70,6 +71,11 @@ const menu = [
     name: "Testimonials",
     href: "/admin/testimonials",
     icon: Quote,
+  },
+  {
+    name: "Blog",
+    href: "/admin/blog",
+    icon: PenLine,
   },
   {
     name: "Resume AI",

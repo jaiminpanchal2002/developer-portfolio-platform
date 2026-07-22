@@ -24,6 +24,7 @@ import { getExperiences } from "@/services/experienceService";
 import { getEducations } from "@/services/educationService";
 import { getCertificates } from "@/services/certificateService";
 import { getTestimonials } from "@/services/testimonialService";
+import { getBlogPosts } from "@/services/blogService";
 
 // Content is managed live via the admin panel and framer-motion's client
 // hooks (e.g. useReducedMotion) don't survive Next's build-time static
@@ -54,6 +55,7 @@ export default async function Home() {
     educations,
     certificates,
     testimonials,
+    blogPosts,
   ] = await Promise.all([
     getProfile().catch(() => null),
     getProjects().catch(() => []),
@@ -62,6 +64,7 @@ export default async function Home() {
     getEducations().catch(() => []),
     getCertificates().catch(() => []),
     getTestimonials().catch(() => []),
+    getBlogPosts().catch(() => []),
   ]);
 
   const profile = fetchedProfile ?? FALLBACK_PROFILE;
@@ -89,7 +92,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Navbar profile={profile} />
+      <Navbar profile={profile} showBlog={blogPosts.length > 0} />
 
       <main className="relative z-10 overflow-x-hidden">
         <Hero profile={profile} />
