@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowUpRight, ArrowDown } from "lucide-react";
+import { ArrowUpRight, ArrowDown, Download } from "lucide-react";
 import { getImageUrl } from "../lib/api";
 import { useLocale } from "@/lib/localeContext";
 import { Profile } from "@/types";
 import MagneticButton from "@/components/ui/MagneticButton";
+import RotatingRoles from "@/components/ui/RotatingRoles";
 
 interface HeroProps {
   profile: Profile;
@@ -77,7 +78,7 @@ export default function Hero({ profile }: HeroProps) {
             {profile.fullName}
           </motion.h1>
 
-          {/* Headline */}
+          {/* Headline — rotates through roles, starting with the live one */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -85,7 +86,14 @@ export default function Hero({ profile }: HeroProps) {
             className="font-[family-name:var(--font-sans)] mt-5 text-lg md:text-xl font-medium max-w-xl"
             style={{ color: "var(--noir-accent)" }}
           >
-            {profile.headline}
+            <RotatingRoles
+              roles={[
+                profile.headline,
+                t("hero.role.fullstack", "Full Stack Engineer"),
+                t("hero.role.ai", "AI & LLM Integration Specialist"),
+                t("hero.role.backend", "Spring Boot & Cloud Architect"),
+              ].filter((r, i, arr) => Boolean(r) && arr.indexOf(r) === i)}
+            />
           </motion.p>
 
           {/* About */}
@@ -122,6 +130,20 @@ export default function Hero({ profile }: HeroProps) {
             >
               {t("hero.cta.contact", "Contact Me")}
             </MagneticButton>
+
+            {profile.resumeUrl && (
+              <a
+                href={getImageUrl(profile.resumeUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="font-[family-name:var(--font-sans)] inline-flex items-center gap-2 px-5 py-3.5 text-sm font-semibold transition-opacity hover:opacity-70"
+                style={{ color: "var(--noir-fg-muted)" }}
+              >
+                <Download size={15} />
+                {t("hero.cta.resume", "Resume")}
+              </a>
+            )}
 
             {profile.profileImageUrl && (
               <div className="flex items-center gap-3 ml-2">

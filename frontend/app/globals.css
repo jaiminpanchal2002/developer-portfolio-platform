@@ -1,19 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --font-display: 'Outfit', 'Satoshi', 'Inter', sans-serif;
+  /* Noir/champagne design system — single source of truth.
+     Type: --font-serif (Fraunces, display) + --font-sans (Plus Jakarta Sans, body),
+     both injected by next/font in app/layout.tsx. */
   --bg-color: #030303;
-  --accent-cyan: #06b6d4;
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
-  --accent-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
   --glass-bg: rgba(10, 10, 10, 0.5);
   --glass-border: rgba(255, 255, 255, 0.05);
   --glass-glow: rgba(201, 168, 118, 0.15);
 
-  /* Premium/cinematic system — introduced with the Hero redesign.
-     Scoped under --noir-* so it can be adopted section by section
-     without colliding with the tokens above. */
   --noir-bg: #0a0a0b;
   --noir-bg-elevated: #131315;
   --noir-fg: #f3f1ed;
@@ -34,7 +29,7 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  font-family: var(--font-display);
+  font-family: var(--font-sans, 'Inter', sans-serif);
   background: var(--bg-color);
   position: relative;
 }

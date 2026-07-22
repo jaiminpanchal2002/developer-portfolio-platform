@@ -1,17 +1,10 @@
 import "./globals.css";
 import { Metadata } from "next";
-import { Outfit, Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import ClientLayout from "@/components/ClientLayout";
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-  display: "swap",
-});
-
-// New premium/cinematic type system (currently used by the redesigned
-// Hero; the rest of the site still runs on Outfit until later phases).
+// Noir/champagne type system: Fraunces for display/serif moments,
+// Plus Jakarta Sans as the body face site-wide.
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
@@ -51,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${outfit.variable} ${fraunces.variable} ${jakarta.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${fraunces.variable} ${jakarta.variable}`} suppressHydrationWarning>
       <body className="antialiased">
         <ClientLayout>
           {children}
