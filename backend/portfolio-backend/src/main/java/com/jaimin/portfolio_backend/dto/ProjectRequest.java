@@ -12,4 +12,11 @@ public class ProjectRequest {
     private String imageUrl;
     private String technologies;
     private Boolean featured;
+    private String problemStatement;
+    private String solution;
+    private String architecture;
+    private String challenges;
+    private String learnings;
+    private String metrics;
+    private Integer displayOrder;
 }

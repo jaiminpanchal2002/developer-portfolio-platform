@@ -19,6 +19,12 @@ export default function ProjectForm({
     githubUrl: "",
     liveUrl: "",
     featured: false,
+    problemStatement: "",
+    solution: "",
+    architecture: "",
+    challenges: "",
+    learnings: "",
+    metrics: "",
   });
 
   const handleChange = (
@@ -113,6 +119,63 @@ export default function ProjectForm({
         />
         Featured Project
       </label>
+
+      {/* Case-study narrative — optional, powers /projects/{id} */}
+      <details className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
+        <summary className="cursor-pointer text-sm font-semibold text-slate-300">
+          Case Study (optional)
+        </summary>
+        <div className="mt-3 space-y-3">
+          <textarea
+            name="problemStatement"
+            placeholder="The Problem — what pain did this project solve?"
+            value={formData.problemStatement}
+            onChange={handleChange}
+            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            rows={3}
+          />
+          <textarea
+            name="solution"
+            placeholder="The Solution — how did you solve it?"
+            value={formData.solution}
+            onChange={handleChange}
+            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            rows={3}
+          />
+          <textarea
+            name="architecture"
+            placeholder="Architecture — stack decisions, data flow, infrastructure"
+            value={formData.architecture}
+            onChange={handleChange}
+            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            rows={3}
+          />
+          <textarea
+            name="challenges"
+            placeholder="Challenges — the hard parts and how you got through them"
+            value={formData.challenges}
+            onChange={handleChange}
+            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            rows={3}
+          />
+          <textarea
+            name="learnings"
+            placeholder="Learnings — what you'd do differently"
+            value={formData.learnings}
+            onChange={handleChange}
+            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            rows={3}
+          />
+          <textarea
+            name="metrics"
+            placeholder={"Metrics — one per line, e.g.\n40% faster page loads\n99.9% uptime over 6 months"}
+            value={formData.metrics}
+            onChange={handleChange}
+            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            rows={3}
+          />
+        </div>
+      </details>
 
       <div className="flex gap-3 justify-end">
 

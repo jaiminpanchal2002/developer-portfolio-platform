@@ -39,9 +39,33 @@ public class Project {
     private String imageUrl;
  
     private String technologies;
- 
+
     private Boolean featured;
- 
+
+    // --- Case-study narrative (all optional; rendered on /projects/{id}) ---
+
+    @Column(length = 5000)
+    private String problemStatement;
+
+    @Column(length = 5000)
+    private String solution;
+
+    @Column(length = 5000)
+    private String architecture;
+
+    @Column(length = 5000)
+    private String challenges;
+
+    @Column(length = 5000)
+    private String learnings;
+
+    /** Outcome numbers, one per line (e.g. "40% faster page loads"). */
+    @Column(length = 2000)
+    private String metrics;
+
+    /** Manual ordering for the public showcase; lower comes first. */
+    private Integer displayOrder;
+
     private LocalDateTime createdAt;
 }
  

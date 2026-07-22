@@ -23,7 +23,21 @@ export default function EditProjectForm({
     imageUrl: project.imageUrl || "",
     technologies: project.technologies || "",
     featured: project.featured || false,
+    problemStatement: project.problemStatement || "",
+    solution: project.solution || "",
+    architecture: project.architecture || "",
+    challenges: project.challenges || "",
+    learnings: project.learnings || "",
+    metrics: project.metrics || "",
+    displayOrder: project.displayOrder,
   });
+
+  const handleCaseStudyChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (
     e: React.FormEvent
@@ -133,6 +147,63 @@ export default function EditProjectForm({
         />
         Featured
       </label>
+
+      {/* Case-study narrative — optional, powers /projects/{id} */}
+      <details className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
+        <summary className="cursor-pointer text-sm font-semibold text-slate-300">
+          Case Study (optional)
+        </summary>
+        <div className="mt-3 space-y-3">
+          <textarea
+            name="problemStatement"
+            placeholder="The Problem — what pain did this project solve?"
+            value={formData.problemStatement}
+            onChange={handleCaseStudyChange}
+            className="w-full p-3 bg-slate-800 rounded"
+            rows={3}
+          />
+          <textarea
+            name="solution"
+            placeholder="The Solution — how did you solve it?"
+            value={formData.solution}
+            onChange={handleCaseStudyChange}
+            className="w-full p-3 bg-slate-800 rounded"
+            rows={3}
+          />
+          <textarea
+            name="architecture"
+            placeholder="Architecture — stack decisions, data flow, infrastructure"
+            value={formData.architecture}
+            onChange={handleCaseStudyChange}
+            className="w-full p-3 bg-slate-800 rounded"
+            rows={3}
+          />
+          <textarea
+            name="challenges"
+            placeholder="Challenges — the hard parts and how you got through them"
+            value={formData.challenges}
+            onChange={handleCaseStudyChange}
+            className="w-full p-3 bg-slate-800 rounded"
+            rows={3}
+          />
+          <textarea
+            name="learnings"
+            placeholder="Learnings — what you'd do differently"
+            value={formData.learnings}
+            onChange={handleCaseStudyChange}
+            className="w-full p-3 bg-slate-800 rounded"
+            rows={3}
+          />
+          <textarea
+            name="metrics"
+            placeholder={"Metrics — one per line, e.g.\n40% faster page loads\n99.9% uptime over 6 months"}
+            value={formData.metrics}
+            onChange={handleCaseStudyChange}
+            className="w-full p-3 bg-slate-800 rounded"
+            rows={3}
+          />
+        </div>
+      </details>
 
       <div className="flex gap-4">
         <button

@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useState, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Globe, ArrowUpRight } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 import { getImageUrl } from "../lib/api";
@@ -140,6 +141,15 @@ function ProjectCard({ project, onImageClick }: { project: Project; onImageClick
                 Live Demo
               </a>
             )}
+
+            <Link
+              href={`/projects/${project.id}`}
+              className="ml-auto flex items-center gap-1.5 text-xs font-semibold transition-opacity hover:opacity-70"
+              style={{ color: "var(--noir-fg)" }}
+            >
+              Case Study
+              <ArrowUpRight size={14} />
+            </Link>
           </div>
         </div>
       </div>

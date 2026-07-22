@@ -19,7 +19,17 @@ export interface Skill {
   proficiency: number;
 }
 
-export interface Project {
+export interface ProjectCaseStudy {
+  problemStatement?: string;
+  solution?: string;
+  architecture?: string;
+  challenges?: string;
+  learnings?: string;
+  /** Outcome numbers, one per line */
+  metrics?: string;
+}
+
+export interface Project extends ProjectCaseStudy {
   id: number;
   title: string;
   description: string;
@@ -28,6 +38,7 @@ export interface Project {
   imageUrl?: string;
   technologies?: string;
   featured?: boolean;
+  displayOrder?: number;
 }
 
 export interface Experience {

@@ -3,6 +3,7 @@ package com.jaimin.portfolio_backend.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.jaimin.portfolio_backend.dto.ProjectRequest;
@@ -27,6 +28,13 @@ public class ProjectService {
                 .imageUrl(request.getImageUrl())
                 .technologies(request.getTechnologies())
                 .featured(request.getFeatured())
+                .problemStatement(request.getProblemStatement())
+                .solution(request.getSolution())
+                .architecture(request.getArchitecture())
+                .challenges(request.getChallenges())
+                .learnings(request.getLearnings())
+                .metrics(request.getMetrics())
+                .displayOrder(request.getDisplayOrder())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -35,7 +43,9 @@ public class ProjectService {
 
     public List<Project> getAllProjects() {
 
-        return projectRepository.findAll();
+        // displayOrder ascending; Postgres sorts NULLs last on ASC, so
+        // unordered projects trail the manually curated ones.
+        return projectRepository.findAll(Sort.by(Sort.Direction.ASC, "displayOrder"));
 
     }
 
@@ -61,6 +71,13 @@ public Project getProjectById(Long id) {
     project.setImageUrl(request.getImageUrl());
     project.setTechnologies(request.getTechnologies());
     project.setFeatured(request.getFeatured());
+    project.setProblemStatement(request.getProblemStatement());
+    project.setSolution(request.getSolution());
+    project.setArchitecture(request.getArchitecture());
+    project.setChallenges(request.getChallenges());
+    project.setLearnings(request.getLearnings());
+    project.setMetrics(request.getMetrics());
+    project.setDisplayOrder(request.getDisplayOrder());
 
     return projectRepository.save(project);
 }
