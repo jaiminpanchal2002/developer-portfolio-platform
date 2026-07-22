@@ -12,6 +12,64 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Ambient particle field — a quiet constellation drifting behind the main
+// composition. Deterministic positions (mulberry32) so SSR/CSR and every
+// visit render the same sky; one draw call, no per-frame allocations.
+const PARTICLE_COUNT = 320;
+
+function mulberry32(seed: number) {
+  let a = seed;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const PARTICLE_POSITIONS = (() => {
+  const rand = mulberry32(20260722);
+  const positions = new Float32Array(PARTICLE_COUNT * 3);
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    positions[i * 3] = (rand() - 0.5) * 16;
+    positions[i * 3 + 1] = (rand() - 0.5) * 10;
+    positions[i * 3 + 2] = -2 - rand() * 6;
+  }
+  return positions;
+})();
+
+function ParticleField() {
+  const points = useRef<THREE.Points>(null);
+
+  useFrame((state, delta) => {
+    if (!points.current) return;
+    const settle = 1 - heroSceneProgress.value;
+    points.current.rotation.y += delta * 0.012 * (0.4 + settle * 0.6);
+    points.current.position.x = state.pointer.x * 0.15 * settle;
+    points.current.position.y = state.pointer.y * 0.1 * settle;
+  });
+
+  return (
+    <points ref={points}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          args={[PARTICLE_POSITIONS, 3]}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        color="#c9a876"
+        size={0.02}
+        sizeAttenuation
+        transparent
+        opacity={0.55}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
 const REST_X = 1.6;
 const SETTLE_X = 2.6;
 const SETTLE_Y = -1.4;
@@ -162,7 +220,15 @@ export default function PersistentScene() {
     // freezing visible (frameloop paused) for the rest of the page.
     <div
       className="fixed inset-0 z-[1] pointer-events-none transition-opacity duration-700"
-      style={{ opacity: active ? 1 : 0 }}
+      // visibility:hidden (after the fade) fully removes the canvas from
+      // painting/compositing beyond its Hero->Skills range — opacity alone
+      // kept a live fixed layer that could still surface in screenshots,
+      // print, and some compositor edge cases.
+      style={{
+        opacity: active ? 1 : 0,
+        visibility: active ? "visible" : "hidden",
+        transitionProperty: "opacity, visibility",
+      }}
       aria-hidden="true"
     >
       <Canvas
@@ -182,6 +248,7 @@ export default function PersistentScene() {
         <directionalLight position={[-4, -1, 2]} intensity={0.4} color="#8fa3b3" />
         <pointLight position={[-2, 3, -3]} intensity={0.3} color="#c9a876" />
         <Suspense fallback={null}>
+          <ParticleField />
           <FloatingComposition />
           <ContactShadows position={[0, -1.6, 0]} opacity={0.4} scale={10} blur={2.4} far={3} />
         </Suspense>
