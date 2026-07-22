@@ -26,6 +26,11 @@ const menu = [
     icon: LayoutDashboard,
   },
   {
+    name: "Analytics",
+    href: "/admin/analytics",
+    icon: Gauge,
+  },
+  {
     name: "Profile",
     href: "/admin/profile",
     icon: User,

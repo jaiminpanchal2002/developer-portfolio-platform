@@ -9,6 +9,7 @@ import { ThemeProvider } from "next-themes";
 import { LocaleProvider } from "@/lib/localeContext";
 
 import SceneErrorBoundary from "@/components/scene/SceneErrorBoundary";
+import AnalyticsBeacon from "@/components/AnalyticsBeacon";
 
 const PersistentScene = dynamic(() => import("@/components/scene/PersistentScene"), {
   ssr: false,
@@ -153,6 +154,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <SceneErrorBoundary>
           <PersistentScene />
         </SceneErrorBoundary>
+
+        <AnalyticsBeacon />
       </ThemeProvider>
     </LocaleProvider>
   );
