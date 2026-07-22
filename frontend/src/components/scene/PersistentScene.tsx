@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, ContactShadows } from "@react-three/drei";
 import gsap from "gsap";
@@ -91,16 +91,21 @@ function FloatingComposition() {
 // Mounted once, fixed behind the whole page. Its composition morphs (via
 // heroSceneProgress, driven by a ScrollTrigger spanning Hero -> Skills) as
 // the user scrolls, instead of each section owning its own WebGL context.
+const emptySubscribe = () => () => {};
+const enabledSnapshot = () =>
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+  window.matchMedia("(min-width: 768px)").matches;
+
 export default function PersistentScene() {
-  const [enabled, setEnabled] = useState(false);
+  // Media-query gate lives outside React state: the server snapshot is
+  // false (never render WebGL during SSR) and the client snapshot decides
+  // once at hydration — same behavior as the old setEnabled-in-effect,
+  // without a cascading render.
+  const enabled = useSyncExternalStore(emptySubscribe, enabledSnapshot, () => false);
   const [active, setActive] = useState(true);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
-    if (prefersReducedMotion || !isDesktop) return;
-
-    setEnabled(true);
+    if (!enabled) return;
 
     let trigger: ScrollTrigger | undefined;
     let attempts = 0;
@@ -141,7 +146,7 @@ export default function PersistentScene() {
       cancelAnimationFrame(frameId);
       trigger?.kill();
     };
-  }, []);
+  }, [enabled]);
 
   if (!enabled) return null;
 

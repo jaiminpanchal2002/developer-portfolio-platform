@@ -15,26 +15,29 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { getInquiries, markInquiryAsRead, deleteInquiry } from "@/services/contactService";
+import { ContactInquiry } from "@/types";
 
 export default function InquiriesPage() {
-  const [inquiries, setInquiries] = useState<any[]>([]);
+  const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "counselling" | "messages">("all");
 
-  const fetchInquiries = async () => {
-    setLoading(true);
-    try {
-      const data = await getInquiries();
-      setInquiries(data);
-    } catch (error) {
-      console.error("Error fetching inquiries:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchInquiries();
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await getInquiries();
+        if (!cancelled) setInquiries(data);
+      } catch (error) {
+        console.error("Error fetching inquiries:", error);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleMarkAsRead = async (id: number) => {
@@ -211,7 +214,7 @@ export default function InquiriesPage() {
 
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-slate-500">
-                    Received: {new Date(inq.createdAt).toLocaleString()}
+                    Received: {inq.createdAt ? new Date(inq.createdAt).toLocaleString() : "—"}
                   </span>
                 </div>
               </div>

@@ -12,7 +12,7 @@ export default function ProjectsPage() {
   const [showModal, setShowModal] = useState(false);
 
   const [selectedProject, setSelectedProject] =
-    useState<any>(null);
+    useState<Project | null>(null);
 
   const [showEditModal, setShowEditModal] =
     useState(false);
@@ -27,10 +27,21 @@ export default function ProjectsPage() {
   };
 
   useEffect(() => {
-    fetchProjects();
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getProjects();
+        if (!cancelled) setProjects(data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const handleEdit = (project: any) => {
+  const handleEdit = (project: Project) => {
     setSelectedProject(project);
     setShowEditModal(true);
   };

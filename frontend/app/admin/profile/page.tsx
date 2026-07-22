@@ -8,6 +8,7 @@ import {
   updateProfile,
 } from "@/services/profileService";
 
+import Image from "next/image";
 import { uploadImage } from "@/services/uploadService";
 import { getImageUrl } from "@/lib/api";
 import { Profile } from "@/types";
@@ -34,10 +35,6 @@ export default function ProfilePage() {
       profileImageUrl: "",
     });
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const fetchProfile = async () => {
     try {
       const data = await getProfile();
@@ -55,6 +52,12 @@ export default function ProfilePage() {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      await fetchProfile();
+    })();
+  }, []);
 
   const handleChange = (
     e:
@@ -233,9 +236,12 @@ export default function ProfilePage() {
           />
 
           {preview && (
-            <img
+            <Image
               src={preview}
               alt="Profile"
+              width={160}
+              height={160}
+              unoptimized
               className="w-40 h-40 rounded-full object-cover border"
             />
           )}

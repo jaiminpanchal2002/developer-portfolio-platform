@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import Lenis from "lenis";
 import gsap from "gsap";
@@ -19,14 +19,18 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+const emptySubscribe = () => () => {};
+const isTouchSnapshot = () =>
+  "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const cursorRef = useRef<HTMLDivElement>(null);
   const followerRef = useRef<HTMLDivElement>(null);
-  const [isTouch, setIsTouch] = useState(false);
+  // Server snapshot assumes touch so the custom cursor never flashes
+  // during SSR/hydration; the client snapshot corrects it immediately.
+  const isTouch = useSyncExternalStore(emptySubscribe, isTouchSnapshot, () => true);
 
   useEffect(() => {
-    setIsTouch("ontouchstart" in window || navigator.maxTouchPoints > 0);
-
     // Initialize Lenis smooth scroll
     const lenis = new Lenis({
       duration: 1.2,

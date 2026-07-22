@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { updateCertificate } from "@/services/certificateService";
+import { Certificate } from "@/types";
 
 interface Props {
-  certificate: any;
+  certificate: Certificate;
   onClose: () => void;
   onSuccess: () => void;
 }

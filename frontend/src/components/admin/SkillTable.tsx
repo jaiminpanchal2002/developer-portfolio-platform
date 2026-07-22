@@ -2,10 +2,11 @@
 
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteSkill } from "@/services/skillService";
+import { Skill } from "@/types";
 
 interface Props {
-  skills: any[];
-  onEdit: (skill: any) => void;
+  skills: Skill[];
+  onEdit: (skill: Skill) => void;
 }
 
 export default function SkillTable({
@@ -44,7 +45,7 @@ export default function SkillTable({
         </thead>
 
         <tbody>
-          {skills.map((skill: any) => (
+          {skills.map((skill) => (
             <tr key={skill.id}>
               <td className="p-6">{skill.name}</td>
 

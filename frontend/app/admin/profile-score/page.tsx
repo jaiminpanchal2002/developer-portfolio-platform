@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { getDashboardStats } from "@/services/dashboardService";
+import { Profile } from "@/types";
 import { getProfile } from "@/services/profileService";
 import { getResumeDetails } from "@/services/resumeService";
 import {
-  Award,
   CheckCircle,
   AlertCircle,
   FileText,
@@ -29,15 +29,15 @@ interface Stats {
   atsScore: number;
 }
 
+interface ResumeInfo {
+  hasResume?: boolean;
+}
+
 export default function ProfileScorePage() {
   const [stats, setStats] = useState<Stats | null>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [resume, setResume] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [resume, setResume] = useState<ResumeInfo | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const loadData = async () => {
     try {
@@ -63,6 +63,12 @@ export default function ProfileScorePage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      await loadData();
+    })();
+  }, []);
 
   if (loading || !stats) {
     return (
@@ -221,7 +227,6 @@ export default function ProfileScorePage() {
 
           <div className="space-y-4">
             {checklist.map((item) => {
-              const Icon = item.icon;
               return (
                 <div
                   key={item.id}

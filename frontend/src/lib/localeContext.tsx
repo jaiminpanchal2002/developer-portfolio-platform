@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useSyncExternalStore } from "react";
 
 // Dictionary map for support locales
 export type Locale = "en" | "hi" | "gu" | "de" | "es" | "fr";
@@ -222,27 +222,25 @@ const translations: Record<Locale, Record<string, string>> = {
   }
 };
 
-export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [locale, setLocaleState] = useState<Locale>("en");
+const emptySubscribe = () => () => {};
 
-  useEffect(() => {
-    const saved = localStorage.getItem("portfolio_locale") as Locale;
-    if (saved && translations[saved]) {
-      setLocaleState(saved);
-    } else if (typeof window !== "undefined" && window.navigator) {
-      const lang = window.navigator.language.split("-")[0] as Locale;
-      if (translations[lang]) {
-        setLocaleState(lang);
-      }
-    }
-  }, []);
+function readClientLocale(): Locale {
+  const saved = localStorage.getItem("portfolio_locale") as Locale;
+  if (saved && translations[saved]) return saved;
+  const lang = window.navigator.language.split("-")[0] as Locale;
+  if (translations[lang]) return lang;
+  return "en";
+}
+
+export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // The locale is external state (localStorage / navigator.language) and
+  // changing it triggers a full reload, so it can be read via
+  // useSyncExternalStore instead of syncing it into React state.
+  const locale = useSyncExternalStore(emptySubscribe, readClientLocale, () => "en" as Locale);
 
   const setLocale = (newLocale: Locale) => {
-    setLocaleState(newLocale);
     localStorage.setItem("portfolio_locale", newLocale);
-    if (typeof window !== "undefined") {
-      window.location.reload();
-    }
+    window.location.reload();
   };
 
   const t = (key: string, fallback?: string): string => {

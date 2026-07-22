@@ -2,10 +2,11 @@
 
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteEducation } from "@/services/educationService";
+import { Education } from "@/types";
 
 interface Props {
-  educations: any[];
-  onEdit: (education: any) => void;
+  educations: Education[];
+  onEdit: (education: Education) => void;
 }
 
 export default function EducationTable({

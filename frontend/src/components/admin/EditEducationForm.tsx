@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { updateEducation } from "@/services/educationService";
+import { Education } from "@/types";
 
 interface Props {
-  education: any;
+  education: Education;
   onClose: () => void;
   onSuccess: () => void;
 }

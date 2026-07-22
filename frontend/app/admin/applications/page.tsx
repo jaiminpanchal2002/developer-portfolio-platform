@@ -10,13 +10,11 @@ import {
 import Swal from "sweetalert2";
 import {
   Plus,
-  Briefcase,
   Calendar,
   FileText,
   Trash2,
   Edit2,
   ExternalLink,
-  ChevronRight,
 } from "lucide-react";
 
 interface JobApplication {
@@ -48,10 +46,6 @@ export default function ApplicationsPage() {
     notes: "",
   });
 
-  useEffect(() => {
-    loadApplications();
-  }, []);
-
   const loadApplications = async () => {
     try {
       setLoading(true);
@@ -71,6 +65,12 @@ export default function ApplicationsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      await loadApplications();
+    })();
+  }, []);
 
   const handleOpenAdd = () => {
     setCurrentApp(null);
@@ -196,23 +196,6 @@ export default function ApplicationsPage() {
     acc[status] = applications.filter((app) => app.status === status);
     return acc;
   }, {} as Record<string, JobApplication[]>);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Applied":
-        return "bg-blue-500/10 text-blue-400 border-blue-500/20";
-      case "Interview":
-        return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
-      case "Rejected":
-        return "bg-red-500/10 text-red-400 border-red-500/20";
-      case "Offer":
-        return "bg-green-500/10 text-green-400 border-green-500/20";
-      case "Accepted":
-        return "bg-cyan-500/10 text-cyan-400 border-cyan-500/20";
-      default:
-        return "bg-slate-500/10 text-slate-400 border-slate-500/20";
-    }
-  };
 
   return (
     <div className="space-y-8">

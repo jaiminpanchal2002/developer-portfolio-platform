@@ -1,5 +1,3 @@
-import { notFound } from "next/navigation";
-
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
@@ -26,8 +24,22 @@ import { getCertificates } from "@/services/certificateService";
 // this route renders per-request instead of being statically generated.
 export const dynamic = "force-dynamic";
 
+// Static fallback so the portfolio degrades gracefully (instead of 404ing)
+// when the backend is unreachable — a portfolio must never be a dead page.
+const FALLBACK_PROFILE = {
+  id: 0,
+  fullName: "Jaimin Panchal",
+  headline: "Full Stack AI Developer",
+  about:
+    "Full Stack AI Developer specializing in production-ready, scalable SaaS and AI systems using Spring Boot, Node.js, Python, and cloud architectures.",
+  email: "jaiminpanchal939@gmail.com",
+  location: "India",
+  githubUrl: "",
+  linkedinUrl: "",
+};
+
 export default async function Home() {
-  const [profile, projects, skills, experiences, educations, certificates] =
+  const [fetchedProfile, projects, skills, experiences, educations, certificates] =
     await Promise.all([
       getProfile().catch(() => null),
       getProjects().catch(() => []),
@@ -37,9 +49,7 @@ export default async function Home() {
       getCertificates().catch(() => []),
     ]);
 
-  if (!profile) {
-    notFound();
-  }
+  const profile = fetchedProfile ?? FALLBACK_PROFILE;
 
   const jsonLd = {
     "@context": "https://schema.org",

@@ -14,7 +14,7 @@ export default function CertificatesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCertificate, setSelectedCertificate] =
-    useState<any>(null);
+    useState<Certificate | null>(null);
 
   const fetchCertificates = async () => {
     try {
@@ -26,10 +26,21 @@ export default function CertificatesPage() {
   };
 
   useEffect(() => {
-    fetchCertificates();
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getCertificates();
+        if (!cancelled) setCertificates(data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const handleEdit = (certificate: any) => {
+  const handleEdit = (certificate: Certificate) => {
     setSelectedCertificate(certificate);
     setShowEditModal(true);
   };

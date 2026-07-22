@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { updateProject } from "@/services/projectService";
+import { Project } from "@/types";
 
 interface Props {
-  project: any;
+  project: Project;
   onClose: () => void;
   onSuccess: () => void;
 }

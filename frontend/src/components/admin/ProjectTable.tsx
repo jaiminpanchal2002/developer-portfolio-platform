@@ -2,10 +2,11 @@
 
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteProject } from "@/services/projectService";
+import { Project } from "@/types";
 
 interface Props {
-  projects: any[];
-  onEdit: (project: any) => void;
+  projects: Project[];
+  onEdit: (project: Project) => void;
 }
 
 export default function ProjectTable({
@@ -44,7 +45,7 @@ export default function ProjectTable({
         </thead>
 
         <tbody>
-          {projects.map((project: any) => (
+          {projects.map((project) => (
             <tr key={project.id}>
               <td className="p-6">{project.title}</td>
 

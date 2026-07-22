@@ -13,7 +13,7 @@ export default function ExperiencePage() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedExperience, setSelectedExperience] = useState<any>(null);
+  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
 
   const fetchExperiences = async () => {
     try {
@@ -25,10 +25,21 @@ export default function ExperiencePage() {
   };
 
   useEffect(() => {
-    fetchExperiences();
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getExperiences();
+        if (!cancelled) setExperiences(data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const handleEdit = (experience: any) => {
+  const handleEdit = (experience: Experience) => {
     setSelectedExperience(experience);
     setShowEditModal(true);
   };

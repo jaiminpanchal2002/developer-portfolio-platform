@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import SkillTable from "@/components/admin/SkillTable";
 import SkillForm from "@/components/admin/SkillForm";
@@ -13,22 +13,33 @@ export default function SkillsPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedSkill, setSelectedSkill] = useState<any>(null);
+  const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
 
-  const fetchSkills = async () => {
+  const fetchSkills = useCallback(async () => {
     try {
       const data = await getSkills();
       setSkills(data);
     } catch (error) {
       console.error(error);
     }
-  };
-
-  useEffect(() => {
-    fetchSkills();
   }, []);
 
-  const handleEdit = (skill: any) => {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getSkills();
+        if (!cancelled) setSkills(data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleEdit = (skill: Skill) => {
     setSelectedSkill(skill);
     setShowEditModal(true);
   };

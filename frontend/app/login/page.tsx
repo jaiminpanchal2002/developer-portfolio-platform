@@ -45,9 +45,11 @@ export default function LoginPage() {
           confirmButtonColor: "#06b6d4",
         });
         setIsResetMode(false);
-      } catch (error: any) {
+      } catch (error) {
         console.error(error);
-        const errMsg = error.response?.data?.message || "Could not complete the password reset request.";
+        const errMsg =
+          (error as { response?: { data?: { message?: string } } }).response
+            ?.data?.message || "Could not complete the password reset request.";
         Swal.fire({
           title: "Reset Request Failed",
           text: errMsg,

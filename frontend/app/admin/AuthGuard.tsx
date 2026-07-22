@@ -1,7 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
+
+const emptySubscribe = () => () => {};
+
+function readToken(): string | null {
+  const token = localStorage.getItem("token");
+  if (!token || token === "undefined" || token === "null") return null;
+  return token;
+}
 
 export default function AuthGuard({
   children,
@@ -9,20 +17,18 @@ export default function AuthGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [authorized, setAuthorized] = useState(false);
+  // Server snapshot is null so nothing protected ever renders during SSR;
+  // the client snapshot re-evaluates after hydration.
+  const token = useSyncExternalStore(emptySubscribe, readToken, () => null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token || token === "undefined" || token === "null") {
+    if (!token) {
       localStorage.removeItem("token");
       router.replace("/login");
-    } else {
-      setAuthorized(true);
     }
-  }, [router]);
+  }, [token, router]);
 
-  if (!authorized) {
+  if (!token) {
     return null;
   }
 

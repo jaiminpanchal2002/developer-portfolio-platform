@@ -16,20 +16,32 @@ import {
   Lightbulb,
   Trash2,
   FileCheck,
-  ChevronDown,
 } from "lucide-react";
+
+interface ResumeAnalysis {
+  score?: number;
+  atsScore?: number;
+  isConfirmed?: boolean;
+  missingKeywords?: string[];
+  recommendation?: string;
+  strengths?: string[];
+  weaknesses?: string[];
+}
+
+interface ResumeDetails {
+  hasResume?: boolean;
+  resumeText?: string;
+  fileName?: string;
+  fileUrl?: string;
+}
 
 export default function ResumePage() {
   const [resumeText, setResumeText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [resumeDetails, setResumeDetails] = useState<any>(null);
+  const [result, setResult] = useState<ResumeAnalysis | null>(null);
+  const [resumeDetails, setResumeDetails] = useState<ResumeDetails | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    loadResumeDetails();
-  }, []);
 
   const loadResumeDetails = async () => {
     try {
@@ -44,6 +56,12 @@ export default function ResumePage() {
       console.error("Failed to load resume details:", error);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      await loadResumeDetails();
+    })();
+  }, []);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -332,7 +350,7 @@ export default function ResumePage() {
                           strokeWidth="6"
                           stroke="#06b6d4"
                           strokeDasharray={2 * Math.PI * 32}
-                          strokeDashoffset={2 * Math.PI * 32 * (1 - result.score / 100)}
+                          strokeDashoffset={2 * Math.PI * 32 * (1 - (result.score ?? 0) / 100)}
                           strokeLinecap="round"
                           fill="transparent"
                         />
@@ -357,7 +375,7 @@ export default function ResumePage() {
                           strokeWidth="6"
                           stroke="#10b981"
                           strokeDasharray={2 * Math.PI * 32}
-                          strokeDashoffset={2 * Math.PI * 32 * (1 - result.atsScore / 100)}
+                          strokeDashoffset={2 * Math.PI * 32 * (1 - (result.atsScore ?? 0) / 100)}
                           strokeLinecap="round"
                           fill="transparent"
                         />
@@ -406,7 +424,7 @@ export default function ResumePage() {
               </div>
 
               {/* Missing Keywords */}
-              {result.missingKeywords?.length > 0 && (
+              {(result.missingKeywords?.length ?? 0) > 0 && (
                 <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
                   <h3 className="font-bold text-xl mb-4 text-yellow-400 flex items-center gap-2">
                     <AlertTriangle size={20} />
@@ -416,7 +434,7 @@ export default function ResumePage() {
                     Incorporate these terms into your resume to increase keyword match:
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {result.missingKeywords.map((item: string, i: number) => (
+                    {result.missingKeywords?.map((item: string, i: number) => (
                       <span
                         key={i}
                         className="px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 text-xs font-semibold"

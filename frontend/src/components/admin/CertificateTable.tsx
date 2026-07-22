@@ -2,10 +2,11 @@
 
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteCertificate } from "@/services/certificateService";
+import { Certificate } from "@/types";
 
 interface Props {
-  certificates: any[];
-  onEdit: (certificate: any) => void;
+  certificates: Certificate[];
+  onEdit: (certificate: Certificate) => void;
 }
 
 export default function CertificateTable({

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { updateExperience } from "@/services/experienceService";
+import { Experience } from "@/types";
 
 interface Props {
-  experience: any;
+  experience: Experience;
   onClose: () => void;
   onSuccess: () => void;
 }

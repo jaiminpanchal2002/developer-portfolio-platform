@@ -15,7 +15,7 @@ export default function EducationPage() {
   const [showEditModal, setShowEditModal] = useState(false);
 
   const [selectedEducation, setSelectedEducation] =
-    useState<any>(null);
+    useState<Education | null>(null);
 
   const fetchEducations = async () => {
     try {
@@ -27,10 +27,21 @@ export default function EducationPage() {
   };
 
   useEffect(() => {
-    fetchEducations();
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getEducations();
+        if (!cancelled) setEducations(data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const handleEdit = (education: any) => {
+  const handleEdit = (education: Education) => {
     setSelectedEducation(education);
     setShowEditModal(true);
   };

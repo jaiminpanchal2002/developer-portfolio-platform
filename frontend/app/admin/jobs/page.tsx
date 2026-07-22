@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getJobs } from "@/services/jobService";
 import {
   generateCoverLetter,
@@ -19,12 +19,12 @@ import {
   ChevronDown,
   ChevronUp,
   ExternalLink,
-  Sparkles,
   Languages,
 } from "lucide-react";
+import { JobMatch } from "@/types/job";
 
 export default function JobsPage() {
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<JobMatch[]>([]);
   const [loading, setLoading] = useState(false);
   const [country, setCountry] = useState("in");
   const [keyword, setKeyword] = useState("Developer");
@@ -40,10 +40,6 @@ export default function JobsPage() {
   const [emailLang, setEmailLang] = useState<Record<number, string>>({});
 
   const [expandedRoadmap, setExpandedRoadmap] = useState<number | null>(null);
-
-  useEffect(() => {
-    loadJobs();
-  }, [country]);
 
   const loadJobs = async () => {
     setLoading(true);
@@ -65,12 +61,42 @@ export default function JobsPage() {
     }
   };
 
+  // Refetch when the country changes, but read keyword/remote through a ref
+  // so typing a keyword doesn't refetch on every keystroke — searching by
+  // keyword stays an explicit action via the search button.
+  const searchRef = useRef({ keyword, remote });
+  useEffect(() => {
+    searchRef.current = { keyword, remote };
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await getJobs(
+          country,
+          searchRef.current.keyword,
+          searchRef.current.remote
+        );
+        if (!cancelled) setJobs(data);
+      } catch (error) {
+        console.error("Failed to load jobs:", error);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [country]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     loadJobs();
   };
 
-  const handleCoverLetter = async (job: any, index: number) => {
+  const handleCoverLetter = async (job: JobMatch, index: number) => {
     setGeneratingLetter(true);
     setSelectedCoverLetter(index);
     setCoverLetter("");
@@ -88,7 +114,7 @@ export default function JobsPage() {
     }
   };
 
-  const handleRecruiterEmail = async (job: any, index: number) => {
+  const handleRecruiterEmail = async (job: JobMatch, index: number) => {
     setGeneratingEmail(true);
     setSelectedEmail(index);
     setEmail("");
@@ -242,7 +268,7 @@ export default function JobsPage() {
                 {/* Match Score Display */}
                 <div className="flex flex-col items-end shrink-0 bg-slate-950/50 border border-slate-800/80 p-4 rounded-2xl text-right">
                   <span className="text-xs text-slate-400 font-semibold uppercase">Profile Match</span>
-                  <span className={`text-3xl font-extrabold mt-1 ${getScoreColor(job.matchScore)}`}>
+                  <span className={`text-3xl font-extrabold mt-1 ${getScoreColor(job.matchScore ?? 0)}`}>
                     {job.matchScore}%
                   </span>
                 </div>
@@ -257,7 +283,7 @@ export default function JobsPage() {
               <div className="mt-5">
                 <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                   <div
-                    className={`h-2 rounded-full ${getProgressColor(job.matchScore)}`}
+                    className={`h-2 rounded-full ${getProgressColor(job.matchScore ?? 0)}`}
                     style={{ width: `${job.matchScore}%` }}
                   />
                 </div>
@@ -276,9 +302,9 @@ export default function JobsPage() {
                     <CheckCircle size={16} />
                     Matched Stack
                   </h4>
-                  {job.matchedSkills?.length > 0 ? (
+                  {(job.matchedSkills?.length ?? 0) > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                      {job.matchedSkills.map((s: string, i: number) => (
+                      {job.matchedSkills?.map((s: string, i: number) => (
                         <span key={i} className="text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full font-semibold">
                           {s}
                         </span>
@@ -295,9 +321,9 @@ export default function JobsPage() {
                     <AlertTriangle size={16} />
                     Missing Skills
                   </h4>
-                  {job.missingSkills?.length > 0 ? (
+                  {(job.missingSkills?.length ?? 0) > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                      {job.missingSkills.map((s: string, i: number) => (
+                      {job.missingSkills?.map((s: string, i: number) => (
                         <span key={i} className="text-xs px-2.5 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full font-semibold">
                           {s}
                         </span>
@@ -310,7 +336,7 @@ export default function JobsPage() {
               </div>
 
               {/* Learning Roadmap Collapsible */}
-              {job.missingSkills?.length > 0 && job.roadmap && (
+              {(job.missingSkills?.length ?? 0) > 0 && job.roadmap && (
                 <div className="mt-5 border-t border-slate-850 pt-4">
                   <button
                     onClick={() => setExpandedRoadmap(expandedRoadmap === index ? null : index)}

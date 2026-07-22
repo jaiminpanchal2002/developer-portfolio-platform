@@ -11,7 +11,6 @@ import {
   Briefcase,
   GraduationCap,
   Award,
-  Sparkles,
   LogOut,
   FileText,
   MessageSquare,

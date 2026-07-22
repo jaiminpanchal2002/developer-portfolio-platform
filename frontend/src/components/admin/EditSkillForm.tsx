@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { updateSkill } from "@/services/skillService";
+import { Skill } from "@/types";
 
 interface Props {
-  skill: any;
+  skill: Skill;
   onClose: () => void;
   onSuccess: () => void;
 }

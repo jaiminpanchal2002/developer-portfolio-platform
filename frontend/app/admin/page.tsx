@@ -8,7 +8,6 @@ import {
   Award,
   GraduationCap,
   FileText,
-  MessageSquare,
   ClipboardList,
   Gauge,
 } from "lucide-react";
@@ -40,7 +39,18 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
-    loadStats();
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getDashboardStats();
+        if (!cancelled) setStats(data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const loadStats = async () => {

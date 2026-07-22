@@ -18,7 +18,7 @@
   --noir-bg-elevated: #131315;
   --noir-fg: #f3f1ed;
   --noir-fg-muted: #a3a09a;
-  --noir-fg-subtle: #67645e;
+  --noir-fg-subtle: #83807a; /* ~5.2:1 against --bg-color, passes WCAG AA for normal text */
   --noir-accent: #c9a876;
   --noir-accent-soft: rgba(201, 168, 118, 0.14);
   --noir-border: rgba(243, 241, 237, 0.08);

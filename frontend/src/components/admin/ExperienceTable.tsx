@@ -2,10 +2,11 @@
 
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteExperience } from "@/services/experienceService";
+import { Experience } from "@/types";
 
 interface Props {
-  experiences: any[];
-  onEdit: (experience: any) => void;
+  experiences: Experience[];
+  onEdit: (experience: Experience) => void;
 }
 
 export default function ExperienceTable({

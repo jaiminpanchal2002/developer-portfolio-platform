@@ -50,9 +50,23 @@ export interface Education {
   grade: string;
 }
 
+export interface ContactInquiry {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  scheduleMeeting?: boolean;
+  meetingDate?: string;
+  meetingTime?: string;
+  meetingLink?: string;
+  createdAt?: string;
+  isRead?: boolean;
+}
+
 export interface Certificate {
   id: number;
   title: string;
   issuer: string;
+  issueDate?: string;
   certificateUrl: string;
 }
