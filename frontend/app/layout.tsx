@@ -21,6 +21,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://jaiminpanchal.com"
+  ),
   title: "Jaimin Panchal | Full Stack AI Developer Portfolio",
   description: "Full Stack AI Developer specializing in production-ready, scalable SaaS and AI systems using Spring Boot, Node.js, Python, and cloud architectures.",
   keywords: ["Jaimin Panchal", "Full Stack AI Developer", "Software Engineer", "React Developer", "Spring Boot Developer", "AI Developer", "LLM Integration", "Portfolio"],

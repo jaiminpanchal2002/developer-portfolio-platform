@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "../lib/api";
 import Swal from "sweetalert2";
 import {
@@ -42,9 +42,35 @@ export default function Contact({ profile }: ContactProps) {
     meetingTime: "",
   });
   const [sending, setSending] = useState(false);
+  // Spam protection: a honeypot field bots auto-fill plus a minimum
+  // time-to-submit — humans don't complete a contact form in under 2.5s.
+  const [honeypot, setHoneypot] = useState("");
+  const mountedAtRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (mountedAtRef.current === null) mountedAtRef.current = Date.now();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (honeypot || Date.now() - (mountedAtRef.current ?? Date.now()) < 2500) {
+      // Pretend success so bots learn nothing.
+      setFormData({ name: "", email: "", message: "", scheduleMeeting: false, meetingDate: "", meetingTime: "" });
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      Swal.fire({
+        title: "Validation Error",
+        text: "Please enter a valid email address.",
+        icon: "warning",
+        background: "#0f172a",
+        color: "#ffffff",
+        confirmButtonColor: "#f59e0b",
+      });
+      return;
+    }
+
     if (!formData.name || !formData.email || !formData.message) {
       Swal.fire({
         title: "Validation Error",
@@ -235,6 +261,21 @@ export default function Contact({ profile }: ContactProps) {
 
           {/* RIGHT COLUMN: CONTACT FORM */}
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Honeypot — visually hidden and skipped by keyboard/screen
+                readers; only bots that blindly fill every field hit it. */}
+            <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-px w-px overflow-hidden">
+              <label htmlFor="contact-website">Website</label>
+              <input
+                id="contact-website"
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+              />
+            </div>
+
             <div>
               <label htmlFor="contact-name" className="block text-sm font-semibold mb-1" style={{ color: "var(--noir-fg-muted)" }}>
                 {t("contact.form.name", "Your Name")}

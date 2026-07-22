@@ -11,7 +11,12 @@ import Footer from "@/components/Footer";
 import AtsMatcher from "@/components/AtsMatcher";
 import SectionWrapper from "@/components/SectionWrapper";
 
+import GitHubShowcase from "@/components/GitHubShowcase";
 import { getProfile } from "@/services/profileService";
+import {
+  extractGitHubUsername,
+  getGitHubShowcase,
+} from "@/services/githubService";
 import { getProjects } from "@/services/projectService";
 import { getSkills } from "@/services/skillService";
 import { getExperiences } from "@/services/experienceService";
@@ -50,6 +55,11 @@ export default async function Home() {
     ]);
 
   const profile = fetchedProfile ?? FALLBACK_PROFILE;
+
+  const githubUsername = extractGitHubUsername(profile.githubUrl);
+  const github = githubUsername
+    ? await getGitHubShowcase(githubUsername).catch(() => null)
+    : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -91,6 +101,12 @@ export default async function Home() {
         <SectionWrapper id="projects">
           <Projects projects={projects} />
         </SectionWrapper>
+
+        {github && (
+          <SectionWrapper id="github">
+            <GitHubShowcase data={github} />
+          </SectionWrapper>
+        )}
 
         <SectionWrapper id="experience">
           <Experience experiences={experiences} />
