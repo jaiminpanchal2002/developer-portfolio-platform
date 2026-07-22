@@ -35,6 +35,7 @@ public class ProjectService {
                 .learnings(request.getLearnings())
                 .metrics(request.getMetrics())
                 .displayOrder(request.getDisplayOrder())
+                .published(request.getPublished() == null ? Boolean.TRUE : request.getPublished())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -47,6 +48,13 @@ public class ProjectService {
         // unordered projects trail the manually curated ones.
         return projectRepository.findAll(Sort.by(Sort.Direction.ASC, "displayOrder"));
 
+    }
+
+    /** Public view: drafts hidden; legacy NULL published counts as published. */
+    public List<Project> getPublishedProjects() {
+        return getAllProjects().stream()
+                .filter(p -> !Boolean.FALSE.equals(p.getPublished()))
+                .toList();
     }
 
 public Project getProjectById(Long id) {
@@ -78,6 +86,9 @@ public Project getProjectById(Long id) {
     project.setLearnings(request.getLearnings());
     project.setMetrics(request.getMetrics());
     project.setDisplayOrder(request.getDisplayOrder());
+    if (request.getPublished() != null) {
+        project.setPublished(request.getPublished());
+    }
 
     return projectRepository.save(project);
 }

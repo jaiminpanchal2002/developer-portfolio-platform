@@ -32,6 +32,9 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         // Public static files endpoint
                         .requestMatchers("/uploads/**").permitAll()
+                        // Admin-only listing (drafts included) — must precede the
+                        // broader public /api/projects/** GET permit below.
+                        .requestMatchers("/api/projects/admin/**").authenticated()
                         // Public read-only endpoints for the portfolio views
                         .requestMatchers(HttpMethod.GET, "/api/profile", "/api/profile/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/projects", "/api/projects/**").permitAll()

@@ -66,6 +66,12 @@ public class Project {
     /** Manual ordering for the public showcase; lower comes first. */
     private Integer displayOrder;
 
+    /**
+     * Draft/publish state. NULL (legacy rows) is treated as published so
+     * existing content never disappears when this column is introduced.
+     */
+    private Boolean published;
+
     private LocalDateTime createdAt;
 }
  

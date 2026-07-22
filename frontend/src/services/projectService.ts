@@ -6,6 +6,12 @@ export const getProjects = async (): Promise<Project[]> => {
   return response.data;
 };
 
+/** Admin listing: includes drafts. Requires an authenticated session. */
+export const getAdminProjects = async (): Promise<Project[]> => {
+  const response = await api.get("/projects/admin/all");
+  return response.data;
+};
+
 export const getProjectById = async (id: number): Promise<Project> => {
   const response = await api.get(`/projects/${id}`);
   return response.data;

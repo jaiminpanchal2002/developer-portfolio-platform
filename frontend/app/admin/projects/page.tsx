@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ProjectTable from "@/components/admin/ProjectTable";
 import ProjectForm from "@/components/admin/ProjectForm";
 import EditProjectForm from "@/components/admin/EditProjectForm";
-import { getProjects } from "@/services/projectService";
+import { getAdminProjects } from "@/services/projectService";
 import { Project } from "@/types";
 
 export default function ProjectsPage() {
@@ -19,7 +19,7 @@ export default function ProjectsPage() {
 
   const fetchProjects = async () => {
     try {
-      const data = await getProjects();
+      const data = await getAdminProjects();
       setProjects(data);
     } catch (error) {
       console.error(error);
@@ -30,7 +30,7 @@ export default function ProjectsPage() {
     let cancelled = false;
     (async () => {
       try {
-        const data = await getProjects();
+        const data = await getAdminProjects();
         if (!cancelled) setProjects(data);
       } catch (error) {
         console.error(error);

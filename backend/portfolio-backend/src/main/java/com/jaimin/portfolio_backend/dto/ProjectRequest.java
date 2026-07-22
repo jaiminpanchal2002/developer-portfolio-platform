@@ -19,4 +19,5 @@ public class ProjectRequest {
     private String learnings;
     private String metrics;
     private Integer displayOrder;
+    private Boolean published;
 }

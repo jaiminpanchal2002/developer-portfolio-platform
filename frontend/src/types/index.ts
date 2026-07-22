@@ -39,6 +39,8 @@ export interface Project extends ProjectCaseStudy {
   technologies?: string;
   featured?: boolean;
   displayOrder?: number;
+  /** false = draft (hidden from the public showcase); undefined counts as published */
+  published?: boolean;
 }
 
 export interface Experience {

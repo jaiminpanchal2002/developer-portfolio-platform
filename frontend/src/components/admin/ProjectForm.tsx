@@ -19,6 +19,7 @@ export default function ProjectForm({
     githubUrl: "",
     liveUrl: "",
     featured: false,
+    published: true,
     problemStatement: "",
     solution: "",
     architecture: "",
@@ -118,6 +119,20 @@ export default function ProjectForm({
           onChange={handleCheckbox}
         />
         Featured Project
+      </label>
+
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={formData.published}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, published: e.target.checked }))
+          }
+        />
+        Published
+        <span className="text-xs text-slate-400">
+          (uncheck to save as a draft — hidden from the public site, previewable via its case-study link)
+        </span>
       </label>
 
       {/* Case-study narrative — optional, powers /projects/{id} */}

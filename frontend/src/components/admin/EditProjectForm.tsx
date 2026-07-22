@@ -30,6 +30,7 @@ export default function EditProjectForm({
     learnings: project.learnings || "",
     metrics: project.metrics || "",
     displayOrder: project.displayOrder,
+    published: project.published !== false,
   });
 
   const handleCaseStudyChange = (
@@ -146,6 +147,29 @@ export default function EditProjectForm({
           }
         />
         Featured
+      </label>
+
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={formData.published}
+          onChange={(e) =>
+            setFormData({ ...formData, published: e.target.checked })
+          }
+        />
+        Published
+        <span className="text-xs text-slate-400">
+          (uncheck to unpublish as a draft; preview stays available at{" "}
+          <a
+            href={`/projects/${project.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-dotted"
+          >
+            /projects/{project.id}
+          </a>
+          )
+        </span>
       </label>
 
       {/* Case-study narrative — optional, powers /projects/{id} */}

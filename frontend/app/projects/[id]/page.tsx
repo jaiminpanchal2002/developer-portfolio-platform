@@ -79,6 +79,21 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
           All projects
         </Link>
 
+        {/* Draft preview notice — the public showcase hides drafts, but the
+            direct link stays viewable so work-in-progress can be reviewed. */}
+        {project.published === false && (
+          <div
+            className="mt-8 rounded-2xl border px-5 py-3 text-sm font-semibold"
+            style={{
+              borderColor: "rgba(234,179,8,0.35)",
+              background: "rgba(234,179,8,0.08)",
+              color: "#eab308",
+            }}
+          >
+            Draft preview — this case study is not listed on the public site yet.
+          </div>
+        )}
+
         {/* Header */}
         <header className="mt-10">
           <p

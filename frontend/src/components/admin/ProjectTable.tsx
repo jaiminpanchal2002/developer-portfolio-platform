@@ -98,6 +98,7 @@ export default function ProjectTable({
             <th className="text-left p-6">Title</th>
             <th className="text-left p-6">Technology</th>
             <th className="text-left p-6">Featured</th>
+            <th className="text-left p-6">Status</th>
             <th className="text-left p-6">Actions</th>
           </tr>
         </thead>
@@ -138,6 +139,27 @@ export default function ProjectTable({
 
               <td className="p-6">
                 {project.featured ? "Yes" : "No"}
+              </td>
+
+              <td className="p-6">
+                {project.published === false ? (
+                  <span className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
+                    Draft
+                    <a
+                      href={`/projects/${project.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline decoration-dotted"
+                      title="Preview the draft case study"
+                    >
+                      Preview
+                    </a>
+                  </span>
+                ) : (
+                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+                    Published
+                  </span>
+                )}
               </td>
 
               <td className="p-6 flex gap-4">
