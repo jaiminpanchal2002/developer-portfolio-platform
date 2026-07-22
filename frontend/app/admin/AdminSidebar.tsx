@@ -31,6 +31,11 @@ const menu = [
     icon: Gauge,
   },
   {
+    name: "Media",
+    href: "/admin/media",
+    icon: FileText,
+  },
+  {
     name: "Profile",
     href: "/admin/profile",
     icon: User,
