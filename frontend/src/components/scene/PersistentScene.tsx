@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, ContactShadows } from "@react-three/drei";
+import { Float, ContactShadows, Line } from "@react-three/drei";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
@@ -104,44 +104,167 @@ function FloatingComposition() {
 
   return (
     <group ref={group} position={[REST_X, 0, 0]}>
-      <Float speed={1.4} rotationIntensity={0.5} floatIntensity={0.9}>
-        <mesh castShadow>
-          <icosahedronGeometry args={[1.35, 0]} />
-          <meshStandardMaterial
-            color="#c9a876"
-            roughness={0.35}
-            metalness={0.3}
-            emissive="#c9a876"
-            emissiveIntensity={0.5}
-          />
-        </mesh>
+      <Float speed={1.2} rotationIntensity={0.35} floatIntensity={0.7}>
+        <GitGraph />
       </Float>
+    </group>
+  );
+}
 
-      <Float speed={1.1} rotationIntensity={0.7} floatIntensity={1.3}>
-        <mesh position={[1.1, 0.9, -1.2]} rotation={[0.4, 0.2, 0]} castShadow>
-          <torusGeometry args={[0.55, 0.16, 32, 96]} />
-          <meshStandardMaterial
-            color="#4a463e"
-            roughness={0.5}
-            metalness={0.2}
-            emissive="#8a8270"
-            emissiveIntensity={0.35}
-          />
-        </mesh>
-      </Float>
+// ─── Git-graph composition ────────────────────────────────────────────
+// A stylized commit graph: a trunk of commits with two feature branches
+// that fold back toward the trunk as the visitor scrolls (progress → 1),
+// like branches merging. Reads as "software engineer" at a glance while
+// staying abstract enough to stay elegant.
 
-      <Float speed={1.8} rotationIntensity={0.4} floatIntensity={1.6}>
-        <mesh position={[-1, -0.6, -0.6]} castShadow>
-          <sphereGeometry args={[0.4, 48, 48]} />
-          <meshStandardMaterial
-            color="#f3f1ed"
-            roughness={0.25}
-            metalness={0.05}
-            emissive="#f3f1ed"
-            emissiveIntensity={0.4}
+const TRUNK: [number, number, number][] = [
+  [0, -1.5, 0],
+  [0, -0.5, 0],
+  [0, 0.5, 0],
+  [0, 1.5, 0],
+];
+
+const BRANCH_A: [number, number, number][] = [
+  [0.85, 0.35, 0.2],
+  [1.35, 1.05, 0.35],
+];
+
+const BRANCH_B: [number, number, number][] = [
+  [-0.8, -0.15, -0.25],
+  [-1.25, 0.55, -0.4],
+  [-1.5, 1.3, -0.5],
+];
+
+function edgePoints(points: [number, number, number][], from: [number, number, number]) {
+  const result: [number, number, number][][] = [];
+  let prev = from;
+  for (const p of points) {
+    result.push([prev, p]);
+    prev = p;
+  }
+  return result;
+}
+
+function CommitNode({
+  position,
+  main,
+  radius = 0.16,
+}: {
+  position: [number, number, number];
+  main?: boolean;
+  radius?: number;
+}) {
+  return (
+    <mesh position={position} castShadow>
+      <sphereGeometry args={[main ? radius * 1.35 : radius, 32, 32]} />
+      <meshStandardMaterial
+        color={main ? "#c9a876" : "#f3f1ed"}
+        roughness={0.3}
+        metalness={0.25}
+        emissive={main ? "#c9a876" : "#8a8270"}
+        emissiveIntensity={main ? 0.55 : 0.3}
+      />
+    </mesh>
+  );
+}
+
+function BranchLines({
+  segments,
+  color,
+}: {
+  segments: [number, number, number][][];
+  color: string;
+}) {
+  return (
+    <>
+      {segments.map((seg, i) => (
+        <Line
+          key={i}
+          points={seg}
+          color={color}
+          lineWidth={1.4}
+          transparent
+          opacity={0.55}
+        />
+      ))}
+    </>
+  );
+}
+
+function GitGraph() {
+  const branchA = useRef<THREE.Group>(null);
+  const branchB = useRef<THREE.Group>(null);
+
+  useFrame((_, delta) => {
+    // Branches fold toward the trunk as the scene settles — a merge.
+    const progress = heroSceneProgress.value;
+    const foldA = THREE.MathUtils.lerp(0, -0.9, progress);
+    const foldB = THREE.MathUtils.lerp(0, 0.9, progress);
+    if (branchA.current) {
+      branchA.current.rotation.z = THREE.MathUtils.damp(
+        branchA.current.rotation.z, foldA, 4, delta);
+    }
+    if (branchB.current) {
+      branchB.current.rotation.z = THREE.MathUtils.damp(
+        branchB.current.rotation.z, foldB, 4, delta);
+    }
+  });
+
+  return (
+    <group scale={1.05}>
+      {/* Trunk */}
+      <BranchLines segments={edgePoints(TRUNK.slice(1), TRUNK[0])} color="#c9a876" />
+      {TRUNK.map((p, i) => (
+        <CommitNode key={`t${i}`} position={p} main />
+      ))}
+
+      {/* Feature branch A — pivots at trunk commit 2 */}
+      <group ref={branchA} position={TRUNK[2]}>
+        <BranchLines
+          segments={edgePoints(
+            BRANCH_A.map((p) => [p[0], p[1] - TRUNK[2][1], p[2]] as [number, number, number]),
+            [0, 0, 0]
+          )}
+          color="#f3f1ed"
+        />
+        {BRANCH_A.map((p, i) => (
+          <CommitNode
+            key={`a${i}`}
+            position={[p[0], p[1] - TRUNK[2][1], p[2]]}
           />
-        </mesh>
-      </Float>
+        ))}
+      </group>
+
+      {/* Feature branch B — pivots at trunk commit 1 */}
+      <group ref={branchB} position={TRUNK[1]}>
+        <BranchLines
+          segments={edgePoints(
+            BRANCH_B.map((p) => [p[0], p[1] - TRUNK[1][1], p[2]] as [number, number, number]),
+            [0, 0, 0]
+          )}
+          color="#f3f1ed"
+        />
+        {BRANCH_B.map((p, i) => (
+          <CommitNode
+            key={`b${i}`}
+            position={[p[0], p[1] - TRUNK[1][1], p[2]]}
+          />
+        ))}
+      </group>
+
+      {/* Orbit ring hinting at CI/automation around the graph */}
+      <mesh rotation={[Math.PI / 2.15, 0.3, 0]}>
+        <torusGeometry args={[2.05, 0.012, 12, 128]} />
+        <meshStandardMaterial
+          color="#c9a876"
+          roughness={0.6}
+          metalness={0.1}
+          emissive="#c9a876"
+          emissiveIntensity={0.25}
+          transparent
+          opacity={0.4}
+        />
+      </mesh>
     </group>
   );
 }
