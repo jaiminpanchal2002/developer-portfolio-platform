@@ -9,6 +9,7 @@ import Certificates from "@/components/Certificates";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AtsMatcher from "@/components/AtsMatcher";
+import Testimonials from "@/components/Testimonials";
 import SectionWrapper from "@/components/SectionWrapper";
 
 import GitHubShowcase from "@/components/GitHubShowcase";
@@ -22,6 +23,7 @@ import { getSkills } from "@/services/skillService";
 import { getExperiences } from "@/services/experienceService";
 import { getEducations } from "@/services/educationService";
 import { getCertificates } from "@/services/certificateService";
+import { getTestimonials } from "@/services/testimonialService";
 
 // Content is managed live via the admin panel and framer-motion's client
 // hooks (e.g. useReducedMotion) don't survive Next's build-time static
@@ -44,15 +46,23 @@ const FALLBACK_PROFILE = {
 };
 
 export default async function Home() {
-  const [fetchedProfile, projects, skills, experiences, educations, certificates] =
-    await Promise.all([
-      getProfile().catch(() => null),
-      getProjects().catch(() => []),
-      getSkills().catch(() => []),
-      getExperiences().catch(() => []),
-      getEducations().catch(() => []),
-      getCertificates().catch(() => []),
-    ]);
+  const [
+    fetchedProfile,
+    projects,
+    skills,
+    experiences,
+    educations,
+    certificates,
+    testimonials,
+  ] = await Promise.all([
+    getProfile().catch(() => null),
+    getProjects().catch(() => []),
+    getSkills().catch(() => []),
+    getExperiences().catch(() => []),
+    getEducations().catch(() => []),
+    getCertificates().catch(() => []),
+    getTestimonials().catch(() => []),
+  ]);
 
   const profile = fetchedProfile ?? FALLBACK_PROFILE;
 
@@ -119,6 +129,12 @@ export default async function Home() {
         <SectionWrapper id="certificates">
           <Certificates certificates={certificates} />
         </SectionWrapper>
+
+        {testimonials.length > 0 && (
+          <SectionWrapper id="testimonials">
+            <Testimonials testimonials={testimonials} />
+          </SectionWrapper>
+        )}
 
         <SectionWrapper id="ats-matcher">
           <AtsMatcher />

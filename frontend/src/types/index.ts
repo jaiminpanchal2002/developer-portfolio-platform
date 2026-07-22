@@ -63,6 +63,18 @@ export interface Education {
   grade: string;
 }
 
+export interface Testimonial {
+  id: number;
+  authorName: string;
+  authorRole?: string;
+  quote: string;
+  avatarUrl?: string;
+  linkUrl?: string;
+  displayOrder?: number;
+  /** false = draft (hidden from the public site); undefined counts as published */
+  published?: boolean;
+}
+
 export interface ContactInquiry {
   id: number;
   name: string;

@@ -35,6 +35,7 @@ public class SecurityConfig {
                         // Admin-only listing (drafts included) — must precede the
                         // broader public /api/projects/** GET permit below.
                         .requestMatchers("/api/projects/admin/**").authenticated()
+                        .requestMatchers("/api/testimonials/admin/**").authenticated()
                         // Public read-only endpoints for the portfolio views
                         .requestMatchers(HttpMethod.GET, "/api/profile", "/api/profile/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/projects", "/api/projects/**").permitAll()
@@ -42,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/experiences", "/api/experiences/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/educations", "/api/educations/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/certificates", "/api/certificates/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/testimonials").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         // Any other requests (CRUD writing, dashboard stats, AI analysis) must be authenticated
                         .anyRequest().authenticated()

@@ -17,6 +17,7 @@ import {
   ClipboardList,
   Gauge,
   Mail,
+  Quote,
 } from "lucide-react";
 
 const menu = [
@@ -64,6 +65,11 @@ const menu = [
     name: "Certificates",
     href: "/admin/certificates",
     icon: Award,
+  },
+  {
+    name: "Testimonials",
+    href: "/admin/testimonials",
+    icon: Quote,
   },
   {
     name: "Resume AI",
