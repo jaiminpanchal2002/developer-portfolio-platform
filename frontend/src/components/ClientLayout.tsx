@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -27,6 +28,12 @@ const isTouchSnapshot = () =>
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const cursorRef = useRef<HTMLDivElement>(null);
   const followerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  // The persistent 3D scene belongs only to the home page — it's driven by
+  // the hero/skills scroll anchors, which don't exist on /login, /admin,
+  // /blog, or /projects. Rendering it elsewhere left it stuck at full
+  // opacity, painting over those pages' content.
+  const isHome = pathname === "/";
   // Server snapshot assumes touch so the custom cursor never flashes
   // during SSR/hydration; the client snapshot corrects it immediately.
   const isTouch = useSyncExternalStore(emptySubscribe, isTouchSnapshot, () => true);
@@ -148,12 +155,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
         {children}
 
-        {/* Mounted after children so its effect runs once Hero/About
-            already exist in the DOM; the wrapper's explicit z-index keeps
-            it visually behind everything regardless of mount order. */}
-        <SceneErrorBoundary>
-          <PersistentScene />
-        </SceneErrorBoundary>
+        {/* Home-only: mounted after children so its effect runs once the
+            Hero/Skills anchors exist in the DOM; the wrapper's explicit
+            z-index keeps it visually behind real content. */}
+        {isHome && (
+          <SceneErrorBoundary>
+            <PersistentScene />
+          </SceneErrorBoundary>
+        )}
 
         <AnalyticsBeacon />
       </ThemeProvider>

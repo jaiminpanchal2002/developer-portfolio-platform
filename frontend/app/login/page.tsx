@@ -138,7 +138,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
+    <div className="relative z-10 min-h-screen flex items-center justify-center bg-slate-950 px-4">
       {twoFactorStep ? (
         <form
           onSubmit={handleVerifyTwoFactor}
