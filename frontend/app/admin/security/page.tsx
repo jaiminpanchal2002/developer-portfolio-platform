@@ -56,7 +56,7 @@ export default function SecurityPage() {
       Swal.fire({
         title: "Could not start setup",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -78,7 +78,7 @@ export default function SecurityPage() {
         icon: "success",
         timer: 1600,
         showConfirmButton: false,
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
       });
     } catch (error) {
@@ -87,7 +87,7 @@ export default function SecurityPage() {
         title: "Invalid code",
         text: "That code didn't match. Make sure your device clock is correct and try the current code.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -105,7 +105,7 @@ export default function SecurityPage() {
       showCancelButton: true,
       confirmButtonText: "Disable",
       confirmButtonColor: "#ef4444",
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
     });
     if (!disableCode) return;
@@ -118,7 +118,7 @@ export default function SecurityPage() {
         icon: "success",
         timer: 1600,
         showConfirmButton: false,
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
       });
     } catch (error) {
@@ -126,7 +126,7 @@ export default function SecurityPage() {
       Swal.fire({
         title: "Invalid code",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -144,7 +144,7 @@ export default function SecurityPage() {
       position: "top-end",
       showConfirmButton: false,
       timer: 1500,
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
     });
   };
@@ -160,14 +160,14 @@ export default function SecurityPage() {
 
       {loading ? (
         <div className="flex h-40 items-center justify-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-cyan-500" />
+          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-[var(--noir-accent)]" />
         </div>
       ) : (
-        <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
+        <div className="rounded-3xl border border-[var(--noir-border)] bg-[var(--noir-bg-elevated)] p-6">
           <div className="flex items-start gap-4">
             <div
               className={`rounded-2xl p-3 ${
-                enabled ? "bg-emerald-500/10 text-emerald-400" : "bg-slate-800 text-slate-400"
+                enabled ? "bg-emerald-500/10 text-emerald-400" : "bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg-muted)]"
               }`}
             >
               {enabled ? <ShieldCheck size={24} /> : <ShieldOff size={24} />}
@@ -176,7 +176,7 @@ export default function SecurityPage() {
               <h2 className="text-lg font-semibold">
                 Authenticator app (TOTP)
               </h2>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-[var(--noir-fg-muted)]">
                 {enabled
                   ? "Enabled — you'll be asked for a code from your app at every login."
                   : "Add a second step at login using Google Authenticator, Authy, or 1Password."}
@@ -196,7 +196,7 @@ export default function SecurityPage() {
                     <button
                       onClick={beginSetup}
                       disabled={busy}
-                      className="rounded-xl bg-cyan-500 px-5 py-2.5 font-semibold text-black hover:bg-cyan-400 disabled:opacity-60"
+                      className="rounded-xl bg-[var(--noir-accent)] px-5 py-2.5 font-semibold text-[var(--noir-bg)] hover:bg-[var(--noir-accent)] disabled:opacity-60"
                     >
                       {busy ? "Preparing…" : "Enable 2FA"}
                     </button>
@@ -207,11 +207,11 @@ export default function SecurityPage() {
           </div>
 
           {phase === "setup" && (
-            <div className="mt-6 border-t border-slate-800 pt-6">
-              <ol className="space-y-5 text-sm text-slate-300">
+            <div className="mt-6 border-t border-[var(--noir-border)] pt-6">
+              <ol className="space-y-5 text-sm text-[var(--noir-fg)]">
                 <li>
                   <p className="font-semibold">1. Scan this QR code</p>
-                  <p className="mt-1 text-slate-400">
+                  <p className="mt-1 text-[var(--noir-fg-muted)]">
                     Open your authenticator app and scan, or enter the key
                     manually.
                   </p>
@@ -228,12 +228,12 @@ export default function SecurityPage() {
                     </div>
                   )}
                   <div className="mt-3 flex items-center gap-2">
-                    <code className="rounded-lg bg-slate-950 px-3 py-2 text-xs tracking-widest text-cyan-300 break-all">
+                    <code className="rounded-lg bg-[var(--noir-bg)] px-3 py-2 text-xs tracking-widest text-[var(--noir-accent)] break-all">
                       {secret}
                     </code>
                     <button
                       onClick={copySecret}
-                      className="rounded-lg bg-slate-800 p-2 text-slate-300 hover:bg-slate-700"
+                      className="rounded-lg bg-[var(--noir-bg-surface-2)] p-2 text-[var(--noir-fg)] hover:bg-[var(--noir-bg-surface-3)]"
                       aria-label="Copy secret"
                     >
                       <Copy size={14} />
@@ -252,12 +252,12 @@ export default function SecurityPage() {
                       onChange={(e) =>
                         setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                       }
-                      className="w-40 rounded-xl border border-slate-700 bg-slate-800 p-3 text-center text-xl tracking-[0.4em] text-white focus:border-cyan-500 focus:outline-none"
+                      className="w-40 rounded-xl border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3 text-center text-xl tracking-[0.4em] text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none"
                     />
                     <button
                       onClick={confirmEnable}
                       disabled={busy || code.length !== 6}
-                      className="rounded-xl bg-cyan-500 px-5 py-3 font-semibold text-black hover:bg-cyan-400 disabled:opacity-60"
+                      className="rounded-xl bg-[var(--noir-accent)] px-5 py-3 font-semibold text-[var(--noir-bg)] hover:bg-[var(--noir-accent)] disabled:opacity-60"
                     >
                       {busy ? "Verifying…" : "Confirm & enable"}
                     </button>
@@ -267,7 +267,7 @@ export default function SecurityPage() {
                         setSecret("");
                         setQrDataUrl("");
                       }}
-                      className="rounded-xl bg-slate-800 px-5 py-3 font-semibold text-slate-300"
+                      className="rounded-xl bg-[var(--noir-bg-surface-2)] px-5 py-3 font-semibold text-[var(--noir-fg)]"
                     >
                       Cancel
                     </button>

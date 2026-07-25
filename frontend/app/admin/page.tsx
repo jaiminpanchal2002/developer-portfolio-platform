@@ -123,7 +123,7 @@ export default function AdminDashboard() {
   ];
 
   const COLORS = [
-    "#06b6d4",
+    "var(--noir-accent)",
     "#8b5cf6",
     "#22c55e",
     "#f59e0b",
@@ -132,21 +132,21 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-8 text-white">
+    <div className="space-y-8 text-[var(--noir-fg)]">
       {/* Top Welcome Title */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[var(--noir-border)]">
         <div>
-          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-[var(--noir-accent)] via-blue-500 to-indigo-500 bg-clip-text text-transparent tracking-tight">
             Dashboard
           </h1>
-          <p className="text-slate-400 mt-2 text-sm font-semibold">
+          <p className="text-[var(--noir-fg-muted)] mt-2 text-sm font-semibold">
             Portfolio Analytics & Recruiting Control Hub
           </p>
         </div>
         <div className="flex gap-3">
           <button
             onClick={loadStats}
-            className="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-xl text-xs font-bold transition-all cursor-pointer"
+            className="px-4 py-2 bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] hover:border-[var(--noir-accent)]/50 rounded-xl text-xs font-bold transition-all cursor-pointer"
           >
             Refresh Stats
           </button>
@@ -161,25 +161,25 @@ export default function AdminDashboard() {
           return (
             <div
               key={item.title}
-              className="group relative rounded-3xl bg-slate-900/50 border border-slate-850 p-6 flex flex-col justify-between hover:border-cyan-500/30 transition-all duration-300 backdrop-blur-xl shadow-xl overflow-hidden"
+              className="group relative rounded-3xl bg-[var(--noir-bg-elevated)]/50 border border-[var(--noir-border)] p-6 flex flex-col justify-between hover:border-[var(--noir-accent)]/30 transition-all duration-300 backdrop-blur-xl shadow-xl overflow-hidden"
             >
               {/* Card border glow decoration */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-cyan-500/10 transition-colors" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--noir-accent)]/5 rounded-full blur-2xl pointer-events-none group-hover:bg-[var(--noir-accent)]/10 transition-colors" />
               
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-slate-450 text-xs font-extrabold uppercase tracking-widest font-mono">
+                  <p className="text-[var(--noir-fg-subtle)] text-xs font-extrabold uppercase tracking-widest font-mono">
                     {item.title}
                   </p>
-                  <h2 className="text-3.5xl font-black mt-2 text-white font-mono">
+                  <h2 className="text-3.5xl font-black mt-2 text-[var(--noir-fg)] font-mono">
                     {item.value}
                   </h2>
                 </div>
                 <div
                   className={`w-12 h-12 rounded-2xl bg-gradient-to-r ${item.color}
-                  flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-black/30`}
+                  flex items-center justify-center text-[var(--noir-bg)] font-bold shadow-lg shadow-black/30`}
                 >
-                  <Icon size={20} className="text-white" />
+                  <Icon size={20} className="text-[var(--noir-fg)]" />
                 </div>
               </div>
             </div>
@@ -190,9 +190,9 @@ export default function AdminDashboard() {
       {/* Visual Analytics Charts */}
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Left Chart panel */}
-        <div className="bg-slate-900/40 rounded-3xl p-6 border border-slate-850 backdrop-blur-xl shadow-xl">
+        <div className="bg-[var(--noir-bg-elevated)]/40 rounded-3xl p-6 border border-[var(--noir-border)] backdrop-blur-xl shadow-xl">
           <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--noir-accent)]" />
             Portfolio Metrics distribution
           </h2>
 
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
                   }}
                   labelStyle={{ color: "#fff", fontWeight: "bold" }}
                 />
-                <Bar dataKey="value" fill="#06b6d4" radius={[6, 6, 0, 0]}>
+                <Bar dataKey="value" fill="var(--noir-accent)" radius={[6, 6, 0, 0]}>
                   {chartData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
@@ -220,7 +220,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Right Distribution Chart panel */}
-        <div className="bg-slate-900/40 rounded-3xl p-6 border border-slate-850 backdrop-blur-xl shadow-xl">
+        <div className="bg-[var(--noir-bg-elevated)]/40 rounded-3xl p-6 border border-[var(--noir-border)] backdrop-blur-xl shadow-xl">
           <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
             Inventory Allocation
@@ -262,7 +262,7 @@ export default function AdminDashboard() {
 
         {/* Portfolio Health */}
 
-        <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800">
+        <div className="bg-[var(--noir-bg-elevated)] rounded-3xl p-6 border border-[var(--noir-border)]">
           <h2 className="text-2xl font-bold mb-6">
             Portfolio Health
           </h2>
@@ -275,9 +275,9 @@ export default function AdminDashboard() {
                 <span>{stats.projects}</span>
               </div>
 
-              <div className="h-3 bg-slate-700 rounded-full">
+              <div className="h-3 bg-[var(--noir-bg-surface-3)] rounded-full">
                 <div
-                  className="h-3 bg-cyan-500 rounded-full"
+                  className="h-3 bg-[var(--noir-accent)] rounded-full"
                   style={{
                     width: `${Math.min(stats.projects * 10, 100)}%`,
                   }}
@@ -291,7 +291,7 @@ export default function AdminDashboard() {
                 <span>{stats.skills}</span>
               </div>
 
-              <div className="h-3 bg-slate-700 rounded-full">
+              <div className="h-3 bg-[var(--noir-bg-surface-3)] rounded-full">
                 <div
                   className="h-3 bg-purple-500 rounded-full"
                   style={{
@@ -307,7 +307,7 @@ export default function AdminDashboard() {
                 <span>{stats.certificates}</span>
               </div>
 
-              <div className="h-3 bg-slate-700 rounded-full">
+              <div className="h-3 bg-[var(--noir-bg-surface-3)] rounded-full">
                 <div
                   className="h-3 bg-pink-500 rounded-full"
                   style={{
@@ -322,30 +322,30 @@ export default function AdminDashboard() {
 
         {/* Quick Summary */}
 
-        <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800">
+        <div className="bg-[var(--noir-bg-elevated)] rounded-3xl p-6 border border-[var(--noir-border)]">
           <h2 className="text-2xl font-bold mb-6">
             Quick Summary
           </h2>
 
           <div className="space-y-4">
 
-            <div className="p-4 rounded-xl bg-slate-800">
+            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
               🚀 Active Projects: {stats.projects}
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-800">
+            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
               💻 Skills Added: {stats.skills}
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-800">
+            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
               🎓 Education Records: {stats.educations}
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-800">
+            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
               🏆 Certificates: {stats.certificates}
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-800">
+            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
               💼 Experience Records: {stats.experiences}
             </div>
 

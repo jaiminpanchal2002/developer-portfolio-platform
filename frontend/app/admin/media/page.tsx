@@ -33,7 +33,7 @@ const toast = (title: string, icon: "success" | "error") =>
     position: "top-end",
     showConfirmButton: false,
     timer: 1800,
-    background: "#0f172a",
+    background: "var(--noir-bg-elevated)",
     color: "#ffffff",
   });
 
@@ -97,7 +97,7 @@ export default function MediaPage() {
       showCancelButton: true,
       confirmButtonText: "Delete",
       confirmButtonColor: "#ef4444",
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
     });
     if (!result.isConfirmed) return;
@@ -143,16 +143,16 @@ export default function MediaPage() {
         }}
         className={`rounded-3xl border-2 border-dashed p-10 text-center transition-colors ${
           dragActive
-            ? "border-cyan-500 bg-cyan-500/5"
-            : "border-slate-700 bg-slate-900/50"
+            ? "border-[var(--noir-accent)] bg-[var(--noir-accent)]/5"
+            : "border-[var(--noir-border-strong)] bg-[var(--noir-bg-elevated)]/50"
         }`}
       >
-        <UploadCloud size={32} className="mx-auto text-slate-500" />
-        <p className="mt-3 text-sm text-slate-400">
+        <UploadCloud size={32} className="mx-auto text-[var(--noir-fg-subtle)]" />
+        <p className="mt-3 text-sm text-[var(--noir-fg-muted)]">
           {uploading ? "Uploading…" : "Drag & drop files here, or"}
         </p>
         {!uploading && (
-          <label className="mt-2 inline-block cursor-pointer text-sm font-semibold text-cyan-400 hover:underline">
+          <label className="mt-2 inline-block cursor-pointer text-sm font-semibold text-[var(--noir-accent)] hover:underline">
             browse files
             <input
               type="file"
@@ -169,23 +169,23 @@ export default function MediaPage() {
 
       {/* Search */}
       <div className="relative max-w-sm">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--noir-fg-subtle)]" />
         <input
           type="text"
           placeholder="Search files…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full rounded-xl border border-slate-800 bg-slate-950 py-2.5 pl-10 pr-4 text-sm text-white focus:border-cyan-500 focus:outline-none"
+          className="w-full rounded-xl border border-[var(--noir-border)] bg-[var(--noir-bg)] py-2.5 pl-10 pr-4 text-sm text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none"
         />
       </div>
 
       {/* Grid */}
       {loading ? (
         <div className="flex items-center justify-center h-40">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-cyan-500" />
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--noir-accent)]" />
         </div>
       ) : visible.length === 0 ? (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-[var(--noir-fg-subtle)]">
           {files.length === 0 ? "No uploads yet." : "Nothing matches that search."}
         </p>
       ) : (
@@ -193,9 +193,9 @@ export default function MediaPage() {
           {visible.map((file) => (
             <div
               key={file.name}
-              className="group rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden"
+              className="group rounded-2xl border border-[var(--noir-border)] bg-[var(--noir-bg-elevated)] overflow-hidden"
             >
-              <div className="relative aspect-square bg-slate-950">
+              <div className="relative aspect-square bg-[var(--noir-bg)]">
                 {file.image ? (
                   <Image
                     src={getImageUrl(file.url)}
@@ -207,22 +207,22 @@ export default function MediaPage() {
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center">
-                    <FileText size={32} className="text-slate-600" />
+                    <FileText size={32} className="text-[var(--noir-fg-subtle)]" />
                   </div>
                 )}
               </div>
               <div className="p-3">
-                <p className="truncate text-xs font-medium text-slate-300" title={file.name}>
+                <p className="truncate text-xs font-medium text-[var(--noir-fg)]" title={file.name}>
                   {file.name}
                 </p>
-                <p className="mt-0.5 text-[11px] text-slate-500">
+                <p className="mt-0.5 text-[11px] text-[var(--noir-fg-subtle)]">
                   {formatSize(file.sizeBytes)} ·{" "}
                   {new Date(file.modifiedAt).toLocaleDateString()}
                 </p>
                 <div className="mt-2 flex gap-2">
                   <button
                     onClick={() => copyUrl(file)}
-                    className="flex items-center gap-1 rounded-lg bg-slate-800 px-2.5 py-1.5 text-[11px] font-semibold text-slate-300 hover:bg-slate-700"
+                    className="flex items-center gap-1 rounded-lg bg-[var(--noir-bg-surface-2)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--noir-fg)] hover:bg-[var(--noir-bg-surface-3)]"
                     aria-label={`Copy URL for ${file.name}`}
                   >
                     <Copy size={12} /> URL

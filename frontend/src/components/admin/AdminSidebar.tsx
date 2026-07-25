@@ -67,7 +67,7 @@ export default function AdminSidebar() {
       {/* Floating Toggle Button for Mobile */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-99 flex items-center justify-center p-2.5 bg-slate-950/80 border border-cyan-500/30 rounded-xl text-cyan-400 hover:text-cyan-300 md:hidden shadow-lg backdrop-blur-md cursor-pointer"
+        className="fixed top-4 left-4 z-99 flex items-center justify-center p-2.5 bg-[var(--noir-bg)]/80 border border-[var(--noir-accent)]/30 rounded-xl text-[var(--noir-accent)] hover:text-[var(--noir-accent)] md:hidden shadow-lg backdrop-blur-md cursor-pointer"
         title="Toggle Menu"
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -77,20 +77,20 @@ export default function AdminSidebar() {
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-90 md:hidden"
+          className="fixed inset-0 bg-[var(--noir-bg)]/60 backdrop-blur-sm z-90 md:hidden"
         />
       )}
 
       {/* Sidebar Container */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-95 w-72 h-screen flex flex-col border-r border-white/10 bg-slate-950 backdrop-blur-xl transition-transform duration-300 ease-in-out
+          fixed inset-y-0 left-0 z-95 w-72 h-screen flex flex-col border-r border-white/10 bg-[var(--noir-bg)] backdrop-blur-xl transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          md:relative md:translate-x-0 md:flex md:w-72 md:bg-slate-950/60
+          md:relative md:translate-x-0 md:flex md:w-72 md:bg-[var(--noir-bg)]/60
         `}
       >
         <div className="p-8 pt-20 md:pt-8 flex justify-between items-center">
-          <h2 className="text-2.5xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+          <h2 className="text-2.5xl font-extrabold bg-gradient-to-r from-[var(--noir-accent)] to-blue-500 bg-clip-text text-transparent">
             Admin Panel
           </h2>
         </div>
@@ -101,7 +101,7 @@ export default function AdminSidebar() {
               key={item.name}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className="block px-4 py-3 rounded-xl text-gray-305 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all mb-2 font-medium"
+              className="block px-4 py-3 rounded-xl text-[var(--noir-fg-muted)] hover:bg-[var(--noir-accent)]/10 hover:text-[var(--noir-accent)] transition-all mb-2 font-medium"
             >
               {item.name}
             </Link>

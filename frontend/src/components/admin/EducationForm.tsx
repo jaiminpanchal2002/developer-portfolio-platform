@@ -64,7 +64,7 @@ export default function EducationForm({
         placeholder="Institution"
         value={formData.institution}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -72,7 +72,7 @@ export default function EducationForm({
         placeholder="Degree"
         value={formData.degree}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -80,7 +80,7 @@ export default function EducationForm({
         placeholder="Field Of Study"
         value={formData.fieldOfStudy}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -89,7 +89,7 @@ export default function EducationForm({
         placeholder="Start Year"
         value={formData.startYear}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -98,7 +98,7 @@ export default function EducationForm({
         placeholder="End Year"
         value={formData.endYear}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -106,7 +106,7 @@ export default function EducationForm({
         placeholder="Grade / CGPA"
         value={formData.grade}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <div className="flex justify-end gap-3">
@@ -120,7 +120,7 @@ export default function EducationForm({
 
         <button
           type="submit"
-          className="bg-cyan-500 text-black px-4 py-2 rounded"
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
         >
           Save Education
         </button>

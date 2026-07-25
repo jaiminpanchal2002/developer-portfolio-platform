@@ -60,7 +60,7 @@ export default function SkillsPage() {
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-cyan-500 text-black px-6 py-3 rounded-xl font-semibold"
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-6 py-3 rounded-xl font-semibold"
         >
           + Add Skill
         </button>
@@ -74,8 +74,8 @@ export default function SkillsPage() {
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
-          <div className="bg-slate-900 p-6 rounded-2xl w-full max-w-xl">
+        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
+          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-xl">
             <h2 className="text-2xl font-bold mb-6">
               Add Skill
             </h2>
@@ -92,8 +92,8 @@ export default function SkillsPage() {
 
       {/* Edit Modal */}
       {showEditModal && selectedSkill && (
-        <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
-          <div className="bg-slate-900 p-6 rounded-2xl w-full max-w-xl">
+        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
+          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-xl">
             <h2 className="text-2xl font-bold mb-6">
               Edit Skill
             </h2>

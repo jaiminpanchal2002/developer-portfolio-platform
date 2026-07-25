@@ -64,9 +64,9 @@ export default function Contact({ profile }: ContactProps) {
         title: "Validation Error",
         text: "Please enter a valid email address.",
         icon: "warning",
-        background: "#0f172a",
-        color: "#ffffff",
-        confirmButtonColor: "#f59e0b",
+        background: "var(--noir-bg-elevated)",
+        color: "var(--noir-fg)",
+        confirmButtonColor: "var(--noir-accent)",
       });
       return;
     }
@@ -76,9 +76,9 @@ export default function Contact({ profile }: ContactProps) {
         title: "Validation Error",
         text: "Please fill in all the contact form fields.",
         icon: "warning",
-        background: "#0f172a",
-        color: "#ffffff",
-        confirmButtonColor: "#f59e0b",
+        background: "var(--noir-bg-elevated)",
+        color: "var(--noir-fg)",
+        confirmButtonColor: "var(--noir-accent)",
       });
       return;
     }
@@ -129,30 +129,30 @@ export default function Contact({ profile }: ContactProps) {
           title: "Meeting Scheduled!",
           html: `
             <div style="text-align: left; font-family: sans-serif; margin-top: 12px;">
-              <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 16px;">Successfully confirmed your inquiry and scheduled a video counselling session!</p>
-              <div style="padding: 16px; background-color: #020617; border: 1px solid #1e293b; border-radius: 16px; margin-bottom: 16px;">
-                <p style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; font-family: monospace; margin: 0 0 10px 0; display: flex; align-items: center; gap: 6px;">
-                  🎥 Jitsi Meet Invitation
+              <p style="color: var(--noir-fg-muted); font-size: 14px; margin-bottom: 16px;">Successfully confirmed your inquiry and scheduled a video counselling session!</p>
+              <div style="padding: 16px; background-color: var(--noir-bg); border: 1px solid var(--noir-border-strong); border-radius: 16px; margin-bottom: 16px;">
+                <p style="font-size: 11px; color: var(--noir-fg-subtle); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; font-family: monospace; margin: 0 0 10px 0;">
+                  Jitsi Meet Invitation
                 </p>
-                <div style="height: 1px; background-color: #1e293b; margin-bottom: 12px; width: 100%;"></div>
-                <p style="font-size: 14px; color: #e2e8f0; margin: 6px 0;">📅 <b>Date:</b> ${safeDate}</p>
-                <p style="font-size: 14px; color: #e2e8f0; margin: 6px 0;">⏰ <b>Time:</b> ${safeTime}</p>
-                <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed #1e293b;">
-                  <span style="font-size: 11px; color: #64748b; font-weight: bold; font-family: monospace; display: block; margin-bottom: 4px;">MEETING LINK:</span>
-                  <a href="${safeMeetLink}" target="_blank" style="color: #22d3ee; font-weight: 600; font-size: 13px; word-break: break-all; text-decoration: underline;">
+                <div style="height: 1px; background-color: var(--noir-border-strong); margin-bottom: 12px; width: 100%;"></div>
+                <p style="font-size: 14px; color: var(--noir-fg); margin: 6px 0;"><b>Date:</b> ${safeDate}</p>
+                <p style="font-size: 14px; color: var(--noir-fg); margin: 6px 0;"><b>Time:</b> ${safeTime}</p>
+                <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed var(--noir-border-strong);">
+                  <span style="font-size: 11px; color: var(--noir-fg-subtle); font-weight: bold; font-family: monospace; display: block; margin-bottom: 4px;">MEETING LINK:</span>
+                  <a href="${safeMeetLink}" target="_blank" style="color: var(--noir-accent); font-weight: 600; font-size: 13px; word-break: break-all; text-decoration: underline;">
                     ${safeMeetLink}
                   </a>
                 </div>
               </div>
-              <p style="color: #94a3b8; font-size: 12px; line-height: 1.6; margin: 0;">
+              <p style="color: var(--noir-fg-subtle); font-size: 12px; line-height: 1.6; margin: 0;">
                 Confirmation invites containing this direct meeting link have been dispatched to <b>${safeUserEmail}</b> and <b>${safeOwnerEmail}</b>.
               </p>
             </div>
           `,
           icon: "success",
-          background: "#0f172a",
-          color: "#ffffff",
-          confirmButtonColor: "#06b6d4",
+          background: "var(--noir-bg-elevated)",
+          color: "var(--noir-fg)",
+          confirmButtonColor: "var(--noir-accent)",
           confirmButtonText: "Done",
         });
       } else {
@@ -160,9 +160,9 @@ export default function Contact({ profile }: ContactProps) {
           title: "Message Sent!",
           text: "Thank you for reaching out. I'll get back to you shortly.",
           icon: "success",
-          background: "#0f172a",
-          color: "#ffffff",
-          confirmButtonColor: "#06b6d4",
+          background: "var(--noir-bg-elevated)",
+          color: "var(--noir-fg)",
+          confirmButtonColor: "var(--noir-accent)",
         });
       }
 
@@ -180,8 +180,8 @@ export default function Contact({ profile }: ContactProps) {
         title: "Error!",
         text: "Could not send your message. Please try again later.",
         icon: "error",
-        background: "#0f172a",
-        color: "#ffffff",
+        background: "var(--noir-bg-elevated)",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -286,7 +286,7 @@ export default function Contact({ profile }: ContactProps) {
                 placeholder="e.g. John Doe"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full rounded-xl px-4 py-3 focus:outline-none transition-colors text-sm border"
+                className="w-full rounded-xl px-4 py-3 transition-colors text-sm border"
                 style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
               />
             </div>
@@ -301,7 +301,7 @@ export default function Contact({ profile }: ContactProps) {
                 placeholder="e.g. john@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full rounded-xl px-4 py-3 focus:outline-none transition-colors text-sm border"
+                className="w-full rounded-xl px-4 py-3 transition-colors text-sm border"
                 style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
               />
             </div>
@@ -316,7 +316,7 @@ export default function Contact({ profile }: ContactProps) {
                 placeholder="Type your message here..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full rounded-xl p-4 focus:outline-none transition-colors text-sm resize-none border"
+                className="w-full rounded-xl p-4 transition-colors text-sm resize-none border"
                 style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
               />
             </div>
@@ -358,7 +358,7 @@ export default function Contact({ profile }: ContactProps) {
                       value={formData.meetingDate}
                       min={todayStr}
                       onChange={(e) => setFormData({ ...formData, meetingDate: e.target.value })}
-                      className="w-full rounded-xl px-4 py-2 focus:outline-none transition-colors text-xs border"
+                      className="w-full rounded-xl px-4 py-2 transition-colors text-xs border"
                       style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
                     />
                   </div>
@@ -373,7 +373,7 @@ export default function Contact({ profile }: ContactProps) {
                       type="time"
                       value={formData.meetingTime}
                       onChange={(e) => setFormData({ ...formData, meetingTime: e.target.value })}
-                      className="w-full rounded-xl px-4 py-2 focus:outline-none transition-colors text-xs border"
+                      className="w-full rounded-xl px-4 py-2 transition-colors text-xs border"
                       style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
                     />
                   </div>

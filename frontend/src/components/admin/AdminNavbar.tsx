@@ -8,7 +8,7 @@ export default function AdminNavbar() {
       top-0
       z-50
       backdrop-blur-xl
-      bg-slate-950/70
+      bg-[var(--noir-bg)]/70
       border-b
       border-white/10
       px-6
@@ -32,12 +32,12 @@ export default function AdminNavbar() {
           h-10
           w-10
           rounded-full
-          bg-cyan-500
+          bg-[var(--noir-accent)]
           flex
           items-center
           justify-center
           font-bold
-          text-black
+          text-[var(--noir-bg)]
           "
         >
           A

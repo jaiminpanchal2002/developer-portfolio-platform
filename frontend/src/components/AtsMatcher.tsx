@@ -77,7 +77,7 @@ export default function AtsMatcher() {
                 onChange={(e) => setJd(e.target.value)}
                 placeholder={t("ats.placeholder", "Paste the details, roles, and skills required for the job here...")}
                 rows={8}
-                className="w-full rounded-2xl p-4 text-sm focus:outline-none transition-colors resize-none border"
+                className="w-full rounded-2xl p-4 text-sm transition-colors resize-none border"
                 style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
               />
             </div>

@@ -66,7 +66,7 @@ export default function EditSkillForm({
         name="name"
         value={formData.name}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <input
@@ -74,7 +74,7 @@ export default function EditSkillForm({
         name="category"
         value={formData.category}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <input
@@ -82,7 +82,7 @@ export default function EditSkillForm({
         name="proficiency"
         value={formData.proficiency}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <div className="flex justify-end gap-3">
@@ -96,7 +96,7 @@ export default function EditSkillForm({
 
         <button
           type="submit"
-          className="px-5 py-2 bg-cyan-500 text-black rounded-lg font-semibold"
+          className="px-5 py-2 bg-[var(--noir-accent)] text-[var(--noir-bg)] rounded-lg font-semibold"
         >
           Update Skill
         </button>

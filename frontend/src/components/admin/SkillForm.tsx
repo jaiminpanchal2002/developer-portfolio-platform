@@ -61,7 +61,7 @@ export default function SkillForm({
         placeholder="Skill Name"
         value={formData.name}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
         required
       />
 
@@ -71,7 +71,7 @@ export default function SkillForm({
         placeholder="Frontend / Backend / Database"
         value={formData.category}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
         required
       />
 
@@ -81,7 +81,7 @@ export default function SkillForm({
         placeholder="Proficiency (0-100)"
         value={formData.proficiency}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
         min={0}
         max={100}
         required
@@ -98,7 +98,7 @@ export default function SkillForm({
 
         <button
           type="submit"
-          className="px-5 py-2 rounded-lg bg-cyan-500 text-black font-semibold"
+          className="px-5 py-2 rounded-lg bg-[var(--noir-accent)] text-[var(--noir-bg)] font-semibold"
         >
           Save Skill
         </button>

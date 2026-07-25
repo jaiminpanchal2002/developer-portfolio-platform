@@ -24,9 +24,9 @@ export default function RegisterPage() {
         title: "Registration Successful!",
         text: "Please login with your new credentials.",
         icon: "success",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
-        confirmButtonColor: "#06b6d4",
+        confirmButtonColor: "var(--noir-accent)",
       });
 
       router.push("/login");
@@ -39,7 +39,7 @@ export default function RegisterPage() {
         title: "Registration Failed",
         text: errorMessage,
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -47,19 +47,19 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--noir-bg)]">
       <form
         onSubmit={handleSubmit}
-        className="bg-slate-900 p-8 rounded-xl w-full max-w-md space-y-4"
+        className="bg-[var(--noir-bg-elevated)] p-8 rounded-xl w-full max-w-md space-y-4"
       >
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-bold text-[var(--noir-fg)]">
           Register
         </h1>
 
         <input
           type="text"
           placeholder="Full Name"
-          className="w-full p-3 rounded bg-slate-800 text-white"
+          className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)]"
           value={formData.fullName}
           onChange={(e) =>
             setFormData({
@@ -72,7 +72,7 @@ export default function RegisterPage() {
         <input
           type="email"
           placeholder="Email"
-          className="w-full p-3 rounded bg-slate-800 text-white"
+          className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)]"
           value={formData.email}
           onChange={(e) =>
             setFormData({
@@ -85,7 +85,7 @@ export default function RegisterPage() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-3 rounded bg-slate-800 text-white"
+          className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)]"
           value={formData.password}
           onChange={(e) =>
             setFormData({
@@ -97,16 +97,16 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          className="w-full bg-green-500 text-black py-3 rounded font-semibold"
+          className="w-full bg-green-500 text-[var(--noir-bg)] py-3 rounded font-semibold"
         >
           Register
         </button>
 
-        <p className="text-center text-white">
+        <p className="text-center text-[var(--noir-fg)]">
           Already have an account?{" "}
           <a
             href="/login"
-            className="text-cyan-400 hover:underline"
+            className="text-[var(--noir-accent)] hover:underline"
           >
             Login
           </a>

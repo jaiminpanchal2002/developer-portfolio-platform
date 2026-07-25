@@ -63,7 +63,7 @@ export default function EditCertificateForm({
         placeholder="Certificate Title"
         value={formData.title}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <input
@@ -72,7 +72,7 @@ export default function EditCertificateForm({
         placeholder="Issuer"
         value={formData.issuer}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <input
@@ -80,7 +80,7 @@ export default function EditCertificateForm({
         name="issueDate"
         value={formData.issueDate}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <input
@@ -89,7 +89,7 @@ export default function EditCertificateForm({
         placeholder="Certificate URL"
         value={formData.certificateUrl}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <div className="flex justify-end gap-3">
@@ -103,7 +103,7 @@ export default function EditCertificateForm({
 
         <button
           type="submit"
-          className="bg-cyan-500 text-black px-4 py-2 rounded"
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
         >
           Update Certificate
         </button>

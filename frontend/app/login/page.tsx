@@ -31,7 +31,7 @@ export default function LoginPage() {
       icon: "success",
       timer: 1500,
       showConfirmButton: false,
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
     });
     router.push("/admin");
@@ -52,7 +52,7 @@ export default function LoginPage() {
         title: "Verification Failed",
         text: "That authentication code is invalid or expired.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -71,7 +71,7 @@ export default function LoginPage() {
           title: "Email Required",
           text: "Please enter your registered email address.",
           icon: "warning",
-          background: "#0f172a",
+          background: "var(--noir-bg-elevated)",
           color: "#ffffff",
           confirmButtonColor: "#f59e0b",
         });
@@ -85,9 +85,9 @@ export default function LoginPage() {
           title: "Temporary Password Sent!",
           text: "We have generated and emailed a temporary password to you. Please check your inbox and spam folder.",
           icon: "success",
-          background: "#0f172a",
+          background: "var(--noir-bg-elevated)",
           color: "#ffffff",
-          confirmButtonColor: "#06b6d4",
+          confirmButtonColor: "var(--noir-accent)",
         });
         setIsResetMode(false);
       } catch (error) {
@@ -99,7 +99,7 @@ export default function LoginPage() {
           title: "Reset Request Failed",
           text: errMsg,
           icon: "error",
-          background: "#0f172a",
+          background: "var(--noir-bg-elevated)",
           color: "#ffffff",
           confirmButtonColor: "#ef4444",
         });
@@ -127,7 +127,7 @@ export default function LoginPage() {
           title: "Login Failed",
           text: "Invalid email or password credentials.",
           icon: "error",
-          background: "#0f172a",
+          background: "var(--noir-bg-elevated)",
           color: "#ffffff",
           confirmButtonColor: "#ef4444",
         });
@@ -138,18 +138,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative z-10 min-h-screen flex items-center justify-center bg-slate-950 px-4">
+    <div className="relative z-10 min-h-screen flex items-center justify-center bg-[var(--noir-bg)] px-4">
       {twoFactorStep ? (
         <form
           onSubmit={handleVerifyTwoFactor}
-          className="bg-slate-900 border border-slate-800 p-8 rounded-2xl w-full max-w-md space-y-6 shadow-2xl relative overflow-hidden"
+          className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-8 rounded-2xl w-full max-w-md space-y-6 shadow-2xl relative overflow-hidden"
         >
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--noir-accent)] to-blue-600" />
           <div>
-            <h1 className="text-3xl font-extrabold text-white">
+            <h1 className="text-3xl font-extrabold text-[var(--noir-fg)]">
               Two-Factor Auth
             </h1>
-            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+            <p className="text-xs text-[var(--noir-fg-muted)] mt-1.5 leading-relaxed">
               Enter the 6-digit code from your authenticator app.
             </p>
           </div>
@@ -162,7 +162,7 @@ export default function LoginPage() {
             placeholder="000000"
             required
             autoFocus
-            className="w-full p-3.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-center text-2xl tracking-[0.5em] placeholder-slate-600 focus:border-cyan-500 focus:outline-none transition-colors"
+            className="w-full p-3.5 rounded-xl bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)] text-[var(--noir-fg)] text-center text-2xl tracking-[0.5em] placeholder-[var(--noir-fg-subtle)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
             value={twoFactorCode}
             onChange={(e) =>
               setTwoFactorCode(e.target.value.replace(/\D/g, "").slice(0, 6))
@@ -172,7 +172,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || twoFactorCode.length !== 6}
-            className="w-full bg-cyan-500 text-black py-3.5 rounded-xl font-bold hover:scale-[1.01] hover:bg-cyan-400 transition-all cursor-pointer shadow-lg shadow-cyan-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[var(--noir-accent)] text-[var(--noir-bg)] py-3.5 rounded-xl font-bold hover:scale-[1.01] hover:bg-[var(--noir-accent)] transition-all cursor-pointer shadow-lg shadow-[var(--noir-accent)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Verifying..." : "Verify & Sign In"}
           </button>
@@ -184,7 +184,7 @@ export default function LoginPage() {
                 setTwoFactorStep(false);
                 setTwoFactorCode("");
               }}
-              className="text-cyan-400 hover:underline text-sm font-semibold bg-transparent border-none cursor-pointer"
+              className="text-[var(--noir-accent)] hover:underline text-sm font-semibold bg-transparent border-none cursor-pointer"
             >
               Back to Login
             </button>
@@ -193,15 +193,15 @@ export default function LoginPage() {
       ) : (
       <form
         onSubmit={handleSubmit}
-        className="bg-slate-900 border border-slate-800 p-8 rounded-2xl w-full max-w-md space-y-6 shadow-2xl relative overflow-hidden"
+        className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-8 rounded-2xl w-full max-w-md space-y-6 shadow-2xl relative overflow-hidden"
       >
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--noir-accent)] to-blue-600" />
 
         <div>
-          <h1 className="text-3xl font-extrabold text-white">
+          <h1 className="text-3xl font-extrabold text-[var(--noir-fg)]">
             {isResetMode ? "Reset Password" : "Admin Login"}
           </h1>
-          <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+          <p className="text-xs text-[var(--noir-fg-muted)] mt-1.5 leading-relaxed">
             {isResetMode
               ? "Enter your email. If it exists in our records, we will send a temporary password."
               : "Access the developer portfolio control panel."}
@@ -213,7 +213,7 @@ export default function LoginPage() {
             type="email"
             placeholder="Enter your email"
             required
-            className="w-full p-3.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 text-sm focus:border-cyan-500 focus:outline-none transition-colors"
+            className="w-full p-3.5 rounded-xl bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)] text-[var(--noir-fg)] placeholder-[var(--noir-fg-subtle)] text-sm focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
             value={resetEmail}
             onChange={(e) => setResetEmail(e.target.value)}
           />
@@ -223,7 +223,7 @@ export default function LoginPage() {
               type="email"
               placeholder="Email"
               required
-              className="w-full p-3.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 text-sm focus:border-cyan-500 focus:outline-none transition-colors"
+              className="w-full p-3.5 rounded-xl bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)] text-[var(--noir-fg)] placeholder-[var(--noir-fg-subtle)] text-sm focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
               value={formData.email}
               onChange={(e) =>
                 setFormData({
@@ -237,7 +237,7 @@ export default function LoginPage() {
               type="password"
               placeholder="Password"
               required
-              className="w-full p-3.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 text-sm focus:border-cyan-500 focus:outline-none transition-colors"
+              className="w-full p-3.5 rounded-xl bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)] text-[var(--noir-fg)] placeholder-[var(--noir-fg-subtle)] text-sm focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
               value={formData.password}
               onChange={(e) =>
                 setFormData({
@@ -252,7 +252,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-cyan-500 text-black py-3.5 rounded-xl font-bold hover:scale-[1.01] hover:bg-cyan-400 transition-all cursor-pointer shadow-lg shadow-cyan-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-[var(--noir-accent)] text-[var(--noir-bg)] py-3.5 rounded-xl font-bold hover:scale-[1.01] hover:bg-[var(--noir-accent)] transition-all cursor-pointer shadow-lg shadow-[var(--noir-accent)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Processing..." : (isResetMode ? "Request Reset Password" : "Login")}
         </button>
@@ -264,7 +264,7 @@ export default function LoginPage() {
               setIsResetMode(!isResetMode);
               setResetEmail("");
             }}
-            className="text-cyan-400 hover:underline text-sm font-semibold bg-transparent border-none cursor-pointer"
+            className="text-[var(--noir-accent)] hover:underline text-sm font-semibold bg-transparent border-none cursor-pointer"
           >
             {isResetMode ? "Back to Login" : "Forgot Password?"}
           </button>

@@ -71,7 +71,7 @@ export default function EditEducationForm({
         placeholder="Institution"
         value={formData.institution}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -80,7 +80,7 @@ export default function EditEducationForm({
         placeholder="Degree"
         value={formData.degree}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -89,7 +89,7 @@ export default function EditEducationForm({
         placeholder="Field Of Study"
         value={formData.fieldOfStudy}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -98,7 +98,7 @@ export default function EditEducationForm({
         placeholder="Start Year"
         value={formData.startYear}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -107,7 +107,7 @@ export default function EditEducationForm({
         placeholder="End Year"
         value={formData.endYear}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -116,7 +116,7 @@ export default function EditEducationForm({
         placeholder="Grade / CGPA"
         value={formData.grade}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
       />
 
       <div className="flex justify-end gap-3">
@@ -130,7 +130,7 @@ export default function EditEducationForm({
 
         <button
           type="submit"
-          className="bg-cyan-500 text-black px-4 py-2 rounded"
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
         >
           Update Education
         </button>

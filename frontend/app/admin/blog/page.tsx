@@ -85,7 +85,7 @@ export default function BlogAdminPage() {
         title: "Missing fields",
         text: "Title and content are required.",
         icon: "warning",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#f59e0b",
       });
@@ -105,7 +105,7 @@ export default function BlogAdminPage() {
       Swal.fire({
         title: "Save failed",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -122,7 +122,7 @@ export default function BlogAdminPage() {
       showCancelButton: true,
       confirmButtonText: "Delete",
       confirmButtonColor: "#ef4444",
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
     });
     if (!result.isConfirmed) return;
@@ -143,7 +143,7 @@ export default function BlogAdminPage() {
         </div>
         <button
           onClick={openAdd}
-          className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-5 py-3 font-semibold text-black"
+          className="inline-flex items-center gap-2 rounded-xl bg-[var(--noir-accent)] px-5 py-3 font-semibold text-[var(--noir-bg)]"
         >
           <Plus size={18} /> New post
         </button>
@@ -151,12 +151,12 @@ export default function BlogAdminPage() {
 
       {loading ? (
         <div className="flex h-40 items-center justify-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-cyan-500" />
+          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-[var(--noir-accent)]" />
         </div>
       ) : posts.length === 0 ? (
-        <p className="text-sm text-slate-500">No posts yet.</p>
+        <p className="text-sm text-[var(--noir-fg-subtle)]">No posts yet.</p>
       ) : (
-        <div className="overflow-x-auto rounded-3xl border border-slate-800">
+        <div className="overflow-x-auto rounded-3xl border border-[var(--noir-border)]">
           <table className="w-full">
             <thead>
               <tr>
@@ -168,16 +168,16 @@ export default function BlogAdminPage() {
             </thead>
             <tbody>
               {posts.map((post) => (
-                <tr key={post.id} className="border-t border-slate-800/60">
+                <tr key={post.id} className="border-t border-[var(--noir-border)]/60">
                   <td className="p-5">
                     <div className="font-semibold">{post.title}</div>
                     {post.readMinutes ? (
-                      <div className="text-xs text-slate-400">
+                      <div className="text-xs text-[var(--noir-fg-muted)]">
                         {post.readMinutes} min read
                       </div>
                     ) : null}
                   </td>
-                  <td className="p-5 text-sm text-slate-400">/{post.slug}</td>
+                  <td className="p-5 text-sm text-[var(--noir-fg-muted)]">/{post.slug}</td>
                   <td className="p-5">
                     {post.published === false ? (
                       <span className="rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
@@ -198,10 +198,10 @@ export default function BlogAdminPage() {
                         aria-label={`Preview ${post.title}`}
                         title="Preview"
                       >
-                        <ExternalLink size={17} className="text-slate-400" />
+                        <ExternalLink size={17} className="text-[var(--noir-fg-muted)]" />
                       </a>
                       <button onClick={() => openEdit(post)} aria-label={`Edit ${post.title}`}>
-                        <Pencil size={17} className="text-cyan-400" />
+                        <Pencil size={17} className="text-[var(--noir-accent)]" />
                       </button>
                       <button onClick={() => handleDelete(post)} aria-label={`Delete ${post.title}`}>
                         <Trash2 size={17} className="text-red-500" />
@@ -216,8 +216,8 @@ export default function BlogAdminPage() {
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4">
-          <div className="my-8 w-full max-w-2xl rounded-2xl bg-slate-900 p-6">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[var(--noir-bg)]/60 p-4">
+          <div className="my-8 w-full max-w-2xl rounded-2xl bg-[var(--noir-bg-elevated)] p-6">
             <h2 className="mb-6 text-2xl font-bold">
               {editingId !== null ? "Edit" : "New"} Post
             </h2>
@@ -227,42 +227,42 @@ export default function BlogAdminPage() {
                 placeholder="Title *"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <input
                 type="text"
                 placeholder="Slug (auto-generated from title if left blank)"
                 value={form.slug}
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <textarea
                 placeholder="Excerpt — short summary shown in the list"
                 rows={2}
                 value={form.excerpt}
                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <textarea
                 placeholder="Content * — blank lines separate paragraphs"
                 rows={12}
                 value={form.content}
                 onChange={(e) => setForm({ ...form, content: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3 font-mono text-sm"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3 font-mono text-sm"
               />
               <input
                 type="text"
                 placeholder="Cover image URL (optional — from Media library)"
                 value={form.coverImageUrl}
                 onChange={(e) => setForm({ ...form, coverImageUrl: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <input
                 type="text"
                 placeholder="Tags, comma-separated (e.g. AI, Spring Boot)"
                 value={form.tags}
                 onChange={(e) => setForm({ ...form, tags: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <label className="flex items-center gap-2 text-sm">
                 <input
@@ -271,7 +271,7 @@ export default function BlogAdminPage() {
                   onChange={(e) => setForm({ ...form, published: e.target.checked })}
                 />
                 Published
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-[var(--noir-fg-muted)]">
                   (uncheck to save as a draft — previewable by direct link)
                 </span>
               </label>
@@ -287,7 +287,7 @@ export default function BlogAdminPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-lg bg-cyan-500 px-5 py-2 font-semibold text-black disabled:opacity-60"
+                  className="rounded-lg bg-[var(--noir-accent)] px-5 py-2 font-semibold text-[var(--noir-bg)] disabled:opacity-60"
                 >
                   {saving ? "Saving…" : "Save"}
                 </button>

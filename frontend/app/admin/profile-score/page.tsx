@@ -55,7 +55,7 @@ export default function ProfileScorePage() {
         title: "Error!",
         text: "Could not retrieve completeness stats.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -73,7 +73,7 @@ export default function ProfileScorePage() {
   if (loading || !stats) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--noir-accent)]"></div>
       </div>
     );
   }
@@ -149,19 +149,19 @@ export default function ProfileScorePage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--noir-accent)] to-blue-500 bg-clip-text text-transparent">
           Profile Score
         </h1>
-        <p className="text-slate-400 mt-2">
+        <p className="text-[var(--noir-fg-muted)] mt-2">
           Calculate portfolio completeness and view recommendations to hit 100%
         </p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Score Gauge Card */}
-        <div className="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col items-center justify-center text-center">
+        <div className="lg:col-span-1 bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6 flex flex-col items-center justify-center text-center">
           <h3 className="font-bold text-xl mb-6 flex items-center gap-2">
-            <Sparkles className="text-cyan-400 animate-pulse" size={20} />
+            <Sparkles className="text-[var(--noir-accent)] animate-pulse" size={20} />
             Completeness
           </h3>
 
@@ -173,7 +173,7 @@ export default function ProfileScorePage() {
                 cy="88"
                 r="74"
                 strokeWidth="12"
-                stroke="#1e293b"
+                stroke="var(--noir-border-strong)"
                 fill="transparent"
               />
               <circle
@@ -192,22 +192,22 @@ export default function ProfileScorePage() {
               />
               <defs>
                 <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#06b6d4" />
-                  <stop offset="100%" stopColor="#3b82f6" />
+                  <stop offset="0%" stopColor="var(--noir-accent)" />
+                  <stop offset="100%" stopColor="var(--noir-accent-dark)" />
                 </linearGradient>
               </defs>
             </svg>
             <div className="absolute flex flex-col items-center justify-center">
-              <span className="text-5xl font-extrabold text-white">
+              <span className="text-5xl font-extrabold text-[var(--noir-fg)]">
                 {stats.profileScore}%
               </span>
-              <span className="text-xs text-slate-400 font-semibold mt-1">
+              <span className="text-xs text-[var(--noir-fg-muted)] font-semibold mt-1">
                 COMPLETE
               </span>
             </div>
           </div>
 
-          <p className="text-slate-300 leading-relaxed text-sm">
+          <p className="text-[var(--noir-fg)] leading-relaxed text-sm">
             {stats.profileScore >= 90
               ? "Awesome! Your developer profile is outstanding. It is ready for public recruitment."
               : stats.profileScore >= 70
@@ -217,10 +217,10 @@ export default function ProfileScorePage() {
         </div>
 
         {/* Checklist & Recommendations */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
+        <div className="lg:col-span-2 bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6 space-y-6">
           <div>
             <h3 className="font-bold text-xl">Completeness Checklist</h3>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-[var(--noir-fg-muted)] text-sm mt-1">
               Add details to increase your score and get accurate job matches
             </p>
           </div>
@@ -233,7 +233,7 @@ export default function ProfileScorePage() {
                   className={`flex items-start justify-between gap-4 p-4 rounded-2xl border transition-all ${
                     item.checked
                       ? "bg-emerald-500/5 border-emerald-500/10"
-                      : "bg-slate-950/40 border-slate-800/80 hover:border-slate-800"
+                      : "bg-[var(--noir-bg)]/40 border-[var(--noir-border)]/80 hover:border-[var(--noir-border)]"
                   }`}
                 >
                   <div className="flex gap-3 items-start">
@@ -241,19 +241,19 @@ export default function ProfileScorePage() {
                       {item.checked ? (
                         <CheckCircle className="text-emerald-500 shrink-0" size={20} />
                       ) : (
-                        <AlertCircle className="text-slate-600 shrink-0" size={20} />
+                        <AlertCircle className="text-[var(--noir-fg-subtle)] shrink-0" size={20} />
                       )}
                     </div>
 
                     <div>
                       <h4
                         className={`font-bold text-base ${
-                          item.checked ? "text-slate-300 line-through" : "text-white"
+                          item.checked ? "text-[var(--noir-fg)] line-through" : "text-[var(--noir-fg)]"
                         }`}
                       >
                         {item.title}
                       </h4>
-                      <p className="text-slate-400 text-xs mt-0.5 leading-relaxed">
+                      <p className="text-[var(--noir-fg-muted)] text-xs mt-0.5 leading-relaxed">
                         {item.desc}
                       </p>
                     </div>
@@ -264,7 +264,7 @@ export default function ProfileScorePage() {
                       className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase ${
                         item.checked
                           ? "bg-emerald-500/10 text-emerald-400"
-                          : "bg-cyan-500/10 text-cyan-400"
+                          : "bg-[var(--noir-accent)]/10 text-[var(--noir-accent)]"
                       }`}
                     >
                       +{item.points} pts
@@ -272,7 +272,7 @@ export default function ProfileScorePage() {
                     {!item.checked && (
                       <Link
                         href={item.link}
-                        className="text-xs text-cyan-400 hover:text-cyan-300 font-bold hover:underline flex items-center cursor-pointer"
+                        className="text-xs text-[var(--noir-accent)] hover:text-[var(--noir-accent)] font-bold hover:underline flex items-center cursor-pointer"
                       >
                         Action
                       </Link>

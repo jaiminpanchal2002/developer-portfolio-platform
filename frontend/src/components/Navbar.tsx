@@ -66,7 +66,7 @@ export default function Navbar({ profile, showBlog }: NavbarProps) {
                 <div className="flex items-center gap-4 md:hidden">
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className="p-2 focus:outline-none cursor-pointer"
+                        className="p-2 cursor-pointer"
                         style={{ color: "var(--noir-accent)" }}
                         title="Toggle navigation menu"
                         aria-label="Toggle navigation menu"

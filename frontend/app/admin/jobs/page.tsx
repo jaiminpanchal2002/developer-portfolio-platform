@@ -52,7 +52,7 @@ export default function JobsPage() {
         title: "Error!",
         text: "Could not fetch recommendations. Ensure backend is running.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -143,21 +143,21 @@ export default function JobsPage() {
       position: "top-end",
       showConfirmButton: false,
       timer: 2000,
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
     });
   };
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-emerald-400";
-    if (score >= 60) return "text-cyan-400";
+    if (score >= 60) return "text-[var(--noir-accent)]";
     if (score >= 40) return "text-yellow-400";
     return "text-rose-400";
   };
 
   const getProgressColor = (score: number) => {
     if (score >= 80) return "bg-emerald-500";
-    if (score >= 60) return "bg-cyan-500";
+    if (score >= 60) return "bg-[var(--noir-accent)]";
     if (score >= 40) return "bg-yellow-500";
     return "bg-rose-500";
   };
@@ -166,29 +166,29 @@ export default function JobsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--noir-accent)] to-blue-500 bg-clip-text text-transparent">
           AI Job Recommendations
         </h1>
-        <p className="text-slate-400 mt-2">
+        <p className="text-[var(--noir-fg-muted)] mt-2">
           Find matching vacancies worldwide and customize applications instantly
         </p>
       </div>
 
       {/* Filter and Search Bar */}
-      <form onSubmit={handleSearch} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+      <form onSubmit={handleSearch} className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
           <input
             type="text"
             placeholder="Search keywords (e.g. Java, React, Spring)..."
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+            className="flex-1 bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
           />
 
           <select
             value={country}
             onChange={(e) => setCountry(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+            className="bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
           >
             <option value="in">🇮🇳 India</option>
             <option value="us">🇺🇸 USA</option>
@@ -200,7 +200,7 @@ export default function JobsPage() {
 
           <button
             type="submit"
-            className="px-6 py-3 rounded-xl bg-cyan-500 text-black font-bold hover:scale-105 transition-all cursor-pointer"
+            className="px-6 py-3 rounded-xl bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold hover:scale-105 transition-all cursor-pointer"
           >
             Find Jobs
           </button>
@@ -212,9 +212,9 @@ export default function JobsPage() {
             id="remote-check"
             checked={remote}
             onChange={(e) => setRemote(e.target.checked)}
-            className="rounded border-slate-800 text-cyan-500 focus:ring-cyan-500 bg-slate-950"
+            className="rounded border-[var(--noir-border)] text-[var(--noir-accent)] focus:ring-[var(--noir-accent)] bg-[var(--noir-bg)]"
           />
-          <label htmlFor="remote-check" className="text-sm text-slate-400 select-none cursor-pointer">
+          <label htmlFor="remote-check" className="text-sm text-[var(--noir-fg-muted)] select-none cursor-pointer">
             Limit search to remote positions
           </label>
         </div>
@@ -223,42 +223,42 @@ export default function JobsPage() {
       {/* Recommended Jobs List */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--noir-accent)]"></div>
         </div>
       ) : jobs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 border border-dashed border-slate-800 rounded-3xl text-slate-500">
-          <Briefcase size={48} className="text-slate-700 mb-4" />
+        <div className="flex flex-col items-center justify-center py-20 border border-dashed border-[var(--noir-border)] rounded-3xl text-[var(--noir-fg-subtle)]">
+          <Briefcase size={48} className="text-[var(--noir-fg-subtle)] mb-4" />
           <h4 className="font-semibold text-lg">No Vacancies Found</h4>
-          <p className="text-sm text-slate-650 mt-1">Try adjusting your keyword filter or switching target countries.</p>
+          <p className="text-sm text-[var(--noir-fg-subtle)] mt-1">Try adjusting your keyword filter or switching target countries.</p>
         </div>
       ) : (
         <div className="space-y-6">
           {jobs.map((job, index) => (
             <div
               key={index}
-              className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-3xl p-6 transition-all"
+              className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] hover:border-[var(--noir-border-strong)] rounded-3xl p-6 transition-all"
             >
               {/* Header Info */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-white leading-tight">
+                  <h2 className="text-2xl font-bold text-[var(--noir-fg)] leading-tight">
                     {job.title}
                   </h2>
-                  <p className="text-cyan-400 font-semibold mt-1">
+                  <p className="text-[var(--noir-accent)] font-semibold mt-1">
                     {job.company}
                   </p>
-                  <div className="flex flex-wrap gap-4 mt-3 text-slate-400 text-sm">
+                  <div className="flex flex-wrap gap-4 mt-3 text-[var(--noir-fg-muted)] text-sm">
                     <span className="flex items-center gap-1">
-                      <MapPin size={16} className="text-slate-500" />
+                      <MapPin size={16} className="text-[var(--noir-fg-subtle)]" />
                       {job.location}
                     </span>
                     <span className="flex items-center gap-1">
-                      <DollarSign size={16} className="text-slate-500" />
+                      <DollarSign size={16} className="text-[var(--noir-fg-subtle)]" />
                       {job.salary}
                     </span>
                     {job.createdAt && (
-                      <span className="flex items-center gap-1 text-xs bg-slate-950 px-2 py-0.5 rounded border border-white/5 font-mono">
-                        <Calendar size={12} className="text-slate-500" />
+                      <span className="flex items-center gap-1 text-xs bg-[var(--noir-bg)] px-2 py-0.5 rounded border border-white/5 font-mono">
+                        <Calendar size={12} className="text-[var(--noir-fg-subtle)]" />
                         {job.createdAt} ({job.source || "Adzuna"})
                       </span>
                     )}
@@ -266,8 +266,8 @@ export default function JobsPage() {
                 </div>
 
                 {/* Match Score Display */}
-                <div className="flex flex-col items-end shrink-0 bg-slate-950/50 border border-slate-800/80 p-4 rounded-2xl text-right">
-                  <span className="text-xs text-slate-400 font-semibold uppercase">Profile Match</span>
+                <div className="flex flex-col items-end shrink-0 bg-[var(--noir-bg)]/50 border border-[var(--noir-border)]/80 p-4 rounded-2xl text-right">
+                  <span className="text-xs text-[var(--noir-fg-muted)] font-semibold uppercase">Profile Match</span>
                   <span className={`text-3xl font-extrabold mt-1 ${getScoreColor(job.matchScore ?? 0)}`}>
                     {job.matchScore}%
                   </span>
@@ -275,27 +275,27 @@ export default function JobsPage() {
               </div>
 
               {/* Description */}
-              <p className="text-slate-350 text-sm leading-relaxed mt-4">
+              <p className="text-[var(--noir-fg-muted)] text-sm leading-relaxed mt-4">
                 {job.description}
               </p>
 
               {/* Score Progress Bar */}
               <div className="mt-5">
-                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-[var(--noir-bg-surface-2)] rounded-full overflow-hidden">
                   <div
                     className={`h-2 rounded-full ${getProgressColor(job.matchScore ?? 0)}`}
                     style={{ width: `${job.matchScore}%` }}
                   />
                 </div>
                 {job.recommendation && (
-                  <p className="text-xs text-slate-400 mt-2 font-medium">
-                    💡 <span className="text-slate-300">{job.recommendation}</span>
+                  <p className="text-xs text-[var(--noir-fg-muted)] mt-2 font-medium">
+                    💡 <span className="text-[var(--noir-fg)]">{job.recommendation}</span>
                   </p>
                 )}
               </div>
 
               {/* Matched / Missing Skills lists */}
-              <div className="grid sm:grid-cols-2 gap-6 mt-6 border-t border-slate-850 pt-5">
+              <div className="grid sm:grid-cols-2 gap-6 mt-6 border-t border-[var(--noir-border)] pt-5">
                 {/* Matched */}
                 <div>
                   <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-1.5 mb-2">
@@ -311,7 +311,7 @@ export default function JobsPage() {
                       ))}
                     </div>
                   ) : (
-                    <span className="text-slate-500 text-xs">No direct matches.</span>
+                    <span className="text-[var(--noir-fg-subtle)] text-xs">No direct matches.</span>
                   )}
                 </div>
 
@@ -330,17 +330,17 @@ export default function JobsPage() {
                       ))}
                     </div>
                   ) : (
-                    <span className="text-slate-500 text-xs">Full stack overlap!</span>
+                    <span className="text-[var(--noir-fg-subtle)] text-xs">Full stack overlap!</span>
                   )}
                 </div>
               </div>
 
               {/* Learning Roadmap Collapsible */}
               {(job.missingSkills?.length ?? 0) > 0 && job.roadmap && (
-                <div className="mt-5 border-t border-slate-850 pt-4">
+                <div className="mt-5 border-t border-[var(--noir-border)] pt-4">
                   <button
                     onClick={() => setExpandedRoadmap(expandedRoadmap === index ? null : index)}
-                    className="flex items-center gap-1 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
+                    className="flex items-center gap-1 text-sm font-semibold text-[var(--noir-accent)] hover:text-[var(--noir-accent)] transition-colors cursor-pointer"
                   >
                     {expandedRoadmap === index ? (
                       <>
@@ -354,7 +354,7 @@ export default function JobsPage() {
                   </button>
                   
                   {expandedRoadmap === index && (
-                    <div className="mt-3 bg-slate-950/60 border border-slate-850 rounded-2xl p-5 text-sm text-slate-300 leading-relaxed font-mono whitespace-pre-line animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="mt-3 bg-[var(--noir-bg)]/60 border border-[var(--noir-border)] rounded-2xl p-5 text-sm text-[var(--noir-fg)] leading-relaxed font-mono whitespace-pre-line animate-in fade-in slide-in-from-top-2 duration-200">
                       {job.roadmap}
                     </div>
                   )}
@@ -362,23 +362,23 @@ export default function JobsPage() {
               )}
 
               {/* Actions Section */}
-              <div className="mt-6 flex flex-wrap gap-4 items-center border-t border-slate-850 pt-5">
+              <div className="mt-6 flex flex-wrap gap-4 items-center border-t border-[var(--noir-border)] pt-5">
                 <a
                   href={job.applyLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-cyan-500 text-black px-6 py-3 rounded-xl font-bold hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer text-sm"
+                  className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-6 py-3 rounded-xl font-bold hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer text-sm"
                 >
                   Apply <ExternalLink size={16} />
                 </a>
 
                 {/* local language selector for email outreach */}
-                <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl">
-                  <Languages size={16} className="text-slate-500" />
+                <div className="flex items-center gap-2 bg-[var(--noir-bg)] border border-[var(--noir-border)] px-3 py-1.5 rounded-xl">
+                  <Languages size={16} className="text-[var(--noir-fg-subtle)]" />
                   <select
                     value={emailLang[index] || "English"}
                     onChange={(e) => setEmailLang({ ...emailLang, [index]: e.target.value })}
-                    className="bg-transparent border-none text-xs text-slate-300 focus:outline-none cursor-pointer"
+                    className="bg-transparent border-none text-xs text-[var(--noir-fg)] focus:outline-none cursor-pointer"
                   >
                     <option value="English">English</option>
                     <option value="German">German</option>
@@ -390,7 +390,7 @@ export default function JobsPage() {
 
                 <button
                   onClick={() => handleRecruiterEmail(job, index)}
-                  className="px-5 py-3 rounded-xl border border-cyan-500/30 text-cyan-400 hover:border-cyan-500 text-sm font-semibold flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-3 rounded-xl border border-[var(--noir-accent)]/30 text-[var(--noir-accent)] hover:border-[var(--noir-accent)] text-sm font-semibold flex items-center gap-1.5 cursor-pointer"
                 >
                   <Mail size={16} />
                   Generate Email
@@ -407,21 +407,21 @@ export default function JobsPage() {
 
               {/* Generated Text Outputs */}
               {selectedEmail === index && (
-                <div className="mt-6 bg-slate-950/80 border border-cyan-500/20 rounded-2xl p-5 relative">
-                  <h4 className="font-bold text-cyan-400 mb-3 flex items-center gap-2">
+                <div className="mt-6 bg-[var(--noir-bg)]/80 border border-[var(--noir-accent)]/20 rounded-2xl p-5 relative">
+                  <h4 className="font-bold text-[var(--noir-accent)] mb-3 flex items-center gap-2">
                     <Mail size={18} />
                     Recruiter Outreach Email ({emailLang[index] || "English"})
                   </h4>
                   {generatingEmail ? (
-                    <div className="text-slate-400 text-sm animate-pulse">Drafting message...</div>
+                    <div className="text-[var(--noir-fg-muted)] text-sm animate-pulse">Drafting message...</div>
                   ) : (
                     <>
-                      <pre className="whitespace-pre-wrap text-slate-350 text-sm leading-relaxed font-sans bg-slate-900/40 p-4 border border-slate-850 rounded-xl">
+                      <pre className="whitespace-pre-wrap text-[var(--noir-fg-muted)] text-sm leading-relaxed font-sans bg-[var(--noir-bg-elevated)]/40 p-4 border border-[var(--noir-border)] rounded-xl">
                         {email}
                       </pre>
                       <button
                         onClick={() => copyToClipboard(email)}
-                        className="mt-3 px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 font-bold rounded-lg text-xs cursor-pointer"
+                        className="mt-3 px-4 py-2 bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)] hover:bg-[var(--noir-bg-surface-3)] font-bold rounded-lg text-xs cursor-pointer"
                       >
                         Copy Outreach
                       </button>
@@ -431,21 +431,21 @@ export default function JobsPage() {
               )}
 
               {selectedCoverLetter === index && (
-                <div className="mt-6 bg-slate-950/80 border border-purple-500/20 rounded-2xl p-5 relative">
+                <div className="mt-6 bg-[var(--noir-bg)]/80 border border-purple-500/20 rounded-2xl p-5 relative">
                   <h4 className="font-bold text-purple-400 mb-3 flex items-center gap-2">
                     <FileText size={18} />
                     Personalized Cover Letter
                   </h4>
                   {generatingLetter ? (
-                    <div className="text-slate-400 text-sm animate-pulse">Drafting letter...</div>
+                    <div className="text-[var(--noir-fg-muted)] text-sm animate-pulse">Drafting letter...</div>
                   ) : (
                     <>
-                      <pre className="whitespace-pre-wrap text-slate-350 text-sm leading-relaxed font-sans bg-slate-900/40 p-4 border border-slate-850 rounded-xl">
+                      <pre className="whitespace-pre-wrap text-[var(--noir-fg-muted)] text-sm leading-relaxed font-sans bg-[var(--noir-bg-elevated)]/40 p-4 border border-[var(--noir-border)] rounded-xl">
                         {coverLetter}
                       </pre>
                       <button
                         onClick={() => copyToClipboard(coverLetter)}
-                        className="mt-3 px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 font-bold rounded-lg text-xs cursor-pointer"
+                        className="mt-3 px-4 py-2 bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)] hover:bg-[var(--noir-bg-surface-3)] font-bold rounded-lg text-xs cursor-pointer"
                       >
                         Copy Letter
                       </button>

@@ -152,7 +152,7 @@ export default function ProfilePage() {
           placeholder="Full Name"
           value={profile.fullName}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <input
@@ -160,7 +160,7 @@ export default function ProfilePage() {
           placeholder="Headline"
           value={profile.headline}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <textarea
@@ -169,7 +169,7 @@ export default function ProfilePage() {
           rows={5}
           value={profile.about}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <input
@@ -177,7 +177,7 @@ export default function ProfilePage() {
           placeholder="Email"
           value={profile.email}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <input
@@ -185,7 +185,7 @@ export default function ProfilePage() {
           placeholder="Phone"
           value={profile.phone}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <input
@@ -193,7 +193,7 @@ export default function ProfilePage() {
           placeholder="Location"
           value={profile.location}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <input
@@ -201,7 +201,7 @@ export default function ProfilePage() {
           placeholder="LinkedIn URL"
           value={profile.linkedinUrl}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <input
@@ -209,7 +209,7 @@ export default function ProfilePage() {
           placeholder="GitHub URL"
           value={profile.githubUrl}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <input
@@ -217,7 +217,7 @@ export default function ProfilePage() {
           placeholder="Resume URL"
           value={profile.resumeUrl}
           onChange={handleChange}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700"
+          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
         <div className="space-y-4">
@@ -249,7 +249,7 @@ export default function ProfilePage() {
 
         <button
           type="submit"
-          className="bg-cyan-500 text-black px-6 py-3 rounded-lg font-semibold"
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-6 py-3 rounded-lg font-semibold"
         >
           {profileExists
             ? "Update Profile"

@@ -71,7 +71,7 @@ export default function ProjectForm({
         placeholder="Project Title"
         value={formData.title}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
         required
       />
 
@@ -80,7 +80,7 @@ export default function ProjectForm({
         placeholder="Description"
         value={formData.description}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
         rows={4}
         required
       />
@@ -91,7 +91,7 @@ export default function ProjectForm({
         placeholder="React, Spring Boot, PostgreSQL"
         value={formData.technologies}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <input
@@ -100,7 +100,7 @@ export default function ProjectForm({
         placeholder="GitHub URL"
         value={formData.githubUrl}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <input
@@ -109,7 +109,7 @@ export default function ProjectForm({
         placeholder="Live URL"
         value={formData.liveUrl}
         onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
 
       <label className="flex items-center gap-2">
@@ -130,14 +130,14 @@ export default function ProjectForm({
           }
         />
         Published
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-[var(--noir-fg-muted)]">
           (uncheck to save as a draft — hidden from the public site, previewable via its case-study link)
         </span>
       </label>
 
       {/* Case-study narrative — optional, powers /projects/{id} */}
-      <details className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-300">
+      <details className="rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)]/50 p-3">
+        <summary className="cursor-pointer text-sm font-semibold text-[var(--noir-fg)]">
           Case Study (optional)
         </summary>
         <div className="mt-3 space-y-3">
@@ -146,7 +146,7 @@ export default function ProjectForm({
             placeholder="The Problem — what pain did this project solve?"
             value={formData.problemStatement}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
             rows={3}
           />
           <textarea
@@ -154,7 +154,7 @@ export default function ProjectForm({
             placeholder="The Solution — how did you solve it?"
             value={formData.solution}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
             rows={3}
           />
           <textarea
@@ -162,7 +162,7 @@ export default function ProjectForm({
             placeholder="Architecture — stack decisions, data flow, infrastructure"
             value={formData.architecture}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
             rows={3}
           />
           <textarea
@@ -170,7 +170,7 @@ export default function ProjectForm({
             placeholder="Challenges — the hard parts and how you got through them"
             value={formData.challenges}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
             rows={3}
           />
           <textarea
@@ -178,7 +178,7 @@ export default function ProjectForm({
             placeholder="Learnings — what you'd do differently"
             value={formData.learnings}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
             rows={3}
           />
           <textarea
@@ -186,7 +186,7 @@ export default function ProjectForm({
             placeholder={"Metrics — one per line, e.g.\n40% faster page loads\n99.9% uptime over 6 months"}
             value={formData.metrics}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
+            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
             rows={3}
           />
         </div>
@@ -204,7 +204,7 @@ export default function ProjectForm({
 
         <button
           type="submit"
-          className="px-5 py-2 rounded-lg bg-cyan-500 text-black font-semibold"
+          className="px-5 py-2 rounded-lg bg-[var(--noir-accent)] text-[var(--noir-bg)] font-semibold"
         >
           Save Project
         </button>

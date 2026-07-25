@@ -15,15 +15,15 @@ export default function Error({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
+      <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[var(--noir-accent)] via-blue-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
         Something went wrong
       </h1>
-      <p className="text-slate-400 max-w-md text-sm md:text-base">
+      <p className="text-[var(--noir-fg-muted)] max-w-md text-sm md:text-base">
         The portfolio couldn&apos;t load right now. This is usually temporary — try again in a moment.
       </p>
       <button
         onClick={reset}
-        className="mt-4 px-6 py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-cyan-500/20 cursor-pointer"
+        className="mt-4 px-6 py-3 rounded-2xl bg-[var(--noir-accent)] hover:bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold transition duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-[var(--noir-accent)]/20 cursor-pointer"
       >
         Try again
       </button>

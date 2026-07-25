@@ -80,7 +80,7 @@ export default function ImageLightbox({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 md:p-8"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--noir-bg)]/95 backdrop-blur-md p-4 md:p-8"
           role="dialog"
           aria-modal="true"
           aria-label="Image preview"
@@ -89,7 +89,7 @@ export default function ImageLightbox({
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer z-[105]"
+            className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-[var(--noir-fg)] hover:text-[var(--noir-fg)] hover:bg-white/10 transition cursor-pointer z-[105]"
             aria-label="Close lightbox"
           >
             <X size={20} />
@@ -103,7 +103,7 @@ export default function ImageLightbox({
                   e.stopPropagation();
                   onNavigate((currentIndex - 1 + images.length) % images.length);
                 }}
-                className="absolute left-6 p-4 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer z-[105]"
+                className="absolute left-6 p-4 rounded-full bg-white/5 border border-white/10 text-[var(--noir-fg)] hover:text-[var(--noir-fg)] hover:bg-white/10 transition cursor-pointer z-[105]"
                 aria-label="Previous image"
               >
                 <ChevronLeft size={24} />
@@ -114,7 +114,7 @@ export default function ImageLightbox({
                   e.stopPropagation();
                   onNavigate((currentIndex + 1) % images.length);
                 }}
-                className="absolute right-6 p-4 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer z-[105]"
+                className="absolute right-6 p-4 rounded-full bg-white/5 border border-white/10 text-[var(--noir-fg)] hover:text-[var(--noir-fg)] hover:bg-white/10 transition cursor-pointer z-[105]"
                 aria-label="Next image"
               >
                 <ChevronRight size={24} />
@@ -138,7 +138,7 @@ export default function ImageLightbox({
               className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/10"
             />
             {images.length > 1 && (
-              <span className="text-xs font-mono text-slate-500 mt-4 tracking-wider uppercase font-bold">
+              <span className="text-xs font-mono text-[var(--noir-fg-subtle)] mt-4 tracking-wider uppercase font-bold">
                 {currentIndex + 1} / {images.length}
               </span>
             )}

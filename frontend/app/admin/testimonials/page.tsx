@@ -85,7 +85,7 @@ export default function TestimonialsPage() {
         title: "Missing fields",
         text: "Author name and quote are required.",
         icon: "warning",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#f59e0b",
       });
@@ -105,7 +105,7 @@ export default function TestimonialsPage() {
       Swal.fire({
         title: "Save failed",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -122,7 +122,7 @@ export default function TestimonialsPage() {
       showCancelButton: true,
       confirmButtonText: "Delete",
       confirmButtonColor: "#ef4444",
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
     });
     if (!result.isConfirmed) return;
@@ -145,7 +145,7 @@ export default function TestimonialsPage() {
         </div>
         <button
           onClick={openAdd}
-          className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-5 py-3 font-semibold text-black"
+          className="inline-flex items-center gap-2 rounded-xl bg-[var(--noir-accent)] px-5 py-3 font-semibold text-[var(--noir-bg)]"
         >
           <Plus size={18} /> Add
         </button>
@@ -153,12 +153,12 @@ export default function TestimonialsPage() {
 
       {loading ? (
         <div className="flex h-40 items-center justify-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-cyan-500" />
+          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-[var(--noir-accent)]" />
         </div>
       ) : testimonials.length === 0 ? (
-        <p className="text-sm text-slate-500">No testimonials yet.</p>
+        <p className="text-sm text-[var(--noir-fg-subtle)]">No testimonials yet.</p>
       ) : (
-        <div className="overflow-x-auto rounded-3xl border border-slate-800">
+        <div className="overflow-x-auto rounded-3xl border border-[var(--noir-border)]">
           <table className="w-full">
             <thead>
               <tr>
@@ -171,17 +171,17 @@ export default function TestimonialsPage() {
             </thead>
             <tbody>
               {testimonials.map((item) => (
-                <tr key={item.id} className="border-t border-slate-800/60">
+                <tr key={item.id} className="border-t border-[var(--noir-border)]/60">
                   <td className="p-5">
                     <div className="font-semibold">{item.authorName}</div>
                     {item.authorRole && (
-                      <div className="text-xs text-slate-400">{item.authorRole}</div>
+                      <div className="text-xs text-[var(--noir-fg-muted)]">{item.authorRole}</div>
                     )}
                   </td>
-                  <td className="max-w-md p-5 text-sm text-slate-300">
+                  <td className="max-w-md p-5 text-sm text-[var(--noir-fg)]">
                     <span className="line-clamp-2">{item.quote}</span>
                   </td>
-                  <td className="p-5 text-slate-400">{item.displayOrder ?? "—"}</td>
+                  <td className="p-5 text-[var(--noir-fg-muted)]">{item.displayOrder ?? "—"}</td>
                   <td className="p-5">
                     {item.published === false ? (
                       <span className="rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
@@ -199,7 +199,7 @@ export default function TestimonialsPage() {
                         onClick={() => openEdit(item)}
                         aria-label={`Edit testimonial from ${item.authorName}`}
                       >
-                        <Pencil size={18} className="text-cyan-400" />
+                        <Pencil size={18} className="text-[var(--noir-accent)]" />
                       </button>
                       <button
                         onClick={() => handleDelete(item)}
@@ -217,8 +217,8 @@ export default function TestimonialsPage() {
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-slate-900 p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--noir-bg)]/60 p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-[var(--noir-bg-elevated)] p-6">
             <h2 className="mb-6 text-2xl font-bold">
               {editingId !== null ? "Edit" : "Add"} Testimonial
             </h2>
@@ -228,35 +228,35 @@ export default function TestimonialsPage() {
                 placeholder="Author name *"
                 value={form.authorName}
                 onChange={(e) => setForm({ ...form, authorName: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <input
                 type="text"
                 placeholder="Role & company, e.g. Engineering Manager, Acme"
                 value={form.authorRole}
                 onChange={(e) => setForm({ ...form, authorRole: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <textarea
                 placeholder="Quote *"
                 rows={4}
                 value={form.quote}
                 onChange={(e) => setForm({ ...form, quote: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <input
                 type="text"
                 placeholder="Avatar URL (optional — from Media library)"
                 value={form.avatarUrl}
                 onChange={(e) => setForm({ ...form, avatarUrl: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <input
                 type="text"
                 placeholder="Profile link, e.g. LinkedIn (optional)"
                 value={form.linkUrl}
                 onChange={(e) => setForm({ ...form, linkUrl: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <input
                 type="number"
@@ -269,7 +269,7 @@ export default function TestimonialsPage() {
                       e.target.value === "" ? undefined : Number(e.target.value),
                   })
                 }
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <label className="flex items-center gap-2 text-sm">
                 <input
@@ -278,7 +278,7 @@ export default function TestimonialsPage() {
                   onChange={(e) => setForm({ ...form, published: e.target.checked })}
                 />
                 Published
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-[var(--noir-fg-muted)]">
                   (uncheck to keep as a hidden draft)
                 </span>
               </label>
@@ -294,7 +294,7 @@ export default function TestimonialsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-lg bg-cyan-500 px-5 py-2 font-semibold text-black disabled:opacity-60"
+                  className="rounded-lg bg-[var(--noir-accent)] px-5 py-2 font-semibold text-[var(--noir-bg)] disabled:opacity-60"
                 >
                   {saving ? "Saving…" : "Save"}
                 </button>

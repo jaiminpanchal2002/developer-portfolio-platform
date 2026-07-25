@@ -15,14 +15,26 @@
   --noir-fg-muted: #a3a09a;
   --noir-fg-subtle: #83807a; /* ~5.2:1 against --bg-color, passes WCAG AA for normal text */
   --noir-accent: #c9a876;
+  --noir-accent-dark: #b8935f;
   --noir-accent-soft: rgba(201, 168, 118, 0.14);
   --noir-border: rgba(243, 241, 237, 0.08);
+  --noir-border-strong: rgba(243, 241, 237, 0.16);
+
+  /* Admin-panel surface tiers — same near-black/off-white/champagne
+     palette as the public site, just more depth steps for dense
+     dashboard chrome (tables, nested panels, sidebar). */
+  --noir-bg-surface-2: #1c1c1f;
+  --noir-bg-surface-3: #232326;
 }
 
 html {
   scroll-behavior: auto; /* Required for Lenis smooth scroll */
   background-color: var(--bg-color);
   color: #f8fafc;
+  /* Without this, native controls (date/time picker icon, checkboxes,
+     select dropdowns) render with light-theme assets and are nearly
+     invisible against the noir background. */
+  color-scheme: dark;
 }
 
 body {
@@ -205,6 +217,18 @@ body::before {
 *:focus-visible {
   outline: 2px solid var(--noir-accent);
   outline-offset: 4px;
+}
+
+/* SweetAlert2 popups — every Swal.fire() call sets its own
+   background/confirmButtonColor to noir tokens, but the library's
+   default button text stays white, which fails contrast against the
+   champagne accent (~2.25:1). Force button text globally instead of
+   passing customClass at every call site. */
+.swal2-confirm {
+  color: var(--noir-bg) !important;
+}
+.swal2-cancel {
+  color: var(--noir-fg) !important;
 }
 
 /* Keyboard navigable outline bypass */

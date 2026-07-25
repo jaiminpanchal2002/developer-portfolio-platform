@@ -64,7 +64,7 @@ export default function EditProjectForm({
       className="space-y-4"
     >
       <input
-        className="w-full p-3 bg-slate-800 rounded"
+        className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
         placeholder="Title"
         value={formData.title}
         onChange={(e) =>
@@ -76,7 +76,7 @@ export default function EditProjectForm({
       />
 
       <textarea
-        className="w-full p-3 bg-slate-800 rounded"
+        className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
         placeholder="Description"
         value={formData.description}
         onChange={(e) =>
@@ -88,7 +88,7 @@ export default function EditProjectForm({
       />
 
       <input
-        className="w-full p-3 bg-slate-800 rounded"
+        className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
         placeholder="Github URL"
         value={formData.githubUrl}
         onChange={(e) =>
@@ -100,7 +100,7 @@ export default function EditProjectForm({
       />
 
       <input
-        className="w-full p-3 bg-slate-800 rounded"
+        className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
         placeholder="Live URL"
         value={formData.liveUrl}
         onChange={(e) =>
@@ -112,7 +112,7 @@ export default function EditProjectForm({
       />
 
       <input
-        className="w-full p-3 bg-slate-800 rounded"
+        className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
         placeholder="Image URL"
         value={formData.imageUrl}
         onChange={(e) =>
@@ -124,7 +124,7 @@ export default function EditProjectForm({
       />
 
       <input
-        className="w-full p-3 bg-slate-800 rounded"
+        className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
         placeholder="Technologies"
         value={formData.technologies}
         onChange={(e) =>
@@ -158,7 +158,7 @@ export default function EditProjectForm({
           }
         />
         Published
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-[var(--noir-fg-muted)]">
           (uncheck to unpublish as a draft; preview stays available at{" "}
           <a
             href={`/projects/${project.id}`}
@@ -173,8 +173,8 @@ export default function EditProjectForm({
       </label>
 
       {/* Case-study narrative — optional, powers /projects/{id} */}
-      <details className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-300">
+      <details className="rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)]/50 p-3">
+        <summary className="cursor-pointer text-sm font-semibold text-[var(--noir-fg)]">
           Case Study (optional)
         </summary>
         <div className="mt-3 space-y-3">
@@ -183,7 +183,7 @@ export default function EditProjectForm({
             placeholder="The Problem — what pain did this project solve?"
             value={formData.problemStatement}
             onChange={handleCaseStudyChange}
-            className="w-full p-3 bg-slate-800 rounded"
+            className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
             rows={3}
           />
           <textarea
@@ -191,7 +191,7 @@ export default function EditProjectForm({
             placeholder="The Solution — how did you solve it?"
             value={formData.solution}
             onChange={handleCaseStudyChange}
-            className="w-full p-3 bg-slate-800 rounded"
+            className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
             rows={3}
           />
           <textarea
@@ -199,7 +199,7 @@ export default function EditProjectForm({
             placeholder="Architecture — stack decisions, data flow, infrastructure"
             value={formData.architecture}
             onChange={handleCaseStudyChange}
-            className="w-full p-3 bg-slate-800 rounded"
+            className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
             rows={3}
           />
           <textarea
@@ -207,7 +207,7 @@ export default function EditProjectForm({
             placeholder="Challenges — the hard parts and how you got through them"
             value={formData.challenges}
             onChange={handleCaseStudyChange}
-            className="w-full p-3 bg-slate-800 rounded"
+            className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
             rows={3}
           />
           <textarea
@@ -215,7 +215,7 @@ export default function EditProjectForm({
             placeholder="Learnings — what you'd do differently"
             value={formData.learnings}
             onChange={handleCaseStudyChange}
-            className="w-full p-3 bg-slate-800 rounded"
+            className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
             rows={3}
           />
           <textarea
@@ -223,7 +223,7 @@ export default function EditProjectForm({
             placeholder={"Metrics — one per line, e.g.\n40% faster page loads\n99.9% uptime over 6 months"}
             value={formData.metrics}
             onChange={handleCaseStudyChange}
-            className="w-full p-3 bg-slate-800 rounded"
+            className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
             rows={3}
           />
         </div>
@@ -232,7 +232,7 @@ export default function EditProjectForm({
       <div className="flex gap-4">
         <button
           type="submit"
-          className="bg-cyan-500 text-black px-6 py-3 rounded-xl font-semibold"
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-6 py-3 rounded-xl font-semibold"
         >
           Update Project
         </button>

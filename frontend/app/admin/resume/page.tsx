@@ -97,7 +97,7 @@ export default function ResumePage() {
         title: "Invalid File Type",
         text: "Please upload a PDF file.",
         icon: "warning",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#f59e0b",
       });
@@ -113,9 +113,9 @@ export default function ResumePage() {
         title: "Successfully Uploaded!",
         text: "Resume uploaded, parsed, and analyzed.",
         icon: "success",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
-        confirmButtonColor: "#06b6d4",
+        confirmButtonColor: "var(--noir-accent)",
       });
 
       loadResumeDetails();
@@ -125,7 +125,7 @@ export default function ResumePage() {
         title: "Upload Failed",
         text: "Error uploading and parsing PDF resume. Verify file syntax.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -140,7 +140,7 @@ export default function ResumePage() {
         title: "Text Empty",
         text: "Please paste your resume text before analyzing.",
         icon: "warning",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#f59e0b",
       });
@@ -159,7 +159,7 @@ export default function ResumePage() {
         position: "top-end",
         showConfirmButton: false,
         timer: 3000,
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
       });
     } catch (error) {
@@ -168,7 +168,7 @@ export default function ResumePage() {
         title: "Error!",
         text: "Could not analyze resume text.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -185,7 +185,7 @@ export default function ResumePage() {
       showCancelButton: true,
       confirmButtonText: "Yes, delete it",
       cancelButtonText: "Cancel",
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
       confirmButtonColor: "#ef4444",
       cancelButtonColor: "#64748b",
@@ -200,9 +200,9 @@ export default function ResumePage() {
             title: "Deleted!",
             text: "Resume has been deleted from your profile.",
             icon: "success",
-            background: "#0f172a",
+            background: "var(--noir-bg-elevated)",
             color: "#ffffff",
-            confirmButtonColor: "#06b6d4",
+            confirmButtonColor: "var(--noir-accent)",
           });
         } catch (error) {
           console.error(error);
@@ -215,10 +215,10 @@ export default function ResumePage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--noir-accent)] to-blue-500 bg-clip-text text-transparent">
           AI Resume Analyzer
         </h1>
-        <p className="text-slate-400 mt-2">
+        <p className="text-[var(--noir-fg-muted)] mt-2">
           Verify ATS compliance, check keyword matching, and find strengths or weaknesses
         </p>
       </div>
@@ -226,25 +226,25 @@ export default function ResumePage() {
       <div className="grid lg:grid-cols-2 gap-8 items-start">
         {/* Upload & Parse Panel */}
         <div className="space-y-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+          <div className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6">
             <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-              <FileText className="text-cyan-400" size={20} />
+              <FileText className="text-[var(--noir-accent)]" size={20} />
               Upload PDF Resume
             </h3>
 
             {resumeDetails?.hasResume ? (
-              <div className="flex items-center justify-between p-4 bg-slate-950/60 border border-slate-800 rounded-2xl">
+              <div className="flex items-center justify-between p-4 bg-[var(--noir-bg)]/60 border border-[var(--noir-border)] rounded-2xl">
                 <div className="flex items-center gap-3">
                   <FileCheck className="text-green-400" size={32} />
                   <div>
-                    <p className="font-bold text-white max-w-[180px] sm:max-w-[280px] truncate text-sm">
+                    <p className="font-bold text-[var(--noir-fg)] max-w-[180px] sm:max-w-[280px] truncate text-sm">
                       {resumeDetails.fileName}
                     </p>
                     <a
                       href={resumeDetails.fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-cyan-400 hover:underline cursor-pointer"
+                      className="text-xs text-[var(--noir-accent)] hover:underline cursor-pointer"
                     >
                       Download Resume
                     </a>
@@ -253,7 +253,7 @@ export default function ResumePage() {
 
                 <button
                   onClick={handleDeleteResume}
-                  className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all cursor-pointer"
+                  className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-[var(--noir-fg)] rounded-xl transition-all cursor-pointer"
                   title="Delete Resume"
                 >
                   <Trash2 size={18} />
@@ -268,8 +268,8 @@ export default function ResumePage() {
                 onClick={() => fileInputRef.current?.click()}
                 className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl py-12 px-6 text-center cursor-pointer transition-all ${
                   dragActive
-                    ? "border-cyan-500 bg-cyan-500/5"
-                    : "border-slate-800 hover:border-slate-700 hover:bg-slate-950/30"
+                    ? "border-[var(--noir-accent)] bg-[var(--noir-accent)]/5"
+                    : "border-[var(--noir-border)] hover:border-[var(--noir-border-strong)] hover:bg-[var(--noir-bg)]/30"
                 }`}
               >
                 <input
@@ -281,12 +281,12 @@ export default function ResumePage() {
                 />
                 <UploadCloud
                   size={48}
-                  className={dragActive ? "text-cyan-400 animate-bounce" : "text-slate-500"}
+                  className={dragActive ? "text-[var(--noir-accent)] animate-bounce" : "text-[var(--noir-fg-subtle)]"}
                 />
-                <h4 className="font-bold mt-4 text-white text-base">
+                <h4 className="font-bold mt-4 text-[var(--noir-fg)] text-base">
                   Drag and drop your PDF resume here
                 </h4>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-[var(--noir-fg-subtle)] mt-2">
                   or click to browse from files (Only PDF supported)
                 </p>
               </div>
@@ -295,7 +295,7 @@ export default function ResumePage() {
 
           {/* Paste Section Fallback */}
           {!resumeDetails?.hasResume && (
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+            <div className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6 space-y-4">
               <h3 className="font-bold text-xl flex items-center gap-2">
                 Alternative: Paste Resume Text
               </h3>
@@ -304,16 +304,16 @@ export default function ResumePage() {
                 onChange={(e) => setResumeText(e.target.value)}
                 rows={8}
                 placeholder="Paste the plain text of your resume here..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-300 focus:border-cyan-500 focus:outline-none transition-colors text-sm resize-none"
+                className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-2xl p-4 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors text-sm resize-none"
               />
               <button
                 onClick={handlePasteAnalyze}
                 disabled={loading}
-                className="w-full bg-slate-800 text-cyan-400 border border-cyan-500/30 hover:border-cyan-500 hover:bg-slate-750 py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full bg-[var(--noir-bg-surface-2)] text-[var(--noir-accent)] border border-[var(--noir-accent)]/30 hover:border-[var(--noir-accent)] hover:bg-[var(--noir-bg-surface-3)] py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-cyan-400"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--noir-accent)]"></div>
                     Analyzing...
                   </>
                 ) : (
@@ -327,47 +327,47 @@ export default function ResumePage() {
         {/* Results Panel */}
         <div>
           {loading ? (
-            <div className="flex flex-col items-center justify-center h-64 bg-slate-900 border border-slate-800 rounded-3xl p-6">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mb-4"></div>
-              <p className="text-slate-400">AI parsing and scoring your resume content...</p>
+            <div className="flex flex-col items-center justify-center h-64 bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--noir-accent)] mb-4"></div>
+              <p className="text-[var(--noir-fg-muted)]">AI parsing and scoring your resume content...</p>
             </div>
           ) : result ? (
             <div className="space-y-6">
               {/* Scores Card */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+              <div className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6">
                 <h3 className="font-bold text-xl mb-6">Analysis Scores</h3>
                 
                 <div className="grid sm:grid-cols-2 gap-6">
                   {/* Resume Score */}
-                  <div className="flex items-center gap-4 bg-slate-950/40 border border-slate-800/60 p-4 rounded-2xl">
+                  <div className="flex items-center gap-4 bg-[var(--noir-bg)]/40 border border-[var(--noir-border)]/60 p-4 rounded-2xl">
                     <div className="w-20 h-20 relative flex items-center justify-center">
                       <svg className="w-full h-full transform -rotate-90">
-                        <circle cx="40" cy="40" r="32" strokeWidth="6" stroke="#1e293b" fill="transparent" />
+                        <circle cx="40" cy="40" r="32" strokeWidth="6" stroke="var(--noir-border-strong)" fill="transparent" />
                         <circle
                           cx="40"
                           cy="40"
                           r="32"
                           strokeWidth="6"
-                          stroke="#06b6d4"
+                          stroke="var(--noir-accent)"
                           strokeDasharray={2 * Math.PI * 32}
                           strokeDashoffset={2 * Math.PI * 32 * (1 - (result.score ?? 0) / 100)}
                           strokeLinecap="round"
                           fill="transparent"
                         />
                       </svg>
-                      <span className="absolute font-extrabold text-white text-lg">{result.score}%</span>
+                      <span className="absolute font-extrabold text-[var(--noir-fg)] text-lg">{result.score}%</span>
                     </div>
                     <div>
-                      <h4 className="font-bold text-white text-sm">Resume Score</h4>
-                      <p className="text-slate-400 text-xs mt-1">Completeness and quality of layout details</p>
+                      <h4 className="font-bold text-[var(--noir-fg)] text-sm">Resume Score</h4>
+                      <p className="text-[var(--noir-fg-muted)] text-xs mt-1">Completeness and quality of layout details</p>
                     </div>
                   </div>
 
                   {/* ATS Score */}
-                  <div className="flex items-center gap-4 bg-slate-950/40 border border-slate-800/60 p-4 rounded-2xl">
+                  <div className="flex items-center gap-4 bg-[var(--noir-bg)]/40 border border-[var(--noir-border)]/60 p-4 rounded-2xl">
                     <div className="w-20 h-20 relative flex items-center justify-center">
                       <svg className="w-full h-full transform -rotate-90">
-                        <circle cx="40" cy="40" r="32" strokeWidth="6" stroke="#1e293b" fill="transparent" />
+                        <circle cx="40" cy="40" r="32" strokeWidth="6" stroke="var(--noir-border-strong)" fill="transparent" />
                         <circle
                           cx="40"
                           cy="40"
@@ -380,18 +380,18 @@ export default function ResumePage() {
                           fill="transparent"
                         />
                       </svg>
-                      <span className="absolute font-extrabold text-white text-lg">{result.atsScore}%</span>
+                      <span className="absolute font-extrabold text-[var(--noir-fg)] text-lg">{result.atsScore}%</span>
                     </div>
                     <div>
-                      <h4 className="font-bold text-white text-sm">ATS Score</h4>
-                      <p className="text-slate-400 text-xs mt-1">Compliance with parsing bots and formats</p>
+                      <h4 className="font-bold text-[var(--noir-fg)] text-sm">ATS Score</h4>
+                      <p className="text-[var(--noir-fg-muted)] text-xs mt-1">Compliance with parsing bots and formats</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Strengths & Weaknesses */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
+              <div className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6 space-y-6">
                 <div>
                   <h3 className="font-bold text-xl mb-4 text-emerald-400 flex items-center gap-2">
                     <CheckCircle size={20} />
@@ -399,7 +399,7 @@ export default function ResumePage() {
                   </h3>
                   <ul className="space-y-3">
                     {result.strengths?.map((item: string, i: number) => (
-                      <li key={i} className="flex gap-2 items-start text-slate-350 text-sm leading-relaxed">
+                      <li key={i} className="flex gap-2 items-start text-[var(--noir-fg-muted)] text-sm leading-relaxed">
                         <span className="text-emerald-500 shrink-0 mt-0.5">✓</span>
                         {item}
                       </li>
@@ -408,13 +408,13 @@ export default function ResumePage() {
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-xl mb-4 text-rose-400 flex items-center gap-2 border-t border-slate-800 pt-6">
+                  <h3 className="font-bold text-xl mb-4 text-rose-400 flex items-center gap-2 border-t border-[var(--noir-border)] pt-6">
                     <AlertTriangle size={20} />
                     Areas to Improve
                   </h3>
                   <ul className="space-y-3">
                     {result.weaknesses?.map((item: string, i: number) => (
-                      <li key={i} className="flex gap-2 items-start text-slate-350 text-sm leading-relaxed">
+                      <li key={i} className="flex gap-2 items-start text-[var(--noir-fg-muted)] text-sm leading-relaxed">
                         <span className="text-rose-500 shrink-0 mt-0.5">✗</span>
                         {item}
                       </li>
@@ -425,12 +425,12 @@ export default function ResumePage() {
 
               {/* Missing Keywords */}
               {(result.missingKeywords?.length ?? 0) > 0 && (
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+                <div className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6">
                   <h3 className="font-bold text-xl mb-4 text-yellow-400 flex items-center gap-2">
                     <AlertTriangle size={20} />
                     Missing Keywords
                   </h3>
-                  <p className="text-xs text-slate-400 mb-4">
+                  <p className="text-xs text-[var(--noir-fg-muted)] mb-4">
                     Incorporate these terms into your resume to increase keyword match:
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -447,21 +447,21 @@ export default function ResumePage() {
               )}
 
               {/* AI Recommendations */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-                <h3 className="font-bold text-xl mb-4 text-cyan-400 flex items-center gap-2">
+              <div className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6">
+                <h3 className="font-bold text-xl mb-4 text-[var(--noir-accent)] flex items-center gap-2">
                   <Lightbulb size={20} />
                   AI Optimization Tips
                 </h3>
-                <div className="rounded-xl bg-slate-950 border border-slate-800 p-4 text-slate-300 text-sm leading-relaxed">
+                <div className="rounded-xl bg-[var(--noir-bg)] border border-[var(--noir-border)] p-4 text-[var(--noir-fg)] text-sm leading-relaxed">
                   {result.recommendation}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-24 border border-dashed border-slate-800 rounded-3xl bg-slate-900/10 text-center">
-              <FileText className="text-slate-700 mb-4" size={48} />
-              <h4 className="text-lg font-semibold text-slate-400">Analysis Awaiting</h4>
-              <p className="text-slate-500 text-sm max-w-xs mt-1">
+            <div className="flex flex-col items-center justify-center py-24 border border-dashed border-[var(--noir-border)] rounded-3xl bg-[var(--noir-bg-elevated)]/10 text-center">
+              <FileText className="text-[var(--noir-fg-subtle)] mb-4" size={48} />
+              <h4 className="text-lg font-semibold text-[var(--noir-fg-muted)]">Analysis Awaiting</h4>
+              <p className="text-[var(--noir-fg-subtle)] text-sm max-w-xs mt-1">
                 Upload your resume PDF in the left panel to trigger the AI parser and ATS diagnostic review.
               </p>
             </div>

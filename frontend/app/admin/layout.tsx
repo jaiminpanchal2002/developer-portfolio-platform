@@ -11,7 +11,7 @@ export default function AdminLayout({
 }) {
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-[#020617] text-white">
+      <div className="min-h-screen bg-[var(--noir-bg)] text-[var(--noir-fg)]">
         <div className="flex">
           <AdminSidebar />
 

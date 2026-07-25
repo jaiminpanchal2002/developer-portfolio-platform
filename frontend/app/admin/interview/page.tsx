@@ -47,7 +47,7 @@ export default function InterviewPage() {
         position: "top-end",
         showConfirmButton: false,
         timer: 3000,
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
       });
     } catch (error) {
@@ -56,7 +56,7 @@ export default function InterviewPage() {
         title: "Generation Failed",
         text: "Could not connect to AI endpoint. Please try again.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -68,7 +68,7 @@ export default function InterviewPage() {
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case "technical":
-        return <Cpu className="text-cyan-400" size={18} />;
+        return <Cpu className="text-[var(--noir-accent)]" size={18} />;
       case "hr":
         return <UserCheck className="text-pink-400" size={18} />;
       case "scenario":
@@ -81,7 +81,7 @@ export default function InterviewPage() {
   const getCategoryBadge = (category: string) => {
     switch (category.toLowerCase()) {
       case "technical":
-        return "bg-cyan-500/10 text-cyan-400 border-cyan-500/20";
+        return "bg-[var(--noir-accent)]/10 text-[var(--noir-accent)] border-[var(--noir-accent)]/20";
       case "hr":
         return "bg-pink-500/10 text-pink-400 border-pink-500/20";
       case "scenario":
@@ -95,18 +95,18 @@ export default function InterviewPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--noir-accent)] to-blue-500 bg-clip-text text-transparent">
           AI Interview Preparation
         </h1>
-        <p className="text-slate-400 mt-2">
+        <p className="text-[var(--noir-fg-muted)] mt-2">
           Generate Technical, HR, and Scenario questions customized to your profile
         </p>
       </div>
 
       {/* Role Selector Card */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+      <div className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6">
         <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-          <Sparkles className="text-cyan-400" size={20} />
+          <Sparkles className="text-[var(--noir-accent)]" size={20} />
           Select Target Role
         </h3>
         
@@ -115,7 +115,7 @@ export default function InterviewPage() {
             value={role}
             onChange={(e) => setRole(e.target.value)}
             disabled={loading}
-            className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+            className="flex-1 bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
           >
             {ROLES.map((r) => (
               <option key={r} value={r}>
@@ -127,7 +127,7 @@ export default function InterviewPage() {
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="px-6 py-3 rounded-xl bg-cyan-500 text-black font-bold hover:scale-105 transition-all shadow-lg shadow-cyan-500/10 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2 cursor-pointer"
+            className="px-6 py-3 rounded-xl bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold hover:scale-105 transition-all shadow-lg shadow-[var(--noir-accent)]/10 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2 cursor-pointer"
           >
             {loading ? (
               <>
@@ -145,10 +145,10 @@ export default function InterviewPage() {
       <div className="space-y-4">
         {questions.length === 0 ? (
           !loading && (
-            <div className="flex flex-col items-center justify-center py-20 border border-dashed border-slate-800 rounded-3xl bg-slate-900/10">
-              <HelpCircle className="text-slate-600 mb-4" size={48} />
-              <h4 className="text-lg font-semibold text-slate-400">No Questions Loaded</h4>
-              <p className="text-slate-500 text-sm max-w-xs text-center mt-1">
+            <div className="flex flex-col items-center justify-center py-20 border border-dashed border-[var(--noir-border)] rounded-3xl bg-[var(--noir-bg-elevated)]/10">
+              <HelpCircle className="text-[var(--noir-fg-subtle)] mb-4" size={48} />
+              <h4 className="text-lg font-semibold text-[var(--noir-fg-muted)]">No Questions Loaded</h4>
+              <p className="text-[var(--noir-fg-subtle)] text-sm max-w-xs text-center mt-1">
                 Select your target job role above and trigger the AI question generator.
               </p>
             </div>
@@ -159,12 +159,12 @@ export default function InterviewPage() {
             return (
               <div
                 key={i}
-                className="bg-slate-900 border border-slate-800/80 hover:border-slate-800 rounded-2xl overflow-hidden transition-colors"
+                className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)]/80 hover:border-[var(--noir-border)] rounded-2xl overflow-hidden transition-colors"
               >
                 {/* Accordion Trigger */}
                 <button
                   onClick={() => setExpandedIndex(isExpanded ? null : i)}
-                  className="w-full text-left p-5 flex justify-between items-start gap-4 cursor-pointer hover:bg-slate-900/50"
+                  className="w-full text-left p-5 flex justify-between items-start gap-4 cursor-pointer hover:bg-[var(--noir-bg-elevated)]/50"
                 >
                   <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-2">
@@ -177,12 +177,12 @@ export default function InterviewPage() {
                         {q.category}
                       </span>
                     </div>
-                    <h3 className="font-bold text-white text-lg md:text-xl pr-6 leading-snug">
+                    <h3 className="font-bold text-[var(--noir-fg)] text-lg md:text-xl pr-6 leading-snug">
                       {q.question}
                     </h3>
                   </div>
 
-                  <div className="text-slate-500 mt-1">
+                  <div className="text-[var(--noir-fg-subtle)] mt-1">
                     {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
                 </button>
@@ -197,9 +197,9 @@ export default function InterviewPage() {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-5 pb-5 pt-2 border-t border-slate-800/50 bg-slate-950/40">
-                        <div className="rounded-xl bg-slate-950/60 border border-slate-800/60 p-4 leading-relaxed text-slate-300 text-sm md:text-base">
-                          <p className="font-bold text-cyan-400 mb-2">Suggested Answer/Hint:</p>
+                      <div className="px-5 pb-5 pt-2 border-t border-[var(--noir-border)]/50 bg-[var(--noir-bg)]/40">
+                        <div className="rounded-xl bg-[var(--noir-bg)]/60 border border-[var(--noir-border)]/60 p-4 leading-relaxed text-[var(--noir-fg)] text-sm md:text-base">
+                          <p className="font-bold text-[var(--noir-accent)] mb-2">Suggested Answer/Hint:</p>
                           <p className="whitespace-pre-line">{q.answer}</p>
                         </div>
                       </div>

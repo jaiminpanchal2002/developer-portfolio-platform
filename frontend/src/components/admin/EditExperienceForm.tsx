@@ -78,7 +78,7 @@ export default function EditExperienceForm({
         value={formData.company}
         onChange={handleChange}
         placeholder="Company"
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -87,7 +87,7 @@ export default function EditExperienceForm({
         value={formData.position}
         onChange={handleChange}
         placeholder="Position"
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
       />
 
       <textarea
@@ -96,7 +96,7 @@ export default function EditExperienceForm({
         onChange={handleChange}
         placeholder="Description"
         rows={4}
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -104,7 +104,7 @@ export default function EditExperienceForm({
         name="startDate"
         value={formData.startDate}
         onChange={handleChange}
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -112,7 +112,7 @@ export default function EditExperienceForm({
         name="endDate"
         value={formData.endDate || ""}
         onChange={handleChange}
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
       />
 
       <label className="flex items-center gap-2">
@@ -135,7 +135,7 @@ export default function EditExperienceForm({
 
         <button
           type="submit"
-          className="bg-cyan-500 text-black px-4 py-2 rounded"
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
         >
           Update Experience
         </button>

@@ -57,9 +57,9 @@ export default function ApplicationsPage() {
         title: "Error!",
         text: "Failed to load applications. Please verify backend connection.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
-        confirmButtonColor: "#06b6d4",
+        confirmButtonColor: "var(--noir-accent)",
       });
     } finally {
       setLoading(false);
@@ -107,7 +107,7 @@ export default function ApplicationsPage() {
         title: "Validation Error",
         text: "Job Title and Company are required.",
         icon: "warning",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#f59e0b",
       });
@@ -121,9 +121,9 @@ export default function ApplicationsPage() {
           title: "Updated!",
           text: "Application details have been updated successfully.",
           icon: "success",
-          background: "#0f172a",
+          background: "var(--noir-bg-elevated)",
           color: "#ffffff",
-          confirmButtonColor: "#06b6d4",
+          confirmButtonColor: "var(--noir-accent)",
         });
       } else {
         await createApplication(formData);
@@ -131,9 +131,9 @@ export default function ApplicationsPage() {
           title: "Created!",
           text: "New job application has been tracked.",
           icon: "success",
-          background: "#0f172a",
+          background: "var(--noir-bg-elevated)",
           color: "#ffffff",
-          confirmButtonColor: "#06b6d4",
+          confirmButtonColor: "var(--noir-accent)",
         });
       }
       setModalOpen(false);
@@ -144,7 +144,7 @@ export default function ApplicationsPage() {
         title: "Error!",
         text: "Failed to save application.",
         icon: "error",
-        background: "#0f172a",
+        background: "var(--noir-bg-elevated)",
         color: "#ffffff",
         confirmButtonColor: "#ef4444",
       });
@@ -159,7 +159,7 @@ export default function ApplicationsPage() {
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "No, keep it",
-      background: "#0f172a",
+      background: "var(--noir-bg-elevated)",
       color: "#ffffff",
       confirmButtonColor: "#ef4444",
       cancelButtonColor: "#64748b",
@@ -171,9 +171,9 @@ export default function ApplicationsPage() {
             title: "Deleted!",
             text: "Your application has been deleted.",
             icon: "success",
-            background: "#0f172a",
+            background: "var(--noir-bg-elevated)",
             color: "#ffffff",
-            confirmButtonColor: "#06b6d4",
+            confirmButtonColor: "var(--noir-accent)",
           });
           loadApplications();
         } catch (error) {
@@ -182,7 +182,7 @@ export default function ApplicationsPage() {
             title: "Error!",
             text: "Failed to delete application.",
             icon: "error",
-            background: "#0f172a",
+            background: "var(--noir-bg-elevated)",
             color: "#ffffff",
             confirmButtonColor: "#ef4444",
           });
@@ -202,16 +202,16 @@ export default function ApplicationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--noir-accent)] to-blue-500 bg-clip-text text-transparent">
             Applications Tracker
           </h1>
-          <p className="text-slate-400 mt-2">
+          <p className="text-[var(--noir-fg-muted)] mt-2">
             Organize and follow your job search process
           </p>
         </div>
         <button
           onClick={handleOpenAdd}
-          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-cyan-500 text-black font-bold hover:scale-105 transition-all shadow-lg shadow-cyan-500/20 cursor-pointer"
+          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold hover:scale-105 transition-all shadow-lg shadow-[var(--noir-accent)]/20 cursor-pointer"
         >
           <Plus size={20} />
           Add Application
@@ -220,7 +220,7 @@ export default function ApplicationsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--noir-accent)]"></div>
         </div>
       ) : (
         /* Kanban Board */
@@ -230,15 +230,15 @@ export default function ApplicationsPage() {
             return (
               <div
                 key={status}
-                className="flex flex-col rounded-3xl bg-slate-900/50 border border-slate-800/80 p-4 min-h-[500px]"
+                className="flex flex-col rounded-3xl bg-[var(--noir-bg-elevated)]/50 border border-[var(--noir-border)]/80 p-4 min-h-[500px]"
               >
                 {/* Column Header */}
-                <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-800">
+                <div className="flex justify-between items-center mb-4 pb-2 border-b border-[var(--noir-border)]">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                    <span className="w-2 h-2 rounded-full bg-[var(--noir-accent)]"></span>
                     <h3 className="font-bold text-lg">{status}</h3>
                   </div>
-                  <span className="text-xs bg-slate-800 px-2 py-1 rounded-full text-slate-400">
+                  <span className="text-xs bg-[var(--noir-bg-surface-2)] px-2 py-1 rounded-full text-[var(--noir-fg-muted)]">
                     {list.length}
                   </span>
                 </div>
@@ -246,27 +246,27 @@ export default function ApplicationsPage() {
                 {/* Column Cards */}
                 <div className="flex-1 space-y-4 overflow-y-auto">
                   {list.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-32 border border-dashed border-slate-800 rounded-2xl text-slate-600 text-sm">
+                    <div className="flex flex-col items-center justify-center h-32 border border-dashed border-[var(--noir-border)] rounded-2xl text-[var(--noir-fg-subtle)] text-sm">
                       No jobs
                     </div>
                   ) : (
                     list.map((app) => (
                       <div
                         key={app.id}
-                        className="group relative rounded-2xl bg-slate-900 border border-slate-800 p-4 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/5 transition-all"
+                        className="group relative rounded-2xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-4 hover:border-[var(--noir-accent)]/50 hover:shadow-lg hover:shadow-[var(--noir-accent)]/5 transition-all"
                       >
                         {/* Quick action bar */}
                         <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleOpenEdit(app)}
-                            className="p-1 rounded bg-slate-800 text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer"
+                            className="p-1 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg-muted)] hover:text-[var(--noir-accent)] transition-colors cursor-pointer"
                             title="Edit"
                           >
                             <Edit2 size={14} />
                           </button>
                           <button
                             onClick={() => handleDelete(app.id!)}
-                            className="p-1 rounded bg-slate-800 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+                            className="p-1 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg-muted)] hover:text-red-400 transition-colors cursor-pointer"
                             title="Delete"
                           >
                             <Trash2 size={14} />
@@ -274,16 +274,16 @@ export default function ApplicationsPage() {
                         </div>
 
                         {/* Card Info */}
-                        <h4 className="font-bold text-white pr-12 text-lg truncate">
+                        <h4 className="font-bold text-[var(--noir-fg)] pr-12 text-lg truncate">
                           {app.jobTitle}
                         </h4>
-                        <p className="text-cyan-400 font-medium text-sm truncate mt-1">
+                        <p className="text-[var(--noir-accent)] font-medium text-sm truncate mt-1">
                           {app.company}
                         </p>
 
-                        <div className="mt-4 space-y-2 text-xs text-slate-400 border-t border-slate-800/80 pt-3">
+                        <div className="mt-4 space-y-2 text-xs text-[var(--noir-fg-muted)] border-t border-[var(--noir-border)]/80 pt-3">
                           <div className="flex items-center gap-2">
-                            <Calendar size={12} className="text-slate-500" />
+                            <Calendar size={12} className="text-[var(--noir-fg-subtle)]" />
                             <span>Applied: {app.appliedDate}</span>
                           </div>
 
@@ -295,8 +295,8 @@ export default function ApplicationsPage() {
                           )}
 
                           {app.notes && (
-                            <div className="flex gap-2 text-slate-400 border-t border-slate-800/50 pt-2 mt-2">
-                              <FileText size={12} className="text-slate-500 shrink-0 mt-0.5" />
+                            <div className="flex gap-2 text-[var(--noir-fg-muted)] border-t border-[var(--noir-border)]/50 pt-2 mt-2">
+                              <FileText size={12} className="text-[var(--noir-fg-subtle)] shrink-0 mt-0.5" />
                               <p className="line-clamp-2 leading-relaxed">{app.notes}</p>
                             </div>
                           )}
@@ -308,7 +308,7 @@ export default function ApplicationsPage() {
                               href={app.jobUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
+                              className="text-xs text-[var(--noir-accent)] hover:underline flex items-center gap-1 cursor-pointer"
                             >
                               Job Post <ExternalLink size={10} />
                             </a>
@@ -326,15 +326,15 @@ export default function ApplicationsPage() {
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-800 p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--noir-bg)]/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg rounded-3xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
             <h2 className="text-2xl font-bold mb-6">
               {currentApp ? "Edit Application" : "Track New Application"}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--noir-fg)] mb-1">
                   Job Title *
                 </label>
                 <input
@@ -345,12 +345,12 @@ export default function ApplicationsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, jobTitle: e.target.value })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+                  className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--noir-fg)] mb-1">
                   Company Name *
                 </label>
                 <input
@@ -361,13 +361,13 @@ export default function ApplicationsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, company: e.target.value })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+                  className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--noir-fg)] mb-1">
                     Status
                   </label>
                   <select
@@ -375,7 +375,7 @@ export default function ApplicationsPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, status: e.target.value })
                     }
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+                    className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
                   >
                     {STATUSES.map((status) => (
                       <option key={status} value={status}>
@@ -386,7 +386,7 @@ export default function ApplicationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--noir-fg)] mb-1">
                     Applied Date
                   </label>
                   <input
@@ -395,14 +395,14 @@ export default function ApplicationsPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, appliedDate: e.target.value })
                     }
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+                    className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--noir-fg)] mb-1">
                     Interview Date
                   </label>
                   <input
@@ -414,12 +414,12 @@ export default function ApplicationsPage() {
                         interviewDate: e.target.value,
                       })
                     }
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+                    className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--noir-fg)] mb-1">
                     Job Posting URL
                   </label>
                   <input
@@ -429,13 +429,13 @@ export default function ApplicationsPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, jobUrl: e.target.value })
                     }
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-cyan-500 focus:outline-none transition-colors"
+                    className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--noir-fg)] mb-1">
                   Notes
                 </label>
                 <textarea
@@ -445,21 +445,21 @@ export default function ApplicationsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white focus:border-cyan-500 focus:outline-none transition-colors resize-none"
+                  className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl p-4 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors resize-none"
                 />
               </div>
 
-              <div className="flex gap-4 justify-end pt-4 border-t border-slate-800/80 mt-6">
+              <div className="flex gap-4 justify-end pt-4 border-t border-[var(--noir-border)]/80 mt-6">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-5 py-3 rounded-xl bg-slate-800 text-white font-semibold hover:bg-slate-700 transition-colors cursor-pointer"
+                  className="px-5 py-3 rounded-xl bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)] font-semibold hover:bg-[var(--noir-bg-surface-3)] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-3 rounded-xl bg-cyan-500 text-black font-bold hover:scale-105 transition-all cursor-pointer"
+                  className="px-5 py-3 rounded-xl bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold hover:scale-105 transition-all cursor-pointer"
                 >
                   {currentApp ? "Save Changes" : "Create Application"}
                 </button>

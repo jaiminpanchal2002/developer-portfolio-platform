@@ -29,7 +29,7 @@ export default function CertificateTable({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 overflow-x-auto">
+    <div className="rounded-3xl border border-[var(--noir-border)] overflow-x-auto">
       <table className="w-full">
         <thead>
           <tr>
@@ -71,7 +71,7 @@ export default function CertificateTable({
                 >
                   <Pencil
                     size={20}
-                    className="text-cyan-400"
+                    className="text-[var(--noir-accent)]"
                   />
                 </button>
 

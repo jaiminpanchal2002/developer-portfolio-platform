@@ -72,7 +72,7 @@ export default function ExperienceForm({
         placeholder="Company"
         value={formData.company}
         onChange={handleChange}
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
         required
       />
 
@@ -82,7 +82,7 @@ export default function ExperienceForm({
         placeholder="Position"
         value={formData.position}
         onChange={handleChange}
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
         required
       />
 
@@ -91,7 +91,7 @@ export default function ExperienceForm({
         placeholder="Description"
         value={formData.description}
         onChange={handleChange}
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
         rows={4}
       />
 
@@ -100,7 +100,7 @@ export default function ExperienceForm({
         name="startDate"
         value={formData.startDate}
         onChange={handleChange}
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
       />
 
       <input
@@ -108,7 +108,7 @@ export default function ExperienceForm({
         name="endDate"
         value={formData.endDate}
         onChange={handleChange}
-        className="w-full p-3 rounded bg-slate-800"
+        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
       />
 
       <label className="flex gap-2">
@@ -131,7 +131,7 @@ export default function ExperienceForm({
 
         <button
           type="submit"
-          className="bg-cyan-500 text-black px-4 py-2 rounded"
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
         >
           Save
         </button>

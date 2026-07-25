@@ -85,9 +85,9 @@ export default function ProjectTable({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 overflow-x-auto">
+    <div className="rounded-3xl border border-[var(--noir-border)] overflow-x-auto">
       {savingOrder && (
-        <div className="px-6 pt-4 text-xs text-cyan-400 font-semibold">
+        <div className="px-6 pt-4 text-xs text-[var(--noir-accent)] font-semibold">
           Saving order…
         </div>
       )}
@@ -121,14 +121,14 @@ export default function ProjectTable({
               }}
               className={
                 overIndex === index && dragIndex !== null && dragIndex !== index
-                  ? "border-t-2 border-cyan-500"
+                  ? "border-t-2 border-[var(--noir-accent)]"
                   : dragIndex === index
                     ? "opacity-40"
                     : ""
               }
             >
               <td className="p-6 cursor-grab active:cursor-grabbing" title="Drag to reorder">
-                <GripVertical size={18} className="text-slate-500" />
+                <GripVertical size={18} className="text-[var(--noir-fg-subtle)]" />
               </td>
 
               <td className="p-6">{project.title}</td>
@@ -169,7 +169,7 @@ export default function ProjectTable({
                 >
                   <Pencil
                     size={20}
-                    className="text-cyan-400"
+                    className="text-[var(--noir-accent)]"
                   />
                 </button>
 
