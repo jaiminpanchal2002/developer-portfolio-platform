@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { createProject } from "@/services/projectService";
+import { uploadImage } from "@/services/uploadService";
+import { getImageUrl } from "@/lib/api";
 
 interface ProjectFormProps {
   onClose: () => void;
@@ -18,6 +21,7 @@ export default function ProjectForm({
     technologies: "",
     githubUrl: "",
     liveUrl: "",
+    imageUrl: "",
     featured: false,
     published: true,
     problemStatement: "",
@@ -27,6 +31,25 @@ export default function ProjectForm({
     learnings: "",
     metrics: "",
   });
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPreview(URL.createObjectURL(file));
+    setUploading(true);
+    try {
+      const imageUrl = await uploadImage(file);
+      setFormData((prev) => ({ ...prev, imageUrl }));
+    } catch (error) {
+      console.error(error);
+      alert("Image upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -111,6 +134,23 @@ export default function ProjectForm({
         onChange={handleChange}
         className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
       />
+
+      <div className="space-y-3">
+        <label className="block text-sm font-semibold text-[var(--noir-fg-muted)]">
+          Project Image
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="w-full text-sm text-[var(--noir-fg-muted)]"
+        />
+        {preview && (
+          <div className="relative w-full h-48 rounded-lg overflow-hidden border border-[var(--noir-border-strong)]">
+            <Image src={getImageUrl(preview)} alt="Project preview" fill sizes="400px" unoptimized className="object-cover" />
+          </div>
+        )}
+      </div>
 
       <label className="flex items-center gap-2">
         <input
@@ -204,9 +244,10 @@ export default function ProjectForm({
 
         <button
           type="submit"
-          className="px-5 py-2 rounded-lg bg-[var(--noir-accent)] text-[var(--noir-bg)] font-semibold"
+          disabled={uploading}
+          className="px-5 py-2 rounded-lg bg-[var(--noir-accent)] text-[var(--noir-bg)] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Save Project
+          {uploading ? "Uploading image…" : "Save Project"}
         </button>
 
       </div>

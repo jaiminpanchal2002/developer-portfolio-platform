@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { updateProject } from "@/services/projectService";
+import { uploadImage } from "@/services/uploadService";
+import { getImageUrl } from "@/lib/api";
 import { Project } from "@/types";
 
 interface Props {
@@ -32,6 +35,25 @@ export default function EditProjectForm({
     displayOrder: project.displayOrder,
     published: project.published !== false,
   });
+  const [preview, setPreview] = useState<string | null>(project.imageUrl || null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPreview(URL.createObjectURL(file));
+    setUploading(true);
+    try {
+      const imageUrl = await uploadImage(file);
+      setFormData((prev) => ({ ...prev, imageUrl }));
+    } catch (error) {
+      console.error(error);
+      alert("Image upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleCaseStudyChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -111,17 +133,22 @@ export default function EditProjectForm({
         }
       />
 
-      <input
-        className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
-        placeholder="Image URL"
-        value={formData.imageUrl}
-        onChange={(e) =>
-          setFormData({
-            ...formData,
-            imageUrl: e.target.value,
-          })
-        }
-      />
+      <div className="space-y-3">
+        <label className="block text-sm font-semibold text-[var(--noir-fg-muted)]">
+          Project Image
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="w-full text-sm text-[var(--noir-fg-muted)]"
+        />
+        {preview && (
+          <div className="relative w-full h-48 rounded-lg overflow-hidden border border-[var(--noir-border-strong)]">
+            <Image src={getImageUrl(preview)} alt="Project preview" fill sizes="400px" unoptimized className="object-cover" />
+          </div>
+        )}
+      </div>
 
       <input
         className="w-full p-3 bg-[var(--noir-bg-surface-2)] rounded"
@@ -232,9 +259,10 @@ export default function EditProjectForm({
       <div className="flex gap-4">
         <button
           type="submit"
-          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-6 py-3 rounded-xl font-semibold"
+          disabled={uploading}
+          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-6 py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Update Project
+          {uploading ? "Uploading image…" : "Update Project"}
         </button>
 
         <button
