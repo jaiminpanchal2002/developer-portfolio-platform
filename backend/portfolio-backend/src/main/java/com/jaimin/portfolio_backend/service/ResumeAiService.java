@@ -13,10 +13,14 @@ public class ResumeAiService {
 
     // Common technical keywords to check for
     private static final List<String> ATS_KEYWORDS = List.of(
-            "Java", "Spring Boot", "React", "Next.js", "TypeScript", "JavaScript",
-            "Docker", "Kubernetes", "AWS", "CI/CD", "PostgreSQL", "MySQL", 
-            "REST API", "JWT", "Microservices", "Git", "GitLab", "GitHub", 
-            "Unit Testing", "Hibernate", "Lombok", "Redis", "Cloud", "Agile"
+            "Java", "Spring Boot", "Spring Security", "React", "Next.js", "Vue.js",
+            "TypeScript", "JavaScript", "Python", "FastAPI", "PHP", "Laravel",
+            "Flutter", "Docker", "Kubernetes", "AWS", "CI/CD", "PostgreSQL", "MySQL",
+            "MongoDB", "REST API", "JWT", "OAuth", "Microservices", "Git", "GitLab", "GitHub",
+            "Unit Testing", "Hibernate", "Lombok", "Redis", "Cloud", "Agile",
+            "Firebase", "Stripe", "PayPal", "Twilio", "LangChain", "RAG",
+            "Vector Database", "OpenAI", "Gemini", "OWASP", "Prometheus", "Grafana",
+            "Helm", "ArgoCD", "PHPUnit", "Pest", "JUnit", "pytest"
     );
 
     public ResumeAnalysisDTO analyzeResume(String resumeText) {

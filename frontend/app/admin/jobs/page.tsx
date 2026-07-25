@@ -27,7 +27,7 @@ export default function JobsPage() {
   const [jobs, setJobs] = useState<JobMatch[]>([]);
   const [loading, setLoading] = useState(false);
   const [country, setCountry] = useState("in");
-  const [keyword, setKeyword] = useState("Developer");
+  const [keyword, setKeyword] = useState("Laravel Developer");
   const [remote, setRemote] = useState(false);
 
   const [selectedCoverLetter, setSelectedCoverLetter] = useState<number | null>(null);

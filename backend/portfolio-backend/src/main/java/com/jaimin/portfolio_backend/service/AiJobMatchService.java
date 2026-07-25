@@ -19,11 +19,17 @@ public class AiJobMatchService {
             "Java", "Spring Boot", "Spring Security", "Hibernate", "JPA",
             "JavaScript", "TypeScript", "React", "Next.js", "Angular", "Vue",
             "Node.js", "Express", "Python", "Django", "Flask", "FastAPI",
+            "PHP", "Laravel", "Dart", "Flutter",
             "Go", "Rust", "C++", "C#", ".NET", "SQL", "MySQL", "PostgreSQL",
             "MongoDB", "Redis", "Elasticsearch", "Docker", "Kubernetes",
-            "AWS", "Azure", "GCP", "Terraform", "Git", "CI/CD", "GitHub Actions",
+            "AWS", "Azure", "GCP", "Terraform", "Helm", "ArgoCD", "Linux",
+            "Git", "CI/CD", "GitHub Actions", "Prometheus", "Grafana",
             "HTML", "CSS", "Tailwind CSS", "GraphQL", "REST API", "Microservices",
-            "Kafka", "RabbitMQ", "Lombok", "JWT", "OAuth", "WebSockets"
+            "Kafka", "RabbitMQ", "Lombok", "JWT", "OAuth", "WebSockets",
+            "Firebase", "Stripe", "PayPal", "Twilio", "Shopify",
+            "LangChain", "LangGraph", "RAG", "Prompt Engineering",
+            "pgvector", "ChromaDB", "Vector Database", "OpenAI", "Gemini",
+            "OWASP", "SonarCloud", "PHPUnit", "Pest", "JUnit", "pytest", "Celery"
     );
 
     // Common roadmaps for missing skills
@@ -113,9 +119,11 @@ public class AiJobMatchService {
             }
         }
 
-        // If no specific technical skills were extracted, default to standard stack matching
+        // If no specific technical skills were extracted, default to this
+        // profile's actual strongest stack (Laravel/PHP and TypeScript/Next.js)
+        // rather than a generic Java/React baseline.
         if (requiredSkills.isEmpty()) {
-            requiredSkills.addAll(List.of("Java", "Spring Boot", "React", "SQL"));
+            requiredSkills.addAll(List.of("PHP", "Laravel", "TypeScript", "Next.js"));
         }
 
         // 2. Aggregate user technical terms

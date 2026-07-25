@@ -37,10 +37,13 @@ public class PublicAtsController {
 
     // Standard high-demand technologies list to check for overlap
     private static final String[] TECH_KEYWORDS = {
-        "Java", "Spring Boot", "Spring", "React", "Next.js", "TypeScript", "JavaScript", 
-        "Node.js", "Python", "Docker", "Kubernetes", "SQL", "MySQL", "PostgreSQL", 
-        "MongoDB", "AWS", "Microservices", "REST APIs", "Git", "CI/CD", "Tailwind", 
-        "Redux", "Framer Motion", "GraphQL", "Lombok", "Hibernate", "JPA"
+        "Java", "Spring Boot", "Spring", "Spring Security", "React", "Next.js", "Vue.js",
+        "TypeScript", "JavaScript", "Node.js", "Python", "FastAPI", "PHP", "Laravel",
+        "Flutter", "Docker", "Kubernetes", "SQL", "MySQL", "PostgreSQL",
+        "MongoDB", "AWS", "Microservices", "REST APIs", "Git", "CI/CD", "Tailwind",
+        "Redux", "Framer Motion", "GraphQL", "Lombok", "Hibernate", "JPA",
+        "Firebase", "Stripe", "PayPal", "Twilio", "LangChain", "LangGraph", "RAG",
+        "OpenAI", "Gemini", "OWASP", "Prometheus", "Grafana", "Helm", "ArgoCD"
     };
 
     @PostMapping("/ats-match")
