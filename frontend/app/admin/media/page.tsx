@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   UploadCloud,
   Trash2,
@@ -18,6 +19,7 @@ import {
 } from "@/services/mediaService";
 import { uploadImage } from "@/services/uploadService";
 import { getImageUrl } from "@/lib/api";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -34,7 +36,7 @@ const toast = (title: string, icon: "success" | "error") =>
     showConfirmButton: false,
     timer: 1800,
     background: "var(--noir-bg-elevated)",
-    color: "#ffffff",
+    color: "var(--noir-fg)",
   });
 
 export default function MediaPage() {
@@ -98,7 +100,7 @@ export default function MediaPage() {
       confirmButtonText: "Delete",
       confirmButtonColor: "#ef4444",
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
     });
     if (!result.isConfirmed) return;
     try {
@@ -189,10 +191,18 @@ export default function MediaPage() {
           {files.length === 0 ? "No uploads yet." : "Nothing matches that search."}
         </p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+        >
           {visible.map((file) => (
-            <div
+            <motion.div
               key={file.name}
+              variants={staggerItem}
+              whileHover={{ y: -4 }}
+              transition={{ duration: 0.2 }}
               className="group rounded-2xl border border-[var(--noir-border)] bg-[var(--noir-bg-elevated)] overflow-hidden"
             >
               <div className="relative aspect-square bg-[var(--noir-bg)]">
@@ -236,9 +246,9 @@ export default function MediaPage() {
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

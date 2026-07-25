@@ -25,7 +25,7 @@ export default function RegisterPage() {
         text: "Please login with your new credentials.",
         icon: "success",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "var(--noir-accent)",
       });
 
@@ -40,7 +40,7 @@ export default function RegisterPage() {
         text: errorMessage,
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     }

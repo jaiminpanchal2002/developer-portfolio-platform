@@ -1,20 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  Mail, 
-  Video, 
-  Calendar, 
-  Clock, 
-  Trash2, 
-  Check, 
-  MessageSquare, 
-  User, 
+import { motion } from "framer-motion";
+import {
+  Mail,
+  Video,
+  Calendar,
+  Clock,
+  Trash2,
+  Check,
+  MessageSquare,
+  User,
   ExternalLink,
   Inbox
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { getInquiries, markInquiryAsRead, deleteInquiry } from "@/services/contactService";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import { ContactInquiry } from "@/types";
 
 export default function InquiriesPage() {
@@ -53,7 +55,7 @@ export default function InquiriesPage() {
         showConfirmButton: false,
         timer: 2000,
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff"
+        color: "var(--noir-fg)"
       });
     } catch (error) {
       console.error(error);
@@ -62,7 +64,7 @@ export default function InquiriesPage() {
         text: "Failed to mark inquiry as read.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff"
+        color: "var(--noir-fg)"
       });
     }
   };
@@ -77,7 +79,7 @@ export default function InquiriesPage() {
       cancelButtonColor: "var(--noir-bg-surface-3)",
       confirmButtonText: "Yes, delete it",
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff"
+      color: "var(--noir-fg)"
     });
 
     if (result.isConfirmed) {
@@ -89,7 +91,7 @@ export default function InquiriesPage() {
           text: "Inquiry has been deleted.",
           icon: "success",
           background: "var(--noir-bg-elevated)",
-          color: "#ffffff"
+          color: "var(--noir-fg)"
         });
       } catch (error) {
         console.error(error);
@@ -98,7 +100,7 @@ export default function InquiriesPage() {
           text: "Failed to delete inquiry.",
           icon: "error",
           background: "var(--noir-bg-elevated)",
-          color: "#ffffff"
+          color: "var(--noir-fg)"
         });
       }
     }
@@ -179,10 +181,11 @@ export default function InquiriesPage() {
           <p className="text-sm text-[var(--noir-fg-subtle)] mt-1">When visitors fill out your contact form, they will appear here.</p>
         </div>
       ) : (
-        <div className="grid gap-6">
+        <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid gap-6">
           {filteredInquiries.map((inq) => (
-            <div
+            <motion.div
               key={inq.id}
+              variants={staggerItem}
               className={`rounded-3xl border p-6 md:p-8 transition-all flex flex-col gap-6 bg-[var(--noir-bg-elevated)]/70 backdrop-blur-md relative ${
                 inq.isRead ? "border-[var(--noir-border)]/80" : "border-[var(--noir-accent)]/35 shadow-lg shadow-black/20"
               }`}
@@ -286,9 +289,9 @@ export default function InquiriesPage() {
                   Delete
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

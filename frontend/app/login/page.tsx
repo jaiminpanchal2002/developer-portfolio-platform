@@ -32,7 +32,7 @@ export default function LoginPage() {
       timer: 1500,
       showConfirmButton: false,
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
     });
     router.push("/admin");
   };
@@ -53,7 +53,7 @@ export default function LoginPage() {
         text: "That authentication code is invalid or expired.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -72,8 +72,8 @@ export default function LoginPage() {
           text: "Please enter your registered email address.",
           icon: "warning",
           background: "var(--noir-bg-elevated)",
-          color: "#ffffff",
-          confirmButtonColor: "#f59e0b",
+          color: "var(--noir-fg)",
+          confirmButtonColor: "var(--noir-accent)",
         });
         setLoading(false);
         return;
@@ -86,7 +86,7 @@ export default function LoginPage() {
           text: "We have generated and emailed a temporary password to you. Please check your inbox and spam folder.",
           icon: "success",
           background: "var(--noir-bg-elevated)",
-          color: "#ffffff",
+          color: "var(--noir-fg)",
           confirmButtonColor: "var(--noir-accent)",
         });
         setIsResetMode(false);
@@ -100,7 +100,7 @@ export default function LoginPage() {
           text: errMsg,
           icon: "error",
           background: "var(--noir-bg-elevated)",
-          color: "#ffffff",
+          color: "var(--noir-fg)",
           confirmButtonColor: "#ef4444",
         });
       } finally {
@@ -128,7 +128,7 @@ export default function LoginPage() {
           text: "Invalid email or password credentials.",
           icon: "error",
           background: "var(--noir-bg-elevated)",
-          color: "#ffffff",
+          color: "var(--noir-fg)",
           confirmButtonColor: "#ef4444",
         });
       } finally {

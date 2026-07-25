@@ -104,8 +104,8 @@ export default function AnalyticsPage() {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
-              <XAxis dataKey="day" stroke="#64748b" fontSize={11} tickLine={false} />
-              <YAxis stroke="#64748b" fontSize={11} tickLine={false} allowDecimals={false} />
+              <XAxis dataKey="day" stroke="var(--noir-fg-subtle)" fontSize={11} tickLine={false} />
+              <YAxis stroke="var(--noir-fg-subtle)" fontSize={11} tickLine={false} allowDecimals={false} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "var(--noir-bg-elevated)",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   getApplications,
   createApplication,
@@ -16,6 +17,8 @@ import {
   Edit2,
   ExternalLink,
 } from "lucide-react";
+import AnimatedModal from "@/components/admin/AnimatedModal";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 
 interface JobApplication {
   id?: number;
@@ -58,7 +61,7 @@ export default function ApplicationsPage() {
         text: "Failed to load applications. Please verify backend connection.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "var(--noir-accent)",
       });
     } finally {
@@ -108,8 +111,8 @@ export default function ApplicationsPage() {
         text: "Job Title and Company are required.",
         icon: "warning",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
-        confirmButtonColor: "#f59e0b",
+        color: "var(--noir-fg)",
+        confirmButtonColor: "var(--noir-accent)",
       });
       return;
     }
@@ -122,7 +125,7 @@ export default function ApplicationsPage() {
           text: "Application details have been updated successfully.",
           icon: "success",
           background: "var(--noir-bg-elevated)",
-          color: "#ffffff",
+          color: "var(--noir-fg)",
           confirmButtonColor: "var(--noir-accent)",
         });
       } else {
@@ -132,7 +135,7 @@ export default function ApplicationsPage() {
           text: "New job application has been tracked.",
           icon: "success",
           background: "var(--noir-bg-elevated)",
-          color: "#ffffff",
+          color: "var(--noir-fg)",
           confirmButtonColor: "var(--noir-accent)",
         });
       }
@@ -145,7 +148,7 @@ export default function ApplicationsPage() {
         text: "Failed to save application.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     }
@@ -160,9 +163,9 @@ export default function ApplicationsPage() {
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "No, keep it",
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
       confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#64748b",
+      cancelButtonColor: "var(--noir-bg-surface-3)",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -172,7 +175,7 @@ export default function ApplicationsPage() {
             text: "Your application has been deleted.",
             icon: "success",
             background: "var(--noir-bg-elevated)",
-            color: "#ffffff",
+            color: "var(--noir-fg)",
             confirmButtonColor: "var(--noir-accent)",
           });
           loadApplications();
@@ -183,7 +186,7 @@ export default function ApplicationsPage() {
             text: "Failed to delete application.",
             icon: "error",
             background: "var(--noir-bg-elevated)",
-            color: "#ffffff",
+            color: "var(--noir-fg)",
             confirmButtonColor: "#ef4444",
           });
         }
@@ -224,12 +227,18 @@ export default function ApplicationsPage() {
         </div>
       ) : (
         /* Kanban Board */
-        <div className="grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1"
+        >
           {STATUSES.map((status) => {
             const list = groupedApps[status] || [];
             return (
-              <div
+              <motion.div
                 key={status}
+                variants={staggerItem}
                 className="flex flex-col rounded-3xl bg-[var(--noir-bg-elevated)]/50 border border-[var(--noir-border)]/80 p-4 min-h-[500px]"
               >
                 {/* Column Header */}
@@ -251,9 +260,14 @@ export default function ApplicationsPage() {
                     </div>
                   ) : (
                     list.map((app) => (
-                      <div
+                      <motion.div
                         key={app.id}
-                        className="group relative rounded-2xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-4 hover:border-[var(--noir-accent)]/50 hover:shadow-lg hover:shadow-[var(--noir-accent)]/5 transition-all"
+                        layout
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        whileHover={{ y: -2 }}
+                        transition={{ duration: 0.25 }}
+                        className="group relative rounded-2xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-4 hover:border-[var(--noir-accent)]/50 hover:shadow-lg hover:shadow-[var(--noir-accent)]/5 transition-colors"
                       >
                         {/* Quick action bar */}
                         <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -314,25 +328,27 @@ export default function ApplicationsPage() {
                             </a>
                           </div>
                         )}
-                      </div>
+                      </motion.div>
                     ))
                   )}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
 
       {/* Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--noir-bg)]/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-3xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-            <h2 className="text-2xl font-bold mb-6">
-              {currentApp ? "Edit Application" : "Track New Application"}
-            </h2>
+      <AnimatedModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        className="w-full max-w-lg rounded-3xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+      >
+        <h2 className="text-2xl font-bold mb-6">
+          {currentApp ? "Edit Application" : "Track New Application"}
+        </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--noir-fg)] mb-1">
                   Job Title *
@@ -465,9 +481,7 @@ export default function ApplicationsPage() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AnimatedModal>
     </div>
   );
 }

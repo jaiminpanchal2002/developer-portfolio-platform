@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   getProfile,
@@ -142,8 +143,11 @@ export default function ProfilePage() {
         Profile Management
       </h1>
 
-      <form
+      <motion.form
         onSubmit={handleSubmit}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
         className="space-y-4"
       >
 
@@ -235,28 +239,40 @@ export default function ProfilePage() {
             className="w-full"
           />
 
-          {preview && (
-            <Image
-              src={preview}
-              alt="Profile"
-              width={160}
-              height={160}
-              unoptimized
-              className="w-40 h-40 rounded-full object-cover border"
-            />
-          )}
+          <AnimatePresence mode="wait">
+            {preview && (
+              <motion.div
+                key={preview}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.25 }}
+              >
+                <Image
+                  src={preview}
+                  alt="Profile"
+                  width={160}
+                  height={160}
+                  unoptimized
+                  className="w-40 h-40 rounded-full object-cover border"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           type="submit"
           className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-6 py-3 rounded-lg font-semibold"
         >
           {profileExists
             ? "Update Profile"
             : "Create Profile"}
-        </button>
+        </motion.button>
 
-      </form>
+      </motion.form>
     </div>
   );
 }

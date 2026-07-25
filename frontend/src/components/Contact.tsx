@@ -89,9 +89,9 @@ export default function Contact({ profile }: ContactProps) {
           title: "Validation Error",
           text: "Please select a date and time for the meeting.",
           icon: "warning",
-          background: "#0f172a",
-          color: "#ffffff",
-          confirmButtonColor: "#f59e0b",
+          background: "var(--noir-bg-elevated)",
+          color: "var(--noir-fg)",
+          confirmButtonColor: "var(--noir-accent)",
         });
         return;
       }
@@ -104,9 +104,9 @@ export default function Contact({ profile }: ContactProps) {
           title: "Invalid Time",
           text: "You cannot schedule a meeting in the past. Please choose a future date and time.",
           icon: "warning",
-          background: "#0f172a",
-          color: "#ffffff",
-          confirmButtonColor: "#f59e0b",
+          background: "var(--noir-bg-elevated)",
+          color: "var(--noir-fg)",
+          confirmButtonColor: "var(--noir-accent)",
         });
         return;
       }

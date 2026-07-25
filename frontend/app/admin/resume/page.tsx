@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 import {
   analyzeResume,
   uploadResumePDF,
@@ -8,6 +9,7 @@ import {
   deleteResume,
 } from "@/services/resumeService";
 import Swal from "sweetalert2";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import {
   FileText,
   UploadCloud,
@@ -98,8 +100,8 @@ export default function ResumePage() {
         text: "Please upload a PDF file.",
         icon: "warning",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
-        confirmButtonColor: "#f59e0b",
+        color: "var(--noir-fg)",
+        confirmButtonColor: "var(--noir-accent)",
       });
       return;
     }
@@ -114,7 +116,7 @@ export default function ResumePage() {
         text: "Resume uploaded, parsed, and analyzed.",
         icon: "success",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "var(--noir-accent)",
       });
 
@@ -126,7 +128,7 @@ export default function ResumePage() {
         text: "Error uploading and parsing PDF resume. Verify file syntax.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -141,8 +143,8 @@ export default function ResumePage() {
         text: "Please paste your resume text before analyzing.",
         icon: "warning",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
-        confirmButtonColor: "#f59e0b",
+        color: "var(--noir-fg)",
+        confirmButtonColor: "var(--noir-accent)",
       });
       return;
     }
@@ -160,7 +162,7 @@ export default function ResumePage() {
         showConfirmButton: false,
         timer: 3000,
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
       });
     } catch (error) {
       console.error(error);
@@ -169,7 +171,7 @@ export default function ResumePage() {
         text: "Could not analyze resume text.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -186,9 +188,9 @@ export default function ResumePage() {
       confirmButtonText: "Yes, delete it",
       cancelButtonText: "Cancel",
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
       confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#64748b",
+      cancelButtonColor: "var(--noir-bg-surface-3)",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -201,7 +203,7 @@ export default function ResumePage() {
             text: "Resume has been deleted from your profile.",
             icon: "success",
             background: "var(--noir-bg-elevated)",
-            color: "#ffffff",
+            color: "var(--noir-fg)",
             confirmButtonColor: "var(--noir-accent)",
           });
         } catch (error) {
@@ -332,25 +334,34 @@ export default function ResumePage() {
               <p className="text-[var(--noir-fg-muted)]">AI parsing and scoring your resume content...</p>
             </div>
           ) : result ? (
-            <div className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="space-y-6"
+            >
               {/* Scores Card */}
               <div className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6">
                 <h3 className="font-bold text-xl mb-6">Analysis Scores</h3>
-                
+
                 <div className="grid sm:grid-cols-2 gap-6">
                   {/* Resume Score */}
                   <div className="flex items-center gap-4 bg-[var(--noir-bg)]/40 border border-[var(--noir-border)]/60 p-4 rounded-2xl">
                     <div className="w-20 h-20 relative flex items-center justify-center">
                       <svg className="w-full h-full transform -rotate-90">
                         <circle cx="40" cy="40" r="32" strokeWidth="6" stroke="var(--noir-border-strong)" fill="transparent" />
-                        <circle
+                        <motion.circle
                           cx="40"
                           cy="40"
                           r="32"
                           strokeWidth="6"
                           stroke="var(--noir-accent)"
                           strokeDasharray={2 * Math.PI * 32}
-                          strokeDashoffset={2 * Math.PI * 32 * (1 - (result.score ?? 0) / 100)}
+                          initial={{ strokeDashoffset: 2 * Math.PI * 32 }}
+                          animate={{
+                            strokeDashoffset: 2 * Math.PI * 32 * (1 - (result.score ?? 0) / 100),
+                          }}
+                          transition={{ duration: 1, ease: "easeOut" }}
                           strokeLinecap="round"
                           fill="transparent"
                         />
@@ -368,14 +379,18 @@ export default function ResumePage() {
                     <div className="w-20 h-20 relative flex items-center justify-center">
                       <svg className="w-full h-full transform -rotate-90">
                         <circle cx="40" cy="40" r="32" strokeWidth="6" stroke="var(--noir-border-strong)" fill="transparent" />
-                        <circle
+                        <motion.circle
                           cx="40"
                           cy="40"
                           r="32"
                           strokeWidth="6"
                           stroke="#10b981"
                           strokeDasharray={2 * Math.PI * 32}
-                          strokeDashoffset={2 * Math.PI * 32 * (1 - (result.atsScore ?? 0) / 100)}
+                          initial={{ strokeDashoffset: 2 * Math.PI * 32 }}
+                          animate={{
+                            strokeDashoffset: 2 * Math.PI * 32 * (1 - (result.atsScore ?? 0) / 100),
+                          }}
+                          transition={{ duration: 1, ease: "easeOut", delay: 0.1 }}
                           strokeLinecap="round"
                           fill="transparent"
                         />
@@ -397,14 +412,18 @@ export default function ResumePage() {
                     <CheckCircle size={20} />
                     Strengths
                   </h3>
-                  <ul className="space-y-3">
+                  <motion.ul variants={staggerContainer} initial="hidden" animate="visible" className="space-y-3">
                     {result.strengths?.map((item: string, i: number) => (
-                      <li key={i} className="flex gap-2 items-start text-[var(--noir-fg-muted)] text-sm leading-relaxed">
+                      <motion.li
+                        key={i}
+                        variants={staggerItem}
+                        className="flex gap-2 items-start text-[var(--noir-fg-muted)] text-sm leading-relaxed"
+                      >
                         <span className="text-emerald-500 shrink-0 mt-0.5">✓</span>
                         {item}
-                      </li>
+                      </motion.li>
                     ))}
-                  </ul>
+                  </motion.ul>
                 </div>
 
                 <div>
@@ -412,14 +431,18 @@ export default function ResumePage() {
                     <AlertTriangle size={20} />
                     Areas to Improve
                   </h3>
-                  <ul className="space-y-3">
+                  <motion.ul variants={staggerContainer} initial="hidden" animate="visible" className="space-y-3">
                     {result.weaknesses?.map((item: string, i: number) => (
-                      <li key={i} className="flex gap-2 items-start text-[var(--noir-fg-muted)] text-sm leading-relaxed">
+                      <motion.li
+                        key={i}
+                        variants={staggerItem}
+                        className="flex gap-2 items-start text-[var(--noir-fg-muted)] text-sm leading-relaxed"
+                      >
                         <span className="text-rose-500 shrink-0 mt-0.5">✗</span>
                         {item}
-                      </li>
+                      </motion.li>
                     ))}
-                  </ul>
+                  </motion.ul>
                 </div>
               </div>
 
@@ -456,7 +479,7 @@ export default function ResumePage() {
                   {result.recommendation}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ) : (
             <div className="flex flex-col items-center justify-center py-24 border border-dashed border-[var(--noir-border)] rounded-3xl bg-[var(--noir-bg-elevated)]/10 text-center">
               <FileText className="text-[var(--noir-fg-subtle)] mb-4" size={48} />

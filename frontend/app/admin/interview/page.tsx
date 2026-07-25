@@ -4,6 +4,7 @@ import { useState } from "react";
 import { getInterviewQuestions } from "@/services/interviewService";
 import Swal from "sweetalert2";
 import { motion, AnimatePresence } from "framer-motion";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import {
   HelpCircle,
   ChevronDown,
@@ -48,7 +49,7 @@ export default function InterviewPage() {
         showConfirmButton: false,
         timer: 3000,
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
       });
     } catch (error) {
       console.error(error);
@@ -57,7 +58,7 @@ export default function InterviewPage() {
         text: "Could not connect to AI endpoint. Please try again.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -142,7 +143,12 @@ export default function InterviewPage() {
       </div>
 
       {/* Questions Listing */}
-      <div className="space-y-4">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="space-y-4"
+      >
         {questions.length === 0 ? (
           !loading && (
             <div className="flex flex-col items-center justify-center py-20 border border-dashed border-[var(--noir-border)] rounded-3xl bg-[var(--noir-bg-elevated)]/10">
@@ -157,8 +163,9 @@ export default function InterviewPage() {
           questions.map((q, i) => {
             const isExpanded = expandedIndex === i;
             return (
-              <div
+              <motion.div
                 key={i}
+                variants={staggerItem}
                 className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)]/80 hover:border-[var(--noir-border)] rounded-2xl overflow-hidden transition-colors"
               >
                 {/* Accordion Trigger */}
@@ -206,11 +213,11 @@ export default function InterviewPage() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             );
           })
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

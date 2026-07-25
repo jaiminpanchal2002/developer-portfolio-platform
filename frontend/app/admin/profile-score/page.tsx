@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { getDashboardStats } from "@/services/dashboardService";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import { Profile } from "@/types";
 import { getProfile } from "@/services/profileService";
 import { getResumeDetails } from "@/services/resumeService";
@@ -56,7 +58,7 @@ export default function ProfileScorePage() {
         text: "Could not retrieve completeness stats.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -176,19 +178,20 @@ export default function ProfileScorePage() {
                 stroke="var(--noir-border-strong)"
                 fill="transparent"
               />
-              <circle
+              <motion.circle
                 cx="88"
                 cy="88"
                 r="74"
                 strokeWidth="12"
                 stroke="url(#cyanGradient)"
                 strokeDasharray={2 * Math.PI * 74}
-                strokeDashoffset={
-                  2 * Math.PI * 74 * (1 - stats.profileScore / 100)
-                }
+                initial={{ strokeDashoffset: 2 * Math.PI * 74 }}
+                animate={{
+                  strokeDashoffset: 2 * Math.PI * 74 * (1 - stats.profileScore / 100),
+                }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
                 strokeLinecap="round"
                 fill="transparent"
-                className="transition-all duration-1000 ease-out"
               />
               <defs>
                 <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -225,12 +228,13 @@ export default function ProfileScorePage() {
             </p>
           </div>
 
-          <div className="space-y-4">
+          <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-4">
             {checklist.map((item) => {
               return (
-                <div
+                <motion.div
                   key={item.id}
-                  className={`flex items-start justify-between gap-4 p-4 rounded-2xl border transition-all ${
+                  variants={staggerItem}
+                  className={`flex items-start justify-between gap-4 p-4 rounded-2xl border transition-colors ${
                     item.checked
                       ? "bg-emerald-500/5 border-emerald-500/10"
                       : "bg-[var(--noir-bg)]/40 border-[var(--noir-border)]/80 hover:border-[var(--noir-border)]"
@@ -278,10 +282,10 @@ export default function ProfileScorePage() {
                       </Link>
                     )}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

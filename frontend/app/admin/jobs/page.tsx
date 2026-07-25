@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { getJobs } from "@/services/jobService";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import {
   generateCoverLetter,
   generateRecruiterEmail
@@ -53,7 +55,7 @@ export default function JobsPage() {
         text: "Could not fetch recommendations. Ensure backend is running.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -144,7 +146,7 @@ export default function JobsPage() {
       showConfirmButton: false,
       timer: 2000,
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
     });
   };
 
@@ -232,11 +234,12 @@ export default function JobsPage() {
           <p className="text-sm text-[var(--noir-fg-subtle)] mt-1">Try adjusting your keyword filter or switching target countries.</p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
           {jobs.map((job, index) => (
-            <div
+            <motion.div
               key={index}
-              className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] hover:border-[var(--noir-border-strong)] rounded-3xl p-6 transition-all"
+              variants={staggerItem}
+              className="bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] hover:border-[var(--noir-border-strong)] rounded-3xl p-6 transition-colors"
             >
               {/* Header Info */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -282,9 +285,11 @@ export default function JobsPage() {
               {/* Score Progress Bar */}
               <div className="mt-5">
                 <div className="h-2 w-full bg-[var(--noir-bg-surface-2)] rounded-full overflow-hidden">
-                  <div
+                  <motion.div
                     className={`h-2 rounded-full ${getProgressColor(job.matchScore ?? 0)}`}
-                    style={{ width: `${job.matchScore}%` }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${job.matchScore}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                   />
                 </div>
                 {job.recommendation && (
@@ -453,9 +458,9 @@ export default function JobsPage() {
                   )}
                 </div>
               )}
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

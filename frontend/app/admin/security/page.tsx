@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
+import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, ShieldOff, Copy } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -57,7 +58,7 @@ export default function SecurityPage() {
         title: "Could not start setup",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -79,7 +80,7 @@ export default function SecurityPage() {
         timer: 1600,
         showConfirmButton: false,
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
       });
     } catch (error) {
       console.error(error);
@@ -88,7 +89,7 @@ export default function SecurityPage() {
         text: "That code didn't match. Make sure your device clock is correct and try the current code.",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -106,7 +107,7 @@ export default function SecurityPage() {
       confirmButtonText: "Disable",
       confirmButtonColor: "#ef4444",
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
     });
     if (!disableCode) return;
     setBusy(true);
@@ -119,7 +120,7 @@ export default function SecurityPage() {
         timer: 1600,
         showConfirmButton: false,
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
       });
     } catch (error) {
       console.error(error);
@@ -127,7 +128,7 @@ export default function SecurityPage() {
         title: "Invalid code",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -145,7 +146,7 @@ export default function SecurityPage() {
       showConfirmButton: false,
       timer: 1500,
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
     });
   };
 
@@ -206,8 +207,15 @@ export default function SecurityPage() {
             </div>
           </div>
 
+          <AnimatePresence>
           {phase === "setup" && (
-            <div className="mt-6 border-t border-[var(--noir-border)] pt-6">
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="mt-6 overflow-hidden border-t border-[var(--noir-border)] pt-6"
+            >
               <ol className="space-y-5 text-sm text-[var(--noir-fg)]">
                 <li>
                   <p className="font-semibold">1. Scan this QR code</p>
@@ -274,8 +282,9 @@ export default function SecurityPage() {
                   </div>
                 </li>
               </ol>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
         </div>
       )}
     </div>
