@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import CertificateTable from "@/components/admin/CertificateTable";
 import CertificateForm from "@/components/admin/CertificateForm";
 import EditCertificateForm from "@/components/admin/EditCertificateForm";
+import AnimatedModal from "@/components/admin/AnimatedModal";
 
 import { getCertificates } from "@/services/certificateService";
 import { Certificate } from "@/types";
@@ -72,39 +73,33 @@ export default function CertificatesPage() {
       />
 
       {/* Add Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-2xl">
-            <h2 className="text-2xl font-bold mb-6">
-              Add Certificate
-            </h2>
+      <AnimatedModal isOpen={showAddModal} onClose={() => setShowAddModal(false)}>
+        <h2 className="text-2xl font-bold mb-6">
+          Add Certificate
+        </h2>
 
-            <CertificateForm
-              onClose={() => setShowAddModal(false)}
-              onSuccess={fetchCertificates}
-            />
-          </div>
-        </div>
-      )}
+        <CertificateForm
+          onClose={() => setShowAddModal(false)}
+          onSuccess={fetchCertificates}
+        />
+      </AnimatedModal>
 
       {/* Edit Modal */}
-      {showEditModal && selectedCertificate && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-2xl">
+      <AnimatedModal isOpen={showEditModal && !!selectedCertificate} onClose={() => setShowEditModal(false)}>
+        {selectedCertificate && (
+          <>
             <h2 className="text-2xl font-bold mb-6">
               Edit Certificate
             </h2>
 
             <EditCertificateForm
               certificate={selectedCertificate}
-              onClose={() =>
-                setShowEditModal(false)
-              }
+              onClose={() => setShowEditModal(false)}
               onSuccess={fetchCertificates}
             />
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </AnimatedModal>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ExperienceTable from "@/components/admin/ExperienceTable";
 import ExperienceForm from "@/components/admin/ExperienceForm";
 import EditExperienceForm from "@/components/admin/EditExperienceForm";
+import AnimatedModal from "@/components/admin/AnimatedModal";
 
 import { getExperiences } from "@/services/experienceService";
 import { Experience } from "@/types";
@@ -71,25 +72,21 @@ export default function ExperiencePage() {
       />
 
       {/* Add Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-2xl">
-            <h2 className="text-2xl font-bold mb-6">
-              Add Experience
-            </h2>
+      <AnimatedModal isOpen={showAddModal} onClose={() => setShowAddModal(false)}>
+        <h2 className="text-2xl font-bold mb-6">
+          Add Experience
+        </h2>
 
-            <ExperienceForm
-              onClose={() => setShowAddModal(false)}
-              onSuccess={fetchExperiences}
-            />
-          </div>
-        </div>
-      )}
+        <ExperienceForm
+          onClose={() => setShowAddModal(false)}
+          onSuccess={fetchExperiences}
+        />
+      </AnimatedModal>
 
       {/* Edit Modal */}
-      {showEditModal && selectedExperience && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-2xl">
+      <AnimatedModal isOpen={showEditModal && !!selectedExperience} onClose={() => setShowEditModal(false)}>
+        {selectedExperience && (
+          <>
             <h2 className="text-2xl font-bold mb-6">
               Edit Experience
             </h2>
@@ -99,9 +96,9 @@ export default function ExperiencePage() {
               onClose={() => setShowEditModal(false)}
               onSuccess={fetchExperiences}
             />
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </AnimatedModal>
     </div>
   );
 }

@@ -1,8 +1,10 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteSkill } from "@/services/skillService";
 import { Skill } from "@/types";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 
 interface Props {
   skills: Skill[];
@@ -44,9 +46,13 @@ export default function SkillTable({
           </tr>
         </thead>
 
-        <tbody>
+        <motion.tbody variants={staggerContainer} initial="hidden" animate="visible">
           {skills.map((skill) => (
-            <tr key={skill.id}>
+            <motion.tr
+              key={skill.id}
+              variants={staggerItem}
+              className="transition-colors hover:bg-[var(--noir-bg-surface-2)]/60"
+            >
               <td className="p-6">{skill.name}</td>
 
               <td className="p-6">
@@ -58,16 +64,20 @@ export default function SkillTable({
               </td>
 
               <td className="p-6 flex gap-4">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => onEdit(skill)}
                 >
                   <Pencil
                     size={20}
                     className="text-[var(--noir-accent)]"
                   />
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() =>
                     handleDelete(skill.id)
                   }
@@ -76,11 +86,11 @@ export default function SkillTable({
                     size={20}
                     className="text-red-500"
                   />
-                </button>
+                </motion.button>
               </td>
-            </tr>
+            </motion.tr>
           ))}
-        </tbody>
+        </motion.tbody>
       </table>
     </div>
   );

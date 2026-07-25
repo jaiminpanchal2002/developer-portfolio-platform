@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -10,6 +11,8 @@ import {
   updateTestimonial,
   deleteTestimonial,
 } from "@/services/testimonialService";
+import AnimatedModal from "@/components/admin/AnimatedModal";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import { Testimonial } from "@/types";
 
 const EMPTY_FORM = {
@@ -86,8 +89,8 @@ export default function TestimonialsPage() {
         text: "Author name and quote are required.",
         icon: "warning",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
-        confirmButtonColor: "#f59e0b",
+        color: "var(--noir-fg)",
+        confirmButtonColor: "var(--noir-accent)",
       });
       return;
     }
@@ -106,7 +109,7 @@ export default function TestimonialsPage() {
         title: "Save failed",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -123,7 +126,7 @@ export default function TestimonialsPage() {
       confirmButtonText: "Delete",
       confirmButtonColor: "#ef4444",
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
     });
     if (!result.isConfirmed) return;
     try {
@@ -169,9 +172,13 @@ export default function TestimonialsPage() {
                 <th className="p-5 text-left">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <motion.tbody variants={staggerContainer} initial="hidden" animate="visible">
               {testimonials.map((item) => (
-                <tr key={item.id} className="border-t border-[var(--noir-border)]/60">
+                <motion.tr
+                  key={item.id}
+                  variants={staggerItem}
+                  className="border-t border-[var(--noir-border)]/60 transition-colors hover:bg-[var(--noir-bg-surface-2)]/60"
+                >
                   <td className="p-5">
                     <div className="font-semibold">{item.authorName}</div>
                     {item.authorRole && (
@@ -195,34 +202,40 @@ export default function TestimonialsPage() {
                   </td>
                   <td className="p-5">
                     <div className="flex gap-4">
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => openEdit(item)}
                         aria-label={`Edit testimonial from ${item.authorName}`}
                       >
                         <Pencil size={18} className="text-[var(--noir-accent)]" />
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => handleDelete(item)}
                         aria-label={`Delete testimonial from ${item.authorName}`}
                       >
                         <Trash2 size={18} className="text-red-500" />
-                      </button>
+                      </motion.button>
                     </div>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
       )}
 
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--noir-bg)]/60 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-[var(--noir-bg-elevated)] p-6">
-            <h2 className="mb-6 text-2xl font-bold">
-              {editingId !== null ? "Edit" : "Add"} Testimonial
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+      <AnimatedModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        className="w-full max-w-lg rounded-2xl bg-[var(--noir-bg-elevated)] p-6 max-h-[90vh] overflow-y-auto"
+      >
+        <h2 className="mb-6 text-2xl font-bold">
+          {editingId !== null ? "Edit" : "Add"} Testimonial
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
                 placeholder="Author name *"
@@ -300,9 +313,7 @@ export default function TestimonialsPage() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AnimatedModal>
     </div>
   );
 }

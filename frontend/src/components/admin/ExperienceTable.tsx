@@ -1,8 +1,10 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteExperience } from "@/services/experienceService";
 import { Experience } from "@/types";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 
 interface Props {
   experiences: Experience[];
@@ -53,9 +55,13 @@ export default function ExperienceTable({
           </tr>
         </thead>
 
-        <tbody>
+        <motion.tbody variants={staggerContainer} initial="hidden" animate="visible">
           {experiences.map((exp) => (
-            <tr key={exp.id}>
+            <motion.tr
+              key={exp.id}
+              variants={staggerItem}
+              className="transition-colors hover:bg-[var(--noir-bg-surface-2)]/60"
+            >
               <td className="p-6">
                 {exp.company}
               </td>
@@ -71,16 +77,20 @@ export default function ExperienceTable({
               </td>
 
               <td className="p-6 flex gap-4">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => onEdit(exp)}
                 >
                   <Pencil
                     size={20}
                     className="text-[var(--noir-accent)]"
                   />
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() =>
                     handleDelete(exp.id)
                   }
@@ -89,11 +99,11 @@ export default function ExperienceTable({
                     size={20}
                     className="text-red-500"
                   />
-                </button>
+                </motion.button>
               </td>
-            </tr>
+            </motion.tr>
           ))}
-        </tbody>
+        </motion.tbody>
       </table>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Pencil, Trash2, Plus, ExternalLink } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -10,6 +11,8 @@ import {
   updateBlogPost,
   deleteBlogPost,
 } from "@/services/blogService";
+import AnimatedModal from "@/components/admin/AnimatedModal";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import { BlogPost } from "@/types";
 
 const EMPTY_FORM = {
@@ -86,8 +89,8 @@ export default function BlogAdminPage() {
         text: "Title and content are required.",
         icon: "warning",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
-        confirmButtonColor: "#f59e0b",
+        color: "var(--noir-fg)",
+        confirmButtonColor: "var(--noir-accent)",
       });
       return;
     }
@@ -106,7 +109,7 @@ export default function BlogAdminPage() {
         title: "Save failed",
         icon: "error",
         background: "var(--noir-bg-elevated)",
-        color: "#ffffff",
+        color: "var(--noir-fg)",
         confirmButtonColor: "#ef4444",
       });
     } finally {
@@ -123,7 +126,7 @@ export default function BlogAdminPage() {
       confirmButtonText: "Delete",
       confirmButtonColor: "#ef4444",
       background: "var(--noir-bg-elevated)",
-      color: "#ffffff",
+      color: "var(--noir-fg)",
     });
     if (!result.isConfirmed) return;
     try {
@@ -166,9 +169,13 @@ export default function BlogAdminPage() {
                 <th className="p-5 text-left">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <motion.tbody variants={staggerContainer} initial="hidden" animate="visible">
               {posts.map((post) => (
-                <tr key={post.id} className="border-t border-[var(--noir-border)]/60">
+                <motion.tr
+                  key={post.id}
+                  variants={staggerItem}
+                  className="border-t border-[var(--noir-border)]/60 transition-colors hover:bg-[var(--noir-bg-surface-2)]/60"
+                >
                   <td className="p-5">
                     <div className="font-semibold">{post.title}</div>
                     {post.readMinutes ? (
@@ -200,28 +207,41 @@ export default function BlogAdminPage() {
                       >
                         <ExternalLink size={17} className="text-[var(--noir-fg-muted)]" />
                       </a>
-                      <button onClick={() => openEdit(post)} aria-label={`Edit ${post.title}`}>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => openEdit(post)}
+                        aria-label={`Edit ${post.title}`}
+                      >
                         <Pencil size={17} className="text-[var(--noir-accent)]" />
-                      </button>
-                      <button onClick={() => handleDelete(post)} aria-label={`Delete ${post.title}`}>
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleDelete(post)}
+                        aria-label={`Delete ${post.title}`}
+                      >
                         <Trash2 size={17} className="text-red-500" />
-                      </button>
+                      </motion.button>
                     </div>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
       )}
 
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[var(--noir-bg)]/60 p-4">
-          <div className="my-8 w-full max-w-2xl rounded-2xl bg-[var(--noir-bg-elevated)] p-6">
-            <h2 className="mb-6 text-2xl font-bold">
-              {editingId !== null ? "Edit" : "New"} Post
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+      <AnimatedModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        align="top"
+        className="my-8 w-full max-w-2xl rounded-2xl bg-[var(--noir-bg-elevated)] p-6"
+      >
+        <h2 className="mb-6 text-2xl font-bold">
+          {editingId !== null ? "Edit" : "New"} Post
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
                 placeholder="Title *"
@@ -293,9 +313,7 @@ export default function BlogAdminPage() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AnimatedModal>
     </div>
   );
 }

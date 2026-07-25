@@ -1,8 +1,10 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteEducation } from "@/services/educationService";
 import { Education } from "@/types";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 
 interface Props {
   educations: Education[];
@@ -52,9 +54,13 @@ export default function EducationTable({
           </tr>
         </thead>
 
-        <tbody>
+        <motion.tbody variants={staggerContainer} initial="hidden" animate="visible">
           {educations.map((education) => (
-            <tr key={education.id}>
+            <motion.tr
+              key={education.id}
+              variants={staggerItem}
+              className="transition-colors hover:bg-[var(--noir-bg-surface-2)]/60"
+            >
               <td className="p-6">
                 {education.institution}
               </td>
@@ -69,7 +75,9 @@ export default function EducationTable({
               </td>
 
               <td className="p-6 flex gap-4">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() =>
                     onEdit(education)
                   }
@@ -78,9 +86,11 @@ export default function EducationTable({
                     size={20}
                     className="text-[var(--noir-accent)]"
                   />
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() =>
                     handleDelete(
                       education.id
@@ -91,11 +101,11 @@ export default function EducationTable({
                     size={20}
                     className="text-red-500"
                   />
-                </button>
+                </motion.button>
               </td>
-            </tr>
+            </motion.tr>
           ))}
-        </tbody>
+        </motion.tbody>
       </table>
     </div>
   );

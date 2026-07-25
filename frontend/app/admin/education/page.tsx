@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import EducationTable from "@/components/admin/EducationTable";
 import EducationForm from "@/components/admin/EducationForm";
 import EditEducationForm from "@/components/admin/EditEducationForm";
+import AnimatedModal from "@/components/admin/AnimatedModal";
 
 import { getEducations } from "@/services/educationService";
 import { Education } from "@/types";
@@ -73,39 +74,33 @@ export default function EducationPage() {
       />
 
       {/* Add Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-2xl">
-            <h2 className="text-2xl font-bold mb-6">
-              Add Education
-            </h2>
+      <AnimatedModal isOpen={showAddModal} onClose={() => setShowAddModal(false)}>
+        <h2 className="text-2xl font-bold mb-6">
+          Add Education
+        </h2>
 
-            <EducationForm
-              onClose={() => setShowAddModal(false)}
-              onSuccess={fetchEducations}
-            />
-          </div>
-        </div>
-      )}
+        <EducationForm
+          onClose={() => setShowAddModal(false)}
+          onSuccess={fetchEducations}
+        />
+      </AnimatedModal>
 
       {/* Edit Modal */}
-      {showEditModal && selectedEducation && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-2xl">
+      <AnimatedModal isOpen={showEditModal && !!selectedEducation} onClose={() => setShowEditModal(false)}>
+        {selectedEducation && (
+          <>
             <h2 className="text-2xl font-bold mb-6">
               Edit Education
             </h2>
 
             <EditEducationForm
               education={selectedEducation}
-              onClose={() =>
-                setShowEditModal(false)
-              }
+              onClose={() => setShowEditModal(false)}
               onSuccess={fetchEducations}
             />
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </AnimatedModal>
     </div>
   );
 }

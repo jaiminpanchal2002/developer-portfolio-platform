@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import SkillTable from "@/components/admin/SkillTable";
 import SkillForm from "@/components/admin/SkillForm";
 import EditSkillForm from "@/components/admin/EditSkillForm";
+import AnimatedModal from "@/components/admin/AnimatedModal";
 
 import { getSkills } from "@/services/skillService";
 import { Skill } from "@/types";
@@ -73,41 +74,41 @@ export default function SkillsPage() {
       />
 
       {/* Add Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-xl">
-            <h2 className="text-2xl font-bold mb-6">
-              Add Skill
-            </h2>
+      <AnimatedModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        className="w-full max-w-xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+      >
+        <h2 className="text-2xl font-bold mb-6">
+          Add Skill
+        </h2>
 
-            <SkillForm
-              onClose={() =>
-                setShowAddModal(false)
-              }
-              onSuccess={fetchSkills}
-            />
-          </div>
-        </div>
-      )}
+        <SkillForm
+          onClose={() => setShowAddModal(false)}
+          onSuccess={fetchSkills}
+        />
+      </AnimatedModal>
 
       {/* Edit Modal */}
-      {showEditModal && selectedSkill && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-xl">
+      <AnimatedModal
+        isOpen={showEditModal && !!selectedSkill}
+        onClose={() => setShowEditModal(false)}
+        className="w-full max-w-xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+      >
+        {selectedSkill && (
+          <>
             <h2 className="text-2xl font-bold mb-6">
               Edit Skill
             </h2>
 
             <EditSkillForm
               skill={selectedSkill}
-              onClose={() =>
-                setShowEditModal(false)
-              }
+              onClose={() => setShowEditModal(false)}
               onSuccess={fetchSkills}
             />
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </AnimatedModal>
     </div>
   );
 }
