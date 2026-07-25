@@ -22,7 +22,7 @@ export default function AdminNavbar() {
             Portfolio Admin
           </h1>
 
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-[var(--noir-fg-muted)]">
             Manage your portfolio
           </p>
         </div>

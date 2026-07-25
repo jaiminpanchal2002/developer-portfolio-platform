@@ -123,7 +123,7 @@ export default function EditEducationForm({
         <button
           type="button"
           onClick={onClose}
-          className="bg-gray-600 px-4 py-2 rounded"
+          className="bg-[var(--noir-bg-surface-3)] px-4 py-2 rounded"
         >
           Cancel
         </button>

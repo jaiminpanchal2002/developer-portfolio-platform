@@ -76,7 +76,7 @@ export default function AnalyticsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-4xl font-bold">Analytics</h1>
-        <p className="text-gray-400 mt-1">
+        <p className="text-[var(--noir-fg-muted)] mt-1">
           Privacy-friendly visitor insight — no cookies, hashed visitors, admin
           pages never tracked
         </p>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ProjectTable from "@/components/admin/ProjectTable";
 import ProjectForm from "@/components/admin/ProjectForm";
 import EditProjectForm from "@/components/admin/EditProjectForm";
+import AnimatedModal from "@/components/admin/AnimatedModal";
 import { getAdminProjects } from "@/services/projectService";
 import { Project } from "@/types";
 
@@ -54,7 +55,7 @@ export default function ProjectsPage() {
             Projects
           </h1>
 
-          <p className="text-gray-400">
+          <p className="text-[var(--noir-fg-muted)]">
             Manage portfolio projects
           </p>
         </div>
@@ -72,38 +73,32 @@ export default function ProjectsPage() {
         onEdit={handleEdit}
       />
 
-      {showModal && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-2xl">
-            <h2 className="text-2xl font-bold mb-6">
-              Add Project
-            </h2>
+      <AnimatedModal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <h2 className="text-2xl font-bold mb-6">
+          Add Project
+        </h2>
 
-            <ProjectForm
-              onClose={() => setShowModal(false)}
-              onSuccess={fetchProjects}
-            />
-          </div>
-        </div>
-      )}
+        <ProjectForm
+          onClose={() => setShowModal(false)}
+          onSuccess={fetchProjects}
+        />
+      </AnimatedModal>
 
-      {showEditModal && selectedProject && (
-        <div className="fixed inset-0 bg-[var(--noir-bg)]/60 flex justify-center items-center z-50">
-          <div className="bg-[var(--noir-bg-elevated)] p-6 rounded-2xl w-full max-w-2xl">
+      <AnimatedModal isOpen={showEditModal && !!selectedProject} onClose={() => setShowEditModal(false)}>
+        {selectedProject && (
+          <>
             <h2 className="text-2xl font-bold mb-6">
               Edit Project
             </h2>
 
             <EditProjectForm
               project={selectedProject}
-              onClose={() =>
-                setShowEditModal(false)
-              }
+              onClose={() => setShowEditModal(false)}
               onSuccess={fetchProjects}
             />
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </AnimatedModal>
     </div>
   );
 }

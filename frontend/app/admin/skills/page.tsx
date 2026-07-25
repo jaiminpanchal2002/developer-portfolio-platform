@@ -53,7 +53,7 @@ export default function SkillsPage() {
             Skills
           </h1>
 
-          <p className="text-gray-400">
+          <p className="text-[var(--noir-fg-muted)]">
             Manage portfolio skills
           </p>
         </div>

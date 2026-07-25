@@ -54,7 +54,7 @@ export default function EducationPage() {
             Education
           </h1>
 
-          <p className="text-gray-400">
+          <p className="text-[var(--noir-fg-muted)]">
             Manage education details
           </p>
         </div>

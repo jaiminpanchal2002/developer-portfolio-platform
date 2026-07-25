@@ -89,7 +89,7 @@ export default function EditSkillForm({
         <button
           type="button"
           onClick={onClose}
-          className="px-5 py-2 bg-gray-600 rounded-lg"
+          className="px-5 py-2 bg-[var(--noir-bg-surface-3)] rounded-lg"
         >
           Cancel
         </button>

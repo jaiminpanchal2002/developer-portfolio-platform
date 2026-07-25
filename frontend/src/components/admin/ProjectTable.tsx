@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import { deleteProject, updateProject } from "@/services/projectService";
 import { Project } from "@/types";
+import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 
 interface Props {
   projects: Project[];
@@ -103,10 +105,15 @@ export default function ProjectTable({
           </tr>
         </thead>
 
-        <tbody>
+        <motion.tbody
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
           {rows.map((project, index) => (
-            <tr
+            <motion.tr
               key={project.id}
+              variants={staggerItem}
               draggable
               onDragStart={() => setDragIndex(index)}
               onDragOver={(e) => {
@@ -119,13 +126,13 @@ export default function ProjectTable({
                 setDragIndex(null);
                 setOverIndex(null);
               }}
-              className={
+              className={`transition-colors hover:bg-[var(--noir-bg-surface-2)]/60 ${
                 overIndex === index && dragIndex !== null && dragIndex !== index
                   ? "border-t-2 border-[var(--noir-accent)]"
                   : dragIndex === index
                     ? "opacity-40"
                     : ""
-              }
+              }`}
             >
               <td className="p-6 cursor-grab active:cursor-grabbing" title="Drag to reorder">
                 <GripVertical size={18} className="text-[var(--noir-fg-subtle)]" />
@@ -163,7 +170,9 @@ export default function ProjectTable({
               </td>
 
               <td className="p-6 flex gap-4">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => onEdit(project)}
                   aria-label={`Edit ${project.title}`}
                 >
@@ -171,9 +180,11 @@ export default function ProjectTable({
                     size={20}
                     className="text-[var(--noir-accent)]"
                   />
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => handleDelete(project.id)}
                   aria-label={`Delete ${project.title}`}
                 >
@@ -181,11 +192,11 @@ export default function ProjectTable({
                     size={20}
                     className="text-red-500"
                   />
-                </button>
+                </motion.button>
               </td>
-            </tr>
+            </motion.tr>
           ))}
-        </tbody>
+        </motion.tbody>
       </table>
     </div>
   );

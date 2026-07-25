@@ -139,7 +139,7 @@ export default function BlogAdminPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold">Blog</h1>
-          <p className="text-gray-400 mt-1">Write and publish posts</p>
+          <p className="text-[var(--noir-fg-muted)] mt-1">Write and publish posts</p>
         </div>
         <button
           onClick={openAdd}
@@ -280,7 +280,7 @@ export default function BlogAdminPage() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="rounded-lg bg-gray-600 px-5 py-2"
+                  className="rounded-lg bg-[var(--noir-bg-surface-3)] px-5 py-2"
                 >
                   Cancel
                 </button>

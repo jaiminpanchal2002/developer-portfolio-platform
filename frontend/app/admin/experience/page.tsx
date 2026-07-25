@@ -52,7 +52,7 @@ export default function ExperiencePage() {
             Experience
           </h1>
 
-          <p className="text-gray-400">
+          <p className="text-[var(--noir-fg-muted)]">
             Manage work experience
           </p>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import {
   FolderKanban,
   Code2,
@@ -10,6 +11,7 @@ import {
   FileText,
   ClipboardList,
   Gauge,
+  Rocket,
 } from "lucide-react";
 
 import {
@@ -25,6 +27,28 @@ import {
 } from "recharts";
 
 import { getDashboardStats } from "@/services/dashboardService";
+import { easeOut, staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
+
+function AnimatedCounter({ value, duration = 1.2 }: { value: number; duration?: number }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.3 });
+
+  useEffect(() => {
+    if (!inView || value <= 0) return;
+    let start = 0;
+    const totalMs = duration * 1000;
+    const increment = Math.max(Math.floor(totalMs / value), 20);
+    const timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start >= value) clearInterval(timer);
+    }, increment);
+    return () => clearInterval(timer);
+  }, [inView, value, duration]);
+
+  return <span ref={ref}>{inView ? count : 0}</span>;
+}
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -101,13 +125,15 @@ export default function AdminDashboard() {
     },
     {
       title: "Profile Score",
-      value: stats.profileScore + "%",
+      value: stats.profileScore,
+      suffix: "%",
       icon: Gauge,
       color: "from-teal-500 to-emerald-500",
     },
     {
       title: "ATS Score",
-      value: stats.atsScore + "%",
+      value: stats.atsScore,
+      suffix: "%",
       icon: FileText,
       color: "from-blue-500 to-cyan-500",
     },
@@ -154,25 +180,34 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Cards Section */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      >
         {cards.map((item) => {
           const Icon = item.icon;
 
           return (
-            <div
+            <motion.div
               key={item.title}
-              className="group relative rounded-3xl bg-[var(--noir-bg-elevated)]/50 border border-[var(--noir-border)] p-6 flex flex-col justify-between hover:border-[var(--noir-accent)]/30 transition-all duration-300 backdrop-blur-xl shadow-xl overflow-hidden"
+              variants={staggerItem}
+              whileHover={{ y: -4 }}
+              transition={{ duration: 0.2, ease: easeOut }}
+              className="group relative rounded-3xl bg-[var(--noir-bg-elevated)]/50 border border-[var(--noir-border)] p-6 flex flex-col justify-between hover:border-[var(--noir-accent)]/30 transition-colors duration-300 backdrop-blur-xl shadow-xl overflow-hidden"
             >
               {/* Card border glow decoration */}
               <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--noir-accent)]/5 rounded-full blur-2xl pointer-events-none group-hover:bg-[var(--noir-accent)]/10 transition-colors" />
-              
+
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-[var(--noir-fg-subtle)] text-xs font-extrabold uppercase tracking-widest font-mono">
                     {item.title}
                   </p>
                   <h2 className="text-3.5xl font-black mt-2 text-[var(--noir-fg)] font-mono">
-                    {item.value}
+                    <AnimatedCounter value={item.value} />
+                    {item.suffix ?? ""}
                   </h2>
                 </div>
                 <div
@@ -182,15 +217,20 @@ export default function AdminDashboard() {
                   <Icon size={20} className="text-[var(--noir-fg)]" />
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Visual Analytics Charts */}
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Left Chart panel */}
-        <div className="bg-[var(--noir-bg-elevated)]/40 rounded-3xl p-6 border border-[var(--noir-border)] backdrop-blur-xl shadow-xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, ease: easeOut }}
+          className="bg-[var(--noir-bg-elevated)]/40 rounded-3xl p-6 border border-[var(--noir-border)] backdrop-blur-xl shadow-xl">
           <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[var(--noir-accent)]" />
             Portfolio Metrics distribution
@@ -217,10 +257,16 @@ export default function AdminDashboard() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Distribution Chart panel */}
-        <div className="bg-[var(--noir-bg-elevated)]/40 rounded-3xl p-6 border border-[var(--noir-border)] backdrop-blur-xl shadow-xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: easeOut }}
+          className="bg-[var(--noir-bg-elevated)]/40 rounded-3xl p-6 border border-[var(--noir-border)] backdrop-blur-xl shadow-xl"
+        >
           <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
             Inventory Allocation
@@ -253,7 +299,7 @@ export default function AdminDashboard() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Portfolio Health & Summary */}
@@ -262,95 +308,86 @@ export default function AdminDashboard() {
 
         {/* Portfolio Health */}
 
-        <div className="bg-[var(--noir-bg-elevated)] rounded-3xl p-6 border border-[var(--noir-border)]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, ease: easeOut }}
+          className="bg-[var(--noir-bg-elevated)] rounded-3xl p-6 border border-[var(--noir-border)]"
+        >
           <h2 className="text-2xl font-bold mb-6">
             Portfolio Health
           </h2>
 
           <div className="space-y-6">
+            {[
+              { label: "Projects", value: stats.projects, barColor: "bg-[var(--noir-accent)]" },
+              { label: "Skills", value: stats.skills, barColor: "bg-purple-500" },
+              { label: "Certificates", value: stats.certificates, barColor: "bg-pink-500" },
+            ].map((row) => (
+              <div key={row.label}>
+                <div className="flex justify-between mb-2">
+                  <span>{row.label}</span>
+                  <span>{row.value}</span>
+                </div>
 
-            <div>
-              <div className="flex justify-between mb-2">
-                <span>Projects</span>
-                <span>{stats.projects}</span>
+                <div className="h-3 bg-[var(--noir-bg-surface-3)] rounded-full overflow-hidden">
+                  <motion.div
+                    className={`h-3 ${row.barColor} rounded-full`}
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${Math.min(row.value * 10, 100)}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, ease: easeOut }}
+                  />
+                </div>
               </div>
-
-              <div className="h-3 bg-[var(--noir-bg-surface-3)] rounded-full">
-                <div
-                  className="h-3 bg-[var(--noir-accent)] rounded-full"
-                  style={{
-                    width: `${Math.min(stats.projects * 10, 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between mb-2">
-                <span>Skills</span>
-                <span>{stats.skills}</span>
-              </div>
-
-              <div className="h-3 bg-[var(--noir-bg-surface-3)] rounded-full">
-                <div
-                  className="h-3 bg-purple-500 rounded-full"
-                  style={{
-                    width: `${Math.min(stats.skills * 10, 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between mb-2">
-                <span>Certificates</span>
-                <span>{stats.certificates}</span>
-              </div>
-
-              <div className="h-3 bg-[var(--noir-bg-surface-3)] rounded-full">
-                <div
-                  className="h-3 bg-pink-500 rounded-full"
-                  style={{
-                    width: `${Math.min(stats.certificates * 10, 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-
+            ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Quick Summary */}
 
-        <div className="bg-[var(--noir-bg-elevated)] rounded-3xl p-6 border border-[var(--noir-border)]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: easeOut }}
+          className="bg-[var(--noir-bg-elevated)] rounded-3xl p-6 border border-[var(--noir-border)]"
+        >
           <h2 className="text-2xl font-bold mb-6">
             Quick Summary
           </h2>
 
-          <div className="space-y-4">
-
-            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
-              🚀 Active Projects: {stats.projects}
-            </div>
-
-            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
-              💻 Skills Added: {stats.skills}
-            </div>
-
-            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
-              🎓 Education Records: {stats.educations}
-            </div>
-
-            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
-              🏆 Certificates: {stats.certificates}
-            </div>
-
-            <div className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)]">
-              💼 Experience Records: {stats.experiences}
-            </div>
-
-          </div>
-        </div>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="space-y-4"
+          >
+            {[
+              { icon: Rocket, label: "Active Projects", value: stats.projects },
+              { icon: Code2, label: "Skills Added", value: stats.skills },
+              { icon: GraduationCap, label: "Education Records", value: stats.educations },
+              { icon: Award, label: "Certificates", value: stats.certificates },
+              { icon: Briefcase, label: "Experience Records", value: stats.experiences },
+            ].map((row) => {
+              const RowIcon = row.icon;
+              return (
+                <motion.div
+                  key={row.label}
+                  variants={staggerItem}
+                  className="p-4 rounded-xl bg-[var(--noir-bg-surface-2)] flex items-center gap-3"
+                >
+                  <RowIcon size={16} className="text-[var(--noir-accent)] shrink-0" />
+                  <span>
+                    {row.label}: {row.value}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </motion.div>
 
       </div>
     </div>

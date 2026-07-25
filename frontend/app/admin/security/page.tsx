@@ -153,7 +153,7 @@ export default function SecurityPage() {
     <div className="max-w-2xl space-y-8">
       <div>
         <h1 className="text-4xl font-bold">Security</h1>
-        <p className="text-gray-400 mt-1">
+        <p className="text-[var(--noir-fg-muted)] mt-1">
           Protect the admin panel with two-factor authentication
         </p>
       </div>

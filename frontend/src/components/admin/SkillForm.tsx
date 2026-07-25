@@ -91,7 +91,7 @@ export default function SkillForm({
         <button
           type="button"
           onClick={onClose}
-          className="px-5 py-2 rounded-lg bg-gray-600"
+          className="px-5 py-2 rounded-lg bg-[var(--noir-bg-surface-3)]"
         >
           Cancel
         </button>
