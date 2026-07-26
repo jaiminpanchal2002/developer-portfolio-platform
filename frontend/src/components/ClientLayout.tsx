@@ -11,6 +11,7 @@ import { LocaleProvider } from "@/lib/localeContext";
 
 import SceneErrorBoundary from "@/components/scene/SceneErrorBoundary";
 import AnalyticsBeacon from "@/components/AnalyticsBeacon";
+import ChatWidget from "@/components/ChatWidget";
 
 const PersistentScene = dynamic(() => import("@/components/scene/PersistentScene"), {
   ssr: false,
@@ -34,6 +35,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // /blog, or /projects. Rendering it elsewhere left it stuck at full
   // opacity, painting over those pages' content.
   const isHome = pathname === "/";
+  // The chatbot belongs to the public-facing portfolio only — not the admin
+  // panel or its auth pages, where it would be noise at best.
+  const isPublicPage =
+    !pathname?.startsWith("/admin") && pathname !== "/login" && pathname !== "/register";
   // Server snapshot assumes touch so the custom cursor never flashes
   // during SSR/hydration; the client snapshot corrects it immediately.
   const isTouch = useSyncExternalStore(emptySubscribe, isTouchSnapshot, () => true);
@@ -165,6 +170,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         )}
 
         <AnalyticsBeacon />
+        {isPublicPage && <ChatWidget />}
       </ThemeProvider>
     </LocaleProvider>
   );

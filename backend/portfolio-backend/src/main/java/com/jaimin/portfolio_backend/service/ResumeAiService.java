@@ -4,14 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jaimin.portfolio_backend.dto.ResumeAnalysisDTO;
 
+/**
+ * Resume quality/ATS-readiness review. Backed by Gemini when configured —
+ * a genuine read of the resume's actual content and structure — falling
+ * back to the deterministic heuristic scorer (structural checks + a fixed
+ * keyword list) when it isn't.
+ */
 @Service
 public class ResumeAiService {
 
-    // Common technical keywords to check for
+    private static final Logger log = LoggerFactory.getLogger(ResumeAiService.class);
+
+    private final GeminiService geminiService;
+
+    public ResumeAiService(GeminiService geminiService) {
+        this.geminiService = geminiService;
+    }
+
+    // Fallback-only: used when Gemini isn't configured or the call fails.
     private static final List<String> ATS_KEYWORDS = List.of(
             "Java", "Spring Boot", "Spring Security", "React", "Next.js", "Vue.js",
             "TypeScript", "JavaScript", "Python", "FastAPI", "PHP", "Laravel",
@@ -35,20 +52,77 @@ public class ResumeAiService {
                     .build();
         }
 
+        if (geminiService.isConfigured()) {
+            try {
+                return analyzeWithGemini(resumeText);
+            } catch (GeminiService.GeminiUnavailableException e) {
+                log.warn("Resume analysis falling back to heuristic scorer: {}", e.getMessage());
+            }
+        }
+
+        return analyzeWithHeuristics(resumeText);
+    }
+
+    private ResumeAnalysisDTO analyzeWithGemini(String resumeText) {
+        String prompt = """
+                You are an expert ATS (Applicant Tracking System) resume reviewer for software engineering roles.
+                Review the resume below on its own merits — structure, clarity, quantified achievements, technical
+                depth, and general ATS-parseability. This is a general review, not against any specific job posting.
+
+                Respond with ONLY a JSON object in exactly this shape, no markdown fences, no extra text:
+                {
+                  "score": <integer 0-100, overall resume quality>,
+                  "atsScore": <integer 0-100, ATS-parser compatibility specifically>,
+                  "strengths": [<3-6 short strings, specific to this resume's actual content>],
+                  "weaknesses": [<2-5 short strings, specific and actionable>],
+                  "missingKeywords": [<technologies/skills this resume's target roles would typically expect but this resume doesn't mention>],
+                  "recommendation": "<2-3 sentences of concrete, specific advice>"
+                }
+
+                RESUME:
+                %s
+                """.formatted(resumeText);
+
+        JsonNode result = geminiService.generateJson(prompt);
+
+        return ResumeAnalysisDTO.builder()
+                .score(clamp(result.path("score").asInt(60)))
+                .atsScore(clamp(result.path("atsScore").asInt(60)))
+                .strengths(toStringList(result.path("strengths")))
+                .weaknesses(toStringList(result.path("weaknesses")))
+                .missingKeywords(toStringList(result.path("missingKeywords")))
+                .recommendation(result.path("recommendation").asText("Analysis unavailable."))
+                .build();
+    }
+
+    private static int clamp(int score) {
+        return Math.max(0, Math.min(100, score));
+    }
+
+    private static List<String> toStringList(JsonNode arrayNode) {
+        List<String> list = new ArrayList<>();
+        if (arrayNode.isArray()) {
+            for (JsonNode n : arrayNode) list.add(n.asText());
+        }
+        return list;
+    }
+
+    // ─── Deterministic fallback (no Gemini key / call failed) ─────────────
+
+    private ResumeAnalysisDTO analyzeWithHeuristics(String resumeText) {
         String textLower = resumeText.toLowerCase();
 
         List<String> strengths = new ArrayList<>();
         List<String> weaknesses = new ArrayList<>();
         List<String> missingKeywords = new ArrayList<>();
-        
+
         int score = 40; // Base score for non-empty resume
 
-        // 1. Check for Contact Details
         boolean hasEmail = Pattern.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}").matcher(resumeText).find();
         boolean hasPhone = Pattern.compile("(\\+?\\d{1,3}[- ]?)?\\d{10}").matcher(resumeText).find() || textLower.contains("phone") || textLower.contains("mobile");
         boolean hasLinkedIn = textLower.contains("linkedin.com") || textLower.contains("linkedin");
         boolean hasGitHub = textLower.contains("github.com") || textLower.contains("github");
-        
+
         if (hasEmail && hasPhone) {
             strengths.add("Contact Information: Email and Phone number are clearly visible.");
             score += 10;
@@ -65,7 +139,6 @@ public class ResumeAiService {
             score -= 2;
         }
 
-        // 2. Check for key sections
         if (textLower.contains("experience") || textLower.contains("work history") || textLower.contains("employment") || textLower.contains("career history")) {
             strengths.add("Work Experience Section: Defined career history.");
             score += 15;
@@ -98,27 +171,14 @@ public class ResumeAiService {
             score -= 10;
         }
 
-        // 3. Keyword Match Analysis + Synonym Mapping
         int foundKeywordsCount = 0;
         for (String keyword : ATS_KEYWORDS) {
-            boolean found = false;
-            // Exact keyword check
-            if (textLower.contains(keyword.toLowerCase())) {
-                found = true;
-            } else {
-                // Semantic synonym maps check
-                if (keyword.equalsIgnoreCase("Spring Boot") && (textLower.contains("spring framework") || textLower.contains("spring boot") || textLower.contains("spring MVC"))) {
-                    found = true;
-                } else if (keyword.equalsIgnoreCase("React") && textLower.contains("next.js")) {
-                    found = true;
-                } else if (keyword.equalsIgnoreCase("CI/CD") && (textLower.contains("jenkins") || textLower.contains("github actions") || textLower.contains("gitlab ci"))) {
-                    found = true;
-                } else if (keyword.equalsIgnoreCase("PostgreSQL") && textLower.contains("postgres")) {
-                    found = true;
-                } else if (keyword.equalsIgnoreCase("Cloud") && (textLower.contains("aws") || textLower.contains("azure") || textLower.contains("gcp") || textLower.contains("cloud computing"))) {
-                    found = true;
-                }
-            }
+            boolean found = textLower.contains(keyword.toLowerCase())
+                    || (keyword.equalsIgnoreCase("Spring Boot") && (textLower.contains("spring framework") || textLower.contains("spring boot") || textLower.contains("spring mvc")))
+                    || (keyword.equalsIgnoreCase("React") && textLower.contains("next.js"))
+                    || (keyword.equalsIgnoreCase("CI/CD") && (textLower.contains("jenkins") || textLower.contains("github actions") || textLower.contains("gitlab ci")))
+                    || (keyword.equalsIgnoreCase("PostgreSQL") && textLower.contains("postgres"))
+                    || (keyword.equalsIgnoreCase("Cloud") && (textLower.contains("aws") || textLower.contains("azure") || textLower.contains("gcp") || textLower.contains("cloud computing")));
 
             if (found) {
                 foundKeywordsCount++;
@@ -128,9 +188,8 @@ public class ResumeAiService {
         }
 
         int keywordMatchPercentage = (foundKeywordsCount * 100) / ATS_KEYWORDS.size();
-        score += (int) (keywordMatchPercentage * 0.35); // Weight of keyword overlap (max +35)
+        score += (int) (keywordMatchPercentage * 0.35);
 
-        // Contact info detail bonus/penalty adjustments
         int atsScore = Math.max(25, Math.min(score, 98));
         int resumeScore = Math.max(30, Math.min(score + 2, 100));
 
@@ -140,13 +199,12 @@ public class ResumeAiService {
             weaknesses.add("Low Keyword Density: Add more relevant industry buzzwords (" + keywordMatchPercentage + "% coverage).");
         }
 
-        // Actionable Recommendation
         String recommendation;
         if (atsScore >= 80) {
             recommendation = "Excellent! Your resume is highly optimized for ATS scanners. Keep it updated and target high-end engineering positions.";
         } else if (atsScore >= 60) {
-            recommendation = "Good! Your resume has core structures. To improve, integrate missing keywords (like " + 
-                (missingKeywords.isEmpty() ? "Docker" : String.join(", ", missingKeywords.stream().limit(3).toList())) + ") and describe achievements with numbers and metrics.";
+            recommendation = "Good! Your resume has core structures. To improve, integrate missing keywords (like "
+                    + (missingKeywords.isEmpty() ? "Docker" : String.join(", ", missingKeywords.stream().limit(3).toList())) + ") and describe achievements with numbers and metrics.";
         } else {
             recommendation = "Needs Work. Make sure to structure your resume using standard headers (Experience, Projects, Education, Skills). Add key technology terms relative to the roles you are targeting.";
         }

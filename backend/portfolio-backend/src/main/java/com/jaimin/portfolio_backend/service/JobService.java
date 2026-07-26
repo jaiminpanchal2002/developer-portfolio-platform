@@ -1,11 +1,12 @@
 package com.jaimin.portfolio_backend.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,9 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jaimin.portfolio_backend.dto.JobDTO;
 import com.jaimin.portfolio_backend.dto.SkillMatchResult;
-import com.jaimin.portfolio_backend.entity.Experience;
 import com.jaimin.portfolio_backend.entity.Profile;
-import com.jaimin.portfolio_backend.entity.Project;
 import com.jaimin.portfolio_backend.entity.Skill;
 import com.jaimin.portfolio_backend.repository.ExperienceRepository;
 import com.jaimin.portfolio_backend.repository.ProjectRepository;
@@ -25,8 +24,11 @@ import com.jaimin.portfolio_backend.repository.SkillRepository;
 @Service
 public class JobService {
 
+    private static final Logger log = LoggerFactory.getLogger(JobService.class);
+
     private final RestTemplate restTemplate;
     private final AiJobMatchService aiJobMatchService;
+    private final GeminiService geminiService;
     private final SkillRepository skillRepository;
     private final ProjectRepository projectRepository;
     private final ExperienceRepository experienceRepository;
@@ -42,6 +44,7 @@ public class JobService {
     public JobService(
             RestTemplate restTemplate,
             AiJobMatchService aiJobMatchService,
+            GeminiService geminiService,
             SkillRepository skillRepository,
             ProjectRepository projectRepository,
             ExperienceRepository experienceRepository,
@@ -49,6 +52,7 @@ public class JobService {
             ProfileService profileService) {
         this.restTemplate = restTemplate;
         this.aiJobMatchService = aiJobMatchService;
+        this.geminiService = geminiService;
         this.skillRepository = skillRepository;
         this.projectRepository = projectRepository;
         this.experienceRepository = experienceRepository;
@@ -74,12 +78,16 @@ public class JobService {
         if (appId != null && !appId.isEmpty() && appKey != null && !appKey.isEmpty()) {
             try {
                 String remoteParam = remote ? "&where=remote" : "";
+                // Capped at 8 (was 15): each result now gets a real per-job Gemini
+                // comparison against the resume, run in parallel below — 8 keeps
+                // a single search well within free-tier rate limits and a few
+                // seconds of wall time instead of dozens of sequential LLM calls.
                 String url = "https://api.adzuna.com/v1/api/jobs/"
                         + country.toLowerCase()
                         + "/search/1"
                         + "?app_id=" + appId
                         + "&app_key=" + appKey
-                        + "&results_per_page=15"
+                        + "&results_per_page=8"
                         + "&what=" + keyword
                         + "&max_days_old=14"
                         + remoteParam;
@@ -90,48 +98,14 @@ public class JobService {
                 JsonNode resultsNode = root.path("results");
 
                 if (resultsNode.isArray()) {
+                    List<CompletableFuture<JobDTO>> futures = new ArrayList<>();
                     for (JsonNode node : resultsNode) {
-                        String title = node.path("title").asText();
-                        String company = node.path("company").path("display_name").asText("Confidential");
-                        String location = node.path("location").path("display_name").asText("Remote");
-                        String description = node.path("description").asText("");
-                        String applyLink = node.path("redirect_url").asText("https://www.adzuna.com");
-                        String rawCreated = node.path("created").asText(""); // e.g. "2026-06-10T12:00:00Z"
-                        String postingDate = rawCreated.length() >= 10 ? rawCreated.substring(0, 10) : "Recent";
-                        String jobSource = "Adzuna";
-
-                        double salaryMin = node.path("salary_min").asDouble(0);
-                        double salaryMax = node.path("salary_max").asDouble(0);
-                        String salary = "Competitive";
-                        if (salaryMin > 0 && salaryMax > 0) {
-                            salary = String.format("%.0f - %.0f", salaryMin, salaryMax);
-                        } else if (salaryMin > 0) {
-                            salary = String.format("From %.0f", salaryMin);
-                        }
-
-                        // Call AI matching
-                        SkillMatchResult match = calculateMatchForJob(description);
-
-                        jobList.add(JobDTO.builder()
-                                .title(title)
-                                .company(company)
-                                .location(location)
-                                .description(description)
-                                .applyLink(applyLink)
-                                .salary(salary)
-                                .matchScore(match.getScore())
-                                .matchedSkills(match.getMatchedSkills())
-                                .missingSkills(match.getMissingSkills())
-                                .recommendation(match.getRecommendation())
-                                .roadmap(match.getRoadmap())
-                                .recruiterEmail("hr@" + company.toLowerCase().replaceAll("[^a-z]", "") + ".com")
-                                .createdAt(postingDate)
-                                .source(jobSource)
-                                .build());
+                        futures.add(CompletableFuture.supplyAsync(() -> buildJobFromAdzunaNode(node)));
                     }
+                    jobList = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
                 }
             } catch (Exception e) {
-                System.err.println("Error calling Adzuna API: " + e.getMessage() + ". Using fallback mock jobs.");
+                log.warn("Error calling Adzuna API: {}. Using fallback mock jobs.", e.getMessage());
             }
         }
 
@@ -141,6 +115,44 @@ public class JobService {
         }
 
         return jobList;
+    }
+
+    private JobDTO buildJobFromAdzunaNode(JsonNode node) {
+        String title = node.path("title").asText();
+        String company = node.path("company").path("display_name").asText("Confidential");
+        String location = node.path("location").path("display_name").asText("Remote");
+        String description = node.path("description").asText("");
+        String applyLink = node.path("redirect_url").asText("https://www.adzuna.com");
+        String rawCreated = node.path("created").asText(""); // e.g. "2026-06-10T12:00:00Z"
+        String postingDate = rawCreated.length() >= 10 ? rawCreated.substring(0, 10) : "Recent";
+
+        double salaryMin = node.path("salary_min").asDouble(0);
+        double salaryMax = node.path("salary_max").asDouble(0);
+        String salary = "Competitive";
+        if (salaryMin > 0 && salaryMax > 0) {
+            salary = String.format("%.0f - %.0f", salaryMin, salaryMax);
+        } else if (salaryMin > 0) {
+            salary = String.format("From %.0f", salaryMin);
+        }
+
+        SkillMatchResult match = calculateMatchForJob(description);
+
+        return JobDTO.builder()
+                .title(title)
+                .company(company)
+                .location(location)
+                .description(description)
+                .applyLink(applyLink)
+                .salary(salary)
+                .matchScore(match.getScore())
+                .matchedSkills(match.getMatchedSkills())
+                .missingSkills(match.getMissingSkills())
+                .recommendation(match.getRecommendation())
+                .roadmap(match.getRoadmap())
+                .recruiterEmail("hr@" + company.toLowerCase().replaceAll("[^a-z]", "") + ".com")
+                .createdAt(postingDate)
+                .source("Adzuna")
+                .build();
     }
 
     public String getLiveJobs(String country) {
@@ -157,7 +169,70 @@ public class JobService {
         return restTemplate.getForObject(url, String.class);
     }
 
+    /**
+     * Real match: compares the actual resume text against this specific job
+     * description via Gemini. Falls back to the deterministic keyword-overlap
+     * matcher (AiJobMatchService) when Gemini isn't configured or the call
+     * fails for this job — every job still gets a score either way.
+     */
     private SkillMatchResult calculateMatchForJob(String description) {
+        Profile profile = profileService.getProfile();
+        String resumeText = profile != null ? profile.getResumeText() : "";
+
+        if (geminiService.isConfigured() && resumeText != null && !resumeText.isBlank()) {
+            try {
+                return matchWithGemini(resumeText, description);
+            } catch (GeminiService.GeminiUnavailableException e) {
+                log.warn("Job match falling back to deterministic matcher: {}", e.getMessage());
+            }
+        }
+
+        return calculateMatchDeterministic(description);
+    }
+
+    private SkillMatchResult matchWithGemini(String resumeText, String jobDescription) {
+        String prompt = """
+                You are an AI recruiter assistant. Compare the CANDIDATE RESUME against the JOB DESCRIPTION and
+                assess genuine fit — actual experience and demonstrated skills, not just keyword overlap.
+
+                Respond with ONLY a JSON object in exactly this shape, no markdown fences, no extra text:
+                {
+                  "score": <integer 0-100>,
+                  "matchedSkills": [<strings — requirements from the job the resume genuinely satisfies>],
+                  "missingSkills": [<strings — requirements from the job the resume does not demonstrate, short skill names not full sentences>],
+                  "recommendation": "<1-2 sentences: should this candidate apply, and why>"
+                }
+
+                CANDIDATE RESUME:
+                %s
+
+                JOB DESCRIPTION:
+                %s
+                """.formatted(resumeText, jobDescription);
+
+        JsonNode result = geminiService.generateJson(prompt);
+
+        List<String> matched = toStringList(result.path("matchedSkills"));
+        List<String> missing = toStringList(result.path("missingSkills"));
+
+        return SkillMatchResult.builder()
+                .score(Math.max(0, Math.min(100, result.path("score").asInt(50))))
+                .matchedSkills(matched)
+                .missingSkills(missing)
+                .recommendation(result.path("recommendation").asText("Assessment unavailable."))
+                .roadmap(aiJobMatchService.buildRoadmap(missing))
+                .build();
+    }
+
+    private static List<String> toStringList(JsonNode arrayNode) {
+        List<String> list = new ArrayList<>();
+        if (arrayNode.isArray()) {
+            for (JsonNode n : arrayNode) list.add(n.asText());
+        }
+        return list;
+    }
+
+    private SkillMatchResult calculateMatchDeterministic(String description) {
         List<String> userSkills = skillRepository.findAll()
                 .stream()
                 .map(Skill::getName)
@@ -193,41 +268,41 @@ public class JobService {
     }
 
     private List<JobDTO> generateMockJobs(String keyword, String country) {
-        List<JobDTO> mockList = new ArrayList<>();
         String currency = getCurrencySymbol(country);
 
-        // Standardize keyword display
         String capKeyword = "Developer";
         if (keyword != null && !keyword.trim().isEmpty()) {
             String clean = keyword.trim();
             capKeyword = clean.substring(0, 1).toUpperCase() + (clean.length() > 1 ? clean.substring(1) : "");
         }
+        final String cap = capKeyword;
 
-        mockList.add(createMockJob(
-            "Senior " + capKeyword + " Engineer",
+        List<CompletableFuture<JobDTO>> futures = new ArrayList<>();
+        futures.add(CompletableFuture.supplyAsync(() -> createMockJob(
+            "Senior " + cap + " Engineer",
             "GlobalTech Inc",
             "Bangalore, India",
             currency + "1,200,000 - " + currency + "1,800,000",
-            "Looking for an experienced engineer specialized in " + capKeyword + ". You will be building scalability features, optimizing backend performance, and integrating " + capKeyword + " services. Strong understanding of architecture, relational databases, and modern software design patterns is highly required."
-        ));
+            "Looking for an experienced engineer specialized in " + cap + ". You will be building scalability features, optimizing backend performance, and integrating " + cap + " services. Strong understanding of architecture, relational databases, and modern software design patterns is highly required."
+        )));
 
-        mockList.add(createMockJob(
-            capKeyword + " Systems Specialist",
+        futures.add(CompletableFuture.supplyAsync(() -> createMockJob(
+            cap + " Systems Specialist",
             "Acuity Corp",
             "Remote",
             currency + "900,000 - " + currency + "1,300,000",
-            "Join our core engineering team. The ideal candidate has hands-on experience with " + capKeyword + " and cloud environments. You will implement robust APIs, write unit tests, and collaborate to deploy secure " + capKeyword + " modules."
-        ));
+            "Join our core engineering team. The ideal candidate has hands-on experience with " + cap + " and cloud environments. You will implement robust APIs, write unit tests, and collaborate to deploy secure " + cap + " modules."
+        )));
 
-        mockList.add(createMockJob(
-            "Full Stack Engineer (" + capKeyword + " & React)",
+        futures.add(CompletableFuture.supplyAsync(() -> createMockJob(
+            "Full Stack Engineer (" + cap + " & React)",
             "Linear",
             "Mumbai, India",
             currency + "1,000,000 - " + currency + "1,500,000",
-            "We are seeking a versatile Full Stack Developer to build user-friendly interfaces and robust backend logic. Tech stack includes " + capKeyword + ", React, TypeScript, and modern styling libraries. Experience deploying applications to cloud services and managing configurations with " + capKeyword + " is a major advantage."
-        ));
+            "We are seeking a versatile Full Stack Developer to build user-friendly interfaces and robust backend logic. Tech stack includes " + cap + ", React, TypeScript, and modern styling libraries. Experience deploying applications to cloud services and managing configurations with " + cap + " is a major advantage."
+        )));
 
-        return mockList;
+        return futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
     }
 
     private JobDTO createMockJob(String title, String company, String location, String salary, String description) {

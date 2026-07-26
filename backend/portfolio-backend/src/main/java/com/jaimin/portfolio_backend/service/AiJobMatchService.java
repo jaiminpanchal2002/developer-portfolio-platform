@@ -217,30 +217,30 @@ public class AiJobMatchService {
             recommendation = "Low Match. Your profile lacks several key requirements. We highly suggest pursuing the learning roadmaps below.";
         }
 
-        // 5. Generate learning roadmaps for missing skills
-        List<String> roadmapList = new ArrayList<>();
-        for (String missing : missingSkills) {
-            List<String> steps = ROADMAPS.get(missing);
-            if (steps != null) {
-                roadmapList.add("### Roadmap for " + missing);
-                roadmapList.addAll(steps);
-                roadmapList.add("");
-            } else {
-                roadmapList.add("### Roadmap for " + missing);
-                roadmapList.addAll(generateDynamicRoadmap(missing));
-                roadmapList.add("");
-            }
-        }
-
-        String roadmapString = String.join("\n", roadmapList);
-
         return SkillMatchResult.builder()
                 .score(finalScore)
                 .matchedSkills(matchedSkills)
                 .missingSkills(missingSkills)
                 .recommendation(recommendation)
-                .roadmap(roadmapString) // Store roadmap in our DTO!
+                .roadmap(buildRoadmap(missingSkills))
                 .build();
+    }
+
+    /**
+     * Learning-roadmap generator for a list of missing-skill names — shared
+     * by both the deterministic matcher above and the Gemini-backed matcher,
+     * since a curated roadmap is genuinely useful content regardless of how
+     * the missing-skills list itself was computed.
+     */
+    public String buildRoadmap(List<String> missingSkills) {
+        List<String> roadmapList = new ArrayList<>();
+        for (String missing : missingSkills) {
+            List<String> steps = ROADMAPS.get(missing);
+            roadmapList.add("### Roadmap for " + missing);
+            roadmapList.addAll(steps != null ? steps : generateDynamicRoadmap(missing));
+            roadmapList.add("");
+        }
+        return String.join("\n", roadmapList);
     }
 
     private void extractTechTerms(String source, Set<String> target) {
