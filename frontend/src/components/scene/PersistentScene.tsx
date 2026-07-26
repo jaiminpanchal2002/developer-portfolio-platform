@@ -294,21 +294,18 @@ export default function PersistentScene() {
 
     const setup = () => {
       const heroEl = document.getElementById("home");
-      // The object's journey now spans Hero through the end of Skills —
-      // it settles gradually across both sections instead of finishing at
-      // the end of About — then recedes for Projects onward, where the
-      // project showcase itself should be the visual focus.
-      const endEl = document.getElementById("skills");
 
-      if (!heroEl || !endEl) {
+      if (!heroEl) {
         if (attempts++ < 30) frameId = requestAnimationFrame(setup);
         return;
       }
 
+      // Confined to the hero itself: the composition settles and fades out
+      // entirely by the time the hero has scrolled past, so no motion
+      // carries into About or any section beyond the home screen.
       trigger = ScrollTrigger.create({
         trigger: heroEl,
         start: "top top",
-        endTrigger: endEl,
         end: "bottom top",
         scrub: true,
         onUpdate: (self) => {

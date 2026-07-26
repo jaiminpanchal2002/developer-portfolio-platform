@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Skill } from "@/types";
 
 const easeOut = [0.16, 1, 0.3, 1] as const;
@@ -157,15 +157,15 @@ interface SkillConstellationProps {
 /**
  * The skills universe: categories orbit a central hub, individual skills
  * orbit their category. Node size encodes proficiency — no progress bars.
- * Fully deterministic layout (SSR-safe), keyboard focusable, and static
- * under prefers-reduced-motion.
+ * Fully deterministic layout (SSR-safe), keyboard focusable. No ambient
+ * looping motion — the enclosing card supplies 3D depth via mouse-tilt
+ * instead, so there's nothing here that needs reduced-motion gating.
  */
 export default function SkillConstellation({
   skills,
   activeCategory,
   onCategoryHover,
 }: SkillConstellationProps) {
-  const shouldReduceMotion = useReducedMotion();
   const [hovered, setHovered] = useState<PlacedSkill | null>(null);
 
   const clusters = useMemo(() => buildLayout(skills), [skills]);
@@ -209,18 +209,7 @@ export default function SkillConstellation({
               />
 
               {/* Category node */}
-              <motion.g
-                animate={
-                  shouldReduceMotion
-                    ? undefined
-                    : { y: [0, -5 - hash01(cluster.category) * 4, 0] }
-                }
-                transition={{
-                  duration: 7 + hash01(cluster.category) * 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
+              <g>
                 <circle
                   cx={cluster.x}
                   cy={cluster.y}
@@ -306,7 +295,7 @@ export default function SkillConstellation({
                     </g>
                   );
                 })}
-              </motion.g>
+              </g>
             </motion.g>
           );
         })}

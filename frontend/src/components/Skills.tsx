@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useMemo, useRef, useState } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { Code2, Server, Database, Cloud, Star, Cpu } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 import { Skill } from "@/types";
@@ -42,6 +42,29 @@ function getCategoryIcon(category: string) {
 export default function Skills({ skills }: { skills: Skill[] }) {
   const { t } = useLocale();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  // Mouse-tracked 3D tilt on the constellation card — the same technique
+  // the project cards use, reused here instead of the ambient bobbing
+  // loop the constellation nodes previously ran on their own: motion that
+  // responds to the visitor instead of animating perpetually in the
+  // background reads as intentional, not like the page is lagging.
+  const cardRef = useRef<HTMLDivElement>(null);
+  const tiltX = useMotionValue(0);
+  const tiltY = useMotionValue(0);
+  const rotateX = useTransform(tiltY, [-150, 150], [4, -4]);
+  const rotateY = useTransform(tiltX, [-150, 150], [-4, 4]);
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    tiltX.set(e.clientX - rect.left - rect.width / 2);
+    tiltY.set(e.clientY - rect.top - rect.height / 2);
+  };
+
+  const handleCardMouseLeave = () => {
+    tiltX.set(0);
+    tiltY.set(0);
+  };
 
   const displaySkills = skills.length > 0 ? skills : FALLBACK_SKILLS;
 
@@ -105,26 +128,32 @@ export default function Skills({ skills }: { skills: Skill[] }) {
 
       {/* The constellation itself */}
       <motion.div
+        ref={cardRef}
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: easeOut }}
+        onMouseMove={handleCardMouseMove}
+        onMouseLeave={handleCardMouseLeave}
+        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         className="bento-card p-4 md:p-8 shadow-2xl"
       >
-        <SkillConstellation
-          skills={displaySkills}
-          activeCategory={activeCategory}
-          onCategoryHover={setActiveCategory}
-        />
-        <p
-          className="text-xs text-center mt-2 font-medium"
-          style={{ color: "var(--noir-fg-subtle)" }}
-        >
-          {t(
-            "skills.constellation.caption",
-            "Each orbit is a discipline — node size reflects depth of experience"
-          )}
-        </p>
+        <div style={{ transform: "translateZ(20px)" }}>
+          <SkillConstellation
+            skills={displaySkills}
+            activeCategory={activeCategory}
+            onCategoryHover={setActiveCategory}
+          />
+          <p
+            className="text-xs text-center mt-2 font-medium"
+            style={{ color: "var(--noir-fg-subtle)" }}
+          >
+            {t(
+              "skills.constellation.caption",
+              "Each orbit is a discipline — node size reflects depth of experience"
+            )}
+          </p>
+        </div>
       </motion.div>
     </div>
   );

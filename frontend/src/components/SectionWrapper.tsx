@@ -48,12 +48,6 @@ export default function SectionWrapper({
       style={{ perspective: 1000 }}
       className="max-w-7xl mx-auto px-6 py-24 relative"
     >
-      {/* Decorative Grid Foundation Blueprint Lines */}
-      {!shouldReduceMotion && (
-        <div className="absolute inset-0 pointer-events-none -z-10 opacity-[0.03] select-none">
-          <div className="w-full h-full bg-[linear-gradient(to_right,#c9a876_1px,transparent_1px),linear-gradient(to_bottom,#c9a876_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-        </div>
-      )}
       {children}
     </motion.section>
   );
