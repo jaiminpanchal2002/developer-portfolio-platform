@@ -1,9 +1,12 @@
 package com.jaimin.portfolio_backend.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.jaimin.portfolio_backend.dto.BulkIdsRequest;
 import com.jaimin.portfolio_backend.dto.SkillRequest;
 import com.jaimin.portfolio_backend.entity.Skill;
 import com.jaimin.portfolio_backend.service.SkillService;
@@ -65,5 +68,11 @@ public class SkillController {
         skillService.deleteSkill(id);
 
         return "Skill Deleted Successfully";
+    }
+
+    @PostMapping("/bulk-delete")
+    public ResponseEntity<Map<String, Object>> bulkDelete(@RequestBody BulkIdsRequest request) {
+        skillService.bulkDelete(request.getIds());
+        return ResponseEntity.ok(Map.of("deleted", request.getIds().size()));
     }
 }

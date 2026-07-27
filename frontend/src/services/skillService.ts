@@ -32,3 +32,8 @@ export const deleteSkill = async (
 
   return response.data;
 };
+
+export const bulkDeleteSkills = async (ids: number[]) => {
+  const response = await api.post("/skills/bulk-delete", { ids });
+  return response.data;
+};

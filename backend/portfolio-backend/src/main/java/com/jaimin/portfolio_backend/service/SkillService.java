@@ -53,4 +53,8 @@ public class SkillService {
 
         skillRepository.delete(skill);
     }
+
+    public void bulkDelete(List<Long> ids) {
+        skillRepository.deleteAllByIdInBatch(ids);
+    }
 }

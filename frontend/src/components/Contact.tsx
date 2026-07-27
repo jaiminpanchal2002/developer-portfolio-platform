@@ -6,14 +6,9 @@ import Swal from "sweetalert2";
 import {
   Mail,
   MapPin,
-  Globe,
-  Link as LinkIcon,
   Send,
-  Calendar,
-  Clock,
-  Video,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import { Profile } from "@/types";
 import { useLocale } from "@/lib/localeContext";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -22,24 +17,12 @@ interface ContactProps {
   profile: Profile;
 }
 
-const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
 export default function Contact({ profile }: ContactProps) {
   const { t } = useLocale();
-  const todayStr = new Date().toLocaleDateString('en-CA');
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
-    scheduleMeeting: false,
-    meetingDate: "",
-    meetingTime: "",
   });
   const [sending, setSending] = useState(false);
   // Spam protection: a honeypot field bots auto-fill plus a minimum
@@ -55,7 +38,7 @@ export default function Contact({ profile }: ContactProps) {
 
     if (honeypot || Date.now() - (mountedAtRef.current ?? Date.now()) < 2500) {
       // Pretend success so bots learn nothing.
-      setFormData({ name: "", email: "", message: "", scheduleMeeting: false, meetingDate: "", meetingTime: "" });
+      setFormData({ name: "", email: "", message: "" });
       return;
     }
 
@@ -83,97 +66,20 @@ export default function Contact({ profile }: ContactProps) {
       return;
     }
 
-    if (formData.scheduleMeeting) {
-      if (!formData.meetingDate || !formData.meetingTime) {
-        Swal.fire({
-          title: "Validation Error",
-          text: "Please select a date and time for the meeting.",
-          icon: "warning",
-          background: "var(--noir-bg-elevated)",
-          color: "var(--noir-fg)",
-          confirmButtonColor: "var(--noir-accent)",
-        });
-        return;
-      }
-
-      // Check for past date/time
-      const now = new Date();
-      const selectedDateTime = new Date(`${formData.meetingDate}T${formData.meetingTime}`);
-      if (selectedDateTime < now) {
-        Swal.fire({
-          title: "Invalid Time",
-          text: "You cannot schedule a meeting in the past. Please choose a future date and time.",
-          icon: "warning",
-          background: "var(--noir-bg-elevated)",
-          color: "var(--noir-fg)",
-          confirmButtonColor: "var(--noir-accent)",
-        });
-        return;
-      }
-    }
-
     setSending(true);
     try {
-      const response = await api.post("/public/contact", formData);
-      const data = response.data;
+      await api.post("/public/contact", formData);
 
-
-      if (data.googleMeetLink) {
-        const safeMeetLink = escapeHtml(String(data.googleMeetLink));
-        const safeUserEmail = escapeHtml(formData.email);
-        const safeOwnerEmail = escapeHtml(profile.email);
-        const safeDate = escapeHtml(formData.meetingDate);
-        const safeTime = escapeHtml(formData.meetingTime);
-
-        Swal.fire({
-          title: "Meeting Scheduled!",
-          html: `
-            <div style="text-align: left; font-family: sans-serif; margin-top: 12px;">
-              <p style="color: var(--noir-fg-muted); font-size: 14px; margin-bottom: 16px;">Successfully confirmed your inquiry and scheduled a video counselling session!</p>
-              <div style="padding: 16px; background-color: var(--noir-bg); border: 1px solid var(--noir-border-strong); border-radius: 16px; margin-bottom: 16px;">
-                <p style="font-size: 11px; color: var(--noir-fg-subtle); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; font-family: monospace; margin: 0 0 10px 0;">
-                  Jitsi Meet Invitation
-                </p>
-                <div style="height: 1px; background-color: var(--noir-border-strong); margin-bottom: 12px; width: 100%;"></div>
-                <p style="font-size: 14px; color: var(--noir-fg); margin: 6px 0;"><b>Date:</b> ${safeDate}</p>
-                <p style="font-size: 14px; color: var(--noir-fg); margin: 6px 0;"><b>Time:</b> ${safeTime}</p>
-                <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed var(--noir-border-strong);">
-                  <span style="font-size: 11px; color: var(--noir-fg-subtle); font-weight: bold; font-family: monospace; display: block; margin-bottom: 4px;">MEETING LINK:</span>
-                  <a href="${safeMeetLink}" target="_blank" style="color: var(--noir-accent); font-weight: 600; font-size: 13px; word-break: break-all; text-decoration: underline;">
-                    ${safeMeetLink}
-                  </a>
-                </div>
-              </div>
-              <p style="color: var(--noir-fg-subtle); font-size: 12px; line-height: 1.6; margin: 0;">
-                Confirmation invites containing this direct meeting link have been dispatched to <b>${safeUserEmail}</b> and <b>${safeOwnerEmail}</b>.
-              </p>
-            </div>
-          `,
-          icon: "success",
-          background: "var(--noir-bg-elevated)",
-          color: "var(--noir-fg)",
-          confirmButtonColor: "var(--noir-accent)",
-          confirmButtonText: "Done",
-        });
-      } else {
-        Swal.fire({
-          title: "Message Sent!",
-          text: "Thank you for reaching out. I'll get back to you shortly.",
-          icon: "success",
-          background: "var(--noir-bg-elevated)",
-          color: "var(--noir-fg)",
-          confirmButtonColor: "var(--noir-accent)",
-        });
-      }
-
-      setFormData({
-        name: "",
-        email: "",
-        message: "",
-        scheduleMeeting: false,
-        meetingDate: "",
-        meetingTime: "",
+      Swal.fire({
+        title: "Message Sent!",
+        text: "Thank you for reaching out. I'll get back to you shortly.",
+        icon: "success",
+        background: "var(--noir-bg-elevated)",
+        color: "var(--noir-fg)",
+        confirmButtonColor: "var(--noir-accent)",
       });
+
+      setFormData({ name: "", email: "", message: "" });
     } catch (error) {
       console.error(error);
       Swal.fire({
@@ -236,10 +142,10 @@ export default function Contact({ profile }: ContactProps) {
                   href={profile.githubUrl.startsWith("http") ? profile.githubUrl : `https://${profile.githubUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl border transition font-semibold text-sm cursor-pointer hover:opacity-80"
+                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl border transition-all duration-200 font-semibold text-sm cursor-pointer hover:-translate-y-0.5 hover:border-[var(--noir-accent)]/50 hover:shadow-[0_0_24px_-8px_var(--noir-accent)]"
                   style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
                 >
-                  <Globe size={18} style={{ color: "var(--noir-accent)" }} />
+                  <FaGithub size={18} style={{ color: "var(--noir-accent)" }} />
                   GitHub
                 </a>
               )}
@@ -249,10 +155,10 @@ export default function Contact({ profile }: ContactProps) {
                   href={profile.linkedinUrl.startsWith("http") ? profile.linkedinUrl : `https://${profile.linkedinUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl border transition font-semibold text-sm cursor-pointer hover:opacity-80"
+                  className="flex items-center justify-center gap-2.5 p-4 rounded-2xl border transition-all duration-200 font-semibold text-sm cursor-pointer hover:-translate-y-0.5 hover:border-[var(--noir-accent)]/50 hover:shadow-[0_0_24px_-8px_var(--noir-accent)]"
                   style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
                 >
-                  <LinkIcon size={18} style={{ color: "var(--noir-accent)" }} />
+                  <FaLinkedinIn size={18} style={{ color: "var(--noir-accent)" }} />
                   LinkedIn
                 </a>
               )}
@@ -321,65 +227,12 @@ export default function Contact({ profile }: ContactProps) {
               />
             </div>
 
-            {/* Google Meet Toggle */}
-            <div className="flex items-center gap-3 p-4 rounded-2xl mt-2 select-none transition-colors border" style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)" }}>
-              <input
-                type="checkbox"
-                id="scheduleMeeting"
-                checked={formData.scheduleMeeting}
-                onChange={(e) => setFormData({ ...formData, scheduleMeeting: e.target.checked })}
-                className="w-4 h-4 rounded cursor-pointer"
-                style={{ accentColor: "var(--noir-accent)" }}
-              />
-              <label htmlFor="scheduleMeeting" className="text-xs font-semibold cursor-pointer flex items-center gap-1.5" style={{ color: "var(--noir-fg-muted)" }}>
-                <Video size={14} style={{ color: "var(--noir-accent)" }} />
-                {t("contact.form.schedule", "Schedule a 1-on-1 Counselling & Tech Consulting Session")}
-              </label>
-            </div>
-
-            {/* Date and Time selectors inside expandable framer motion animation */}
-            <AnimatePresence>
-              {formData.scheduleMeeting && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  className="grid grid-cols-2 gap-4 pt-2"
-                >
-                  <div>
-                    <label htmlFor="contact-meeting-date" className="text-xs font-semibold mb-1 flex items-center gap-1" style={{ color: "var(--noir-fg-muted)" }}>
-                      <Calendar size={12} style={{ color: "var(--noir-accent)" }} />
-                      {t("contact.form.date", "Select Date")}
-                    </label>
-                    <input
-                      id="contact-meeting-date"
-                      type="date"
-                      value={formData.meetingDate}
-                      min={todayStr}
-                      onChange={(e) => setFormData({ ...formData, meetingDate: e.target.value })}
-                      className="w-full rounded-xl px-4 py-2 transition-colors text-xs border"
-                      style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="contact-meeting-time" className="text-xs font-semibold mb-1 flex items-center gap-1" style={{ color: "var(--noir-fg-muted)" }}>
-                      <Clock size={12} style={{ color: "var(--noir-accent)" }} />
-                      {t("contact.form.time", "Select Time")}
-                    </label>
-                    <input
-                      id="contact-meeting-time"
-                      type="time"
-                      value={formData.meetingTime}
-                      onChange={(e) => setFormData({ ...formData, meetingTime: e.target.value })}
-                      className="w-full rounded-xl px-4 py-2 transition-colors text-xs border"
-                      style={{ background: "rgba(0,0,0,0.2)", borderColor: "var(--noir-border)", color: "var(--noir-fg)" }}
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <p className="text-xs" style={{ color: "var(--noir-fg-subtle)" }}>
+              {t("contact.form.scheduleHint", "Prefer a call? ")}
+              <a href="#appointment" className="underline decoration-dotted hover:opacity-80" style={{ color: "var(--noir-accent)" }}>
+                {t("contact.form.scheduleLink", "Book a meeting instead →")}
+              </a>
+            </p>
 
             <button
               type="submit"

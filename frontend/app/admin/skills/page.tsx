@@ -6,6 +6,7 @@ import SkillTable from "@/components/admin/SkillTable";
 import SkillForm from "@/components/admin/SkillForm";
 import EditSkillForm from "@/components/admin/EditSkillForm";
 import AnimatedModal from "@/components/admin/AnimatedModal";
+import { stickyHeaderClass } from "@/components/admin/form/formStyles";
 
 import { getSkills } from "@/services/skillService";
 import { Skill } from "@/types";
@@ -71,15 +72,16 @@ export default function SkillsPage() {
       <SkillTable
         skills={skills}
         onEdit={handleEdit}
+        onRefresh={fetchSkills}
       />
 
       {/* Add Modal */}
       <AnimatedModal
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
-        className="w-full max-w-xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+        className="max-w-xl"
       >
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className={stickyHeaderClass}>
           Add Skill
         </h2>
 
@@ -93,11 +95,11 @@ export default function SkillsPage() {
       <AnimatedModal
         isOpen={showEditModal && !!selectedSkill}
         onClose={() => setShowEditModal(false)}
-        className="w-full max-w-xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+        className="max-w-xl"
       >
         {selectedSkill && (
           <>
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className={stickyHeaderClass}>
               Edit Skill
             </h2>
 

@@ -32,3 +32,8 @@ export const deleteCertificate = async (
 
   return response.data;
 };
+
+export const bulkDeleteCertificates = async (ids: number[]) => {
+  const response = await api.post("/certificates/bulk-delete", { ids });
+  return response.data;
+};

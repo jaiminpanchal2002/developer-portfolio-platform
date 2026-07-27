@@ -32,3 +32,18 @@ export const updateBlogPost = async (id: number, post: Partial<BlogPost>) => {
 export const deleteBlogPost = async (id: number) => {
   return api.delete(`/blog/${id}`);
 };
+
+export const bulkDeleteBlogPosts = async (ids: number[]) => {
+  const response = await api.post("/blog/bulk-delete", { ids });
+  return response.data;
+};
+
+export const bulkPublishBlogPosts = async (ids: number[]) => {
+  const response = await api.patch("/blog/bulk-publish", { ids });
+  return response.data;
+};
+
+export const bulkUnpublishBlogPosts = async (ids: number[]) => {
+  const response = await api.patch("/blog/bulk-unpublish", { ids });
+  return response.data;
+};

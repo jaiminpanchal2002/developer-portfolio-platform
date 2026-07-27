@@ -5,9 +5,21 @@ import { useRouter } from "next/navigation";
 
 const emptySubscribe = () => () => {};
 
+function isExpired(token: string): boolean {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return typeof decoded.exp === "number" && decoded.exp * 1000 <= Date.now();
+  } catch {
+    // Malformed token — treat as expired rather than trusting it.
+    return true;
+  }
+}
+
 function readToken(): string | null {
   const token = localStorage.getItem("token");
   if (!token || token === "undefined" || token === "null") return null;
+  if (isExpired(token)) return null;
   return token;
 }
 

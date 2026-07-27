@@ -1,9 +1,12 @@
 package com.jaimin.portfolio_backend.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.jaimin.portfolio_backend.dto.BulkIdsRequest;
 import com.jaimin.portfolio_backend.dto.EducationRequest;
 import com.jaimin.portfolio_backend.entity.Education;
 import com.jaimin.portfolio_backend.service.EducationService;
@@ -78,5 +81,11 @@ public class EducationController {
         educationService.deleteEducation(id);
 
         return "Education Deleted Successfully";
+    }
+
+    @PostMapping("/bulk-delete")
+    public ResponseEntity<Map<String, Object>> bulkDelete(@RequestBody BulkIdsRequest request) {
+        educationService.bulkDelete(request.getIds());
+        return ResponseEntity.ok(Map.of("deleted", request.getIds().size()));
     }
 }

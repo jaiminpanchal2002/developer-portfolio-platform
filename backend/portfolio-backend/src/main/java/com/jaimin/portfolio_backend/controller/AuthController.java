@@ -1,5 +1,6 @@
 package com.jaimin.portfolio_backend.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +44,12 @@ public class AuthController {
     @PostMapping("/2fa/verify")
     public AuthResponse verifyTwoFactor(@RequestBody Map<String, String> body) {
         return authService.verifyTwoFactor(body.get("email"), body.get("code"));
+    }
+
+    /** Silently renews the session token; requires a still-valid token (see SecurityConfig). */
+    @PostMapping("/refresh")
+    public AuthResponse refresh(Authentication authentication) {
+        return authService.refresh(authentication.getName());
     }
 
     @PostMapping("/forgot-password")

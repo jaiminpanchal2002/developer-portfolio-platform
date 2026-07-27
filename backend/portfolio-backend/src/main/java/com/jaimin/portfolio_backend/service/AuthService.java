@@ -68,6 +68,17 @@ public class AuthService {
                 .build();
     }
 
+    /** Mints a fresh token for an already-authenticated session so long-lived
+     *  admin sessions don't go stale mid-form and get bounced on the next
+     *  write. Only reachable with a currently-valid token (see SecurityConfig). */
+    public AuthResponse refresh(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return AuthResponse.builder()
+                .token(jwtService.generateToken(user.getEmail()))
+                .build();
+    }
+
     /** Second login step: exchange email + TOTP code for a token. */
     public AuthResponse verifyTwoFactor(String email, String code) {
         User user = userRepository.findByEmail(email)

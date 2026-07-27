@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createExperience } from "@/services/experienceService";
+import { experienceDefaultValues, experienceSchema, ExperienceFormValues } from "@/lib/validation/experienceSchema";
+import { toastError, toastSuccess } from "@/lib/toast";
+import Field from "@/components/admin/form/Field";
+import { inputClass, primaryButtonClass, secondaryButtonClass, stickyFooterClass } from "@/components/admin/form/formStyles";
 
 interface Props {
   onClose: () => void;
@@ -12,128 +17,99 @@ export default function ExperienceForm({
   onClose,
   onSuccess,
 }: Props) {
-  const [formData, setFormData] = useState({
-    company: "",
-    position: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    currentlyWorking: false,
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<ExperienceFormValues>({
+    resolver: zodResolver(experienceSchema),
+    defaultValues: experienceDefaultValues,
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { name, value } = e.target;
+  const currentlyWorking = watch("currentlyWorking");
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleCheckbox = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      currentlyWorking: e.target.checked,
-    }));
-  };
-
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
-
+  const onSubmit = async (values: ExperienceFormValues) => {
     try {
-      await createExperience(formData);
-
-      alert("Experience Added");
-
+      await createExperience(values);
+      toastSuccess("Experience added successfully");
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Failed");
+      toastError("Failed to save experience");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4"
-    >
-      <input
-        type="text"
-        name="company"
-        placeholder="Company"
-        value={formData.company}
-        onChange={handleChange}
-        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
-        required
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <Field label="Company" htmlFor="company" required error={errors.company?.message}>
+        <input
+          id="company"
+          type="text"
+          {...register("company")}
+          aria-invalid={!!errors.company}
+          className={inputClass(!!errors.company)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="position"
-        placeholder="Position"
-        value={formData.position}
-        onChange={handleChange}
-        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
-        required
-      />
+      <Field label="Position" htmlFor="position" required error={errors.position?.message}>
+        <input
+          id="position"
+          type="text"
+          {...register("position")}
+          aria-invalid={!!errors.position}
+          className={inputClass(!!errors.position)}
+        />
+      </Field>
 
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={formData.description}
-        onChange={handleChange}
-        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
-        rows={4}
-      />
+      <Field label="Description" htmlFor="description" error={errors.description?.message}>
+        <textarea
+          id="description"
+          {...register("description")}
+          aria-invalid={!!errors.description}
+          rows={4}
+          className={inputClass(!!errors.description)}
+        />
+      </Field>
 
-      <input
-        type="date"
-        name="startDate"
-        value={formData.startDate}
-        onChange={handleChange}
-        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="Start Date" htmlFor="startDate" required error={errors.startDate?.message}>
+        <input
+          id="startDate"
+          type="date"
+          {...register("startDate")}
+          aria-invalid={!!errors.startDate}
+          className={inputClass(!!errors.startDate)}
+        />
+      </Field>
 
-      <input
-        type="date"
-        name="endDate"
-        value={formData.endDate}
-        onChange={handleChange}
-        className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="End Date" htmlFor="endDate" error={errors.endDate?.message} required={!currentlyWorking}>
+        <input
+          id="endDate"
+          type="date"
+          disabled={currentlyWorking}
+          {...register("endDate")}
+          aria-invalid={!!errors.endDate}
+          className={inputClass(!!errors.endDate) + (currentlyWorking ? " opacity-50 cursor-not-allowed" : "")}
+        />
+      </Field>
 
-      <label className="flex gap-2">
+      <label className="flex gap-2 items-center">
         <input
           type="checkbox"
-          checked={formData.currentlyWorking}
-          onChange={handleCheckbox}
+          checked={currentlyWorking}
+          onChange={(e) => setValue("currentlyWorking", e.target.checked, { shouldValidate: true })}
         />
         Currently Working
       </label>
 
-      <div className="flex gap-3 justify-end">
-        <button
-          type="button"
-          onClick={onClose}
-          className="bg-[var(--noir-bg-surface-3)] px-4 py-2 rounded"
-        >
+      <div className={stickyFooterClass}>
+        <button type="button" onClick={onClose} className={secondaryButtonClass}>
           Cancel
         </button>
-
-        <button
-          type="submit"
-          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
-        >
-          Save
+        <button type="submit" disabled={isSubmitting} className={primaryButtonClass}>
+          {isSubmitting ? "Saving…" : "Save"}
         </button>
       </div>
     </form>

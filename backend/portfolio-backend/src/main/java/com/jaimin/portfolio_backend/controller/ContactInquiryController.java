@@ -1,10 +1,12 @@
 package com.jaimin.portfolio_backend.controller;
 
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.jaimin.portfolio_backend.dto.BulkIdsRequest;
 import com.jaimin.portfolio_backend.entity.ContactInquiry;
 import com.jaimin.portfolio_backend.repository.ContactInquiryRepository;
 
@@ -40,5 +42,19 @@ public class ContactInquiryController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/bulk-delete")
+    public ResponseEntity<Map<String, Object>> bulkDelete(@RequestBody BulkIdsRequest request) {
+        contactInquiryRepository.deleteAllByIdInBatch(request.getIds());
+        return ResponseEntity.ok(Map.of("deleted", request.getIds().size()));
+    }
+
+    @PatchMapping("/bulk-read")
+    public ResponseEntity<Map<String, Object>> bulkMarkAsRead(@RequestBody BulkIdsRequest request) {
+        List<ContactInquiry> inquiries = contactInquiryRepository.findAllById(request.getIds());
+        inquiries.forEach(inq -> inq.setIsRead(true));
+        contactInquiryRepository.saveAll(inquiries);
+        return ResponseEntity.ok(Map.of("updated", request.getIds().size()));
     }
 }

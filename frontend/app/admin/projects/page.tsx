@@ -5,6 +5,7 @@ import ProjectTable from "@/components/admin/ProjectTable";
 import ProjectForm from "@/components/admin/ProjectForm";
 import EditProjectForm from "@/components/admin/EditProjectForm";
 import AnimatedModal from "@/components/admin/AnimatedModal";
+import { stickyHeaderClass } from "@/components/admin/form/formStyles";
 import { getAdminProjects } from "@/services/projectService";
 import { Project } from "@/types";
 
@@ -71,10 +72,11 @@ export default function ProjectsPage() {
       <ProjectTable
         projects={projects}
         onEdit={handleEdit}
+        onRefresh={fetchProjects}
       />
 
       <AnimatedModal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className={stickyHeaderClass}>
           Add Project
         </h2>
 
@@ -87,7 +89,7 @@ export default function ProjectsPage() {
       <AnimatedModal isOpen={showEditModal && !!selectedProject} onClose={() => setShowEditModal(false)}>
         {selectedProject && (
           <>
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className={stickyHeaderClass}>
               Edit Project
             </h2>
 

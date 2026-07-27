@@ -1,16 +1,24 @@
 package com.jaimin.portfolio_backend.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import com.jaimin.portfolio_backend.dto.DashboardStatsResponse;
 import com.jaimin.portfolio_backend.dto.ResumeAnalysisDTO;
 import com.jaimin.portfolio_backend.entity.Profile;
+import com.jaimin.portfolio_backend.entity.AppointmentStatus;
+import com.jaimin.portfolio_backend.repository.AppointmentRepository;
 import com.jaimin.portfolio_backend.repository.CertificateRepository;
+import com.jaimin.portfolio_backend.repository.ChatInteractionRepository;
+import com.jaimin.portfolio_backend.repository.BlogPostRepository;
+import com.jaimin.portfolio_backend.repository.ContactInquiryRepository;
 import com.jaimin.portfolio_backend.repository.EducationRepository;
 import com.jaimin.portfolio_backend.repository.ExperienceRepository;
 import com.jaimin.portfolio_backend.repository.JobApplicationRepository;
 import com.jaimin.portfolio_backend.repository.ProjectRepository;
 import com.jaimin.portfolio_backend.repository.SkillRepository;
+import com.jaimin.portfolio_backend.repository.TestimonialRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +32,11 @@ public class DashboardService {
     private final EducationRepository educationRepository;
     private final CertificateRepository certificateRepository;
     private final JobApplicationRepository jobApplicationRepository;
+    private final TestimonialRepository testimonialRepository;
+    private final BlogPostRepository blogPostRepository;
+    private final ContactInquiryRepository contactInquiryRepository;
+    private final ChatInteractionRepository chatInteractionRepository;
+    private final AppointmentRepository appointmentRepository;
     private final ProfileService profileService;
     private final ResumeAiService resumeAiService;
 
@@ -34,6 +47,11 @@ public class DashboardService {
         long educations = educationRepository.count();
         long certificates = certificateRepository.count();
         long applications = jobApplicationRepository.count();
+        long testimonials = testimonialRepository.count();
+        long blogPosts = blogPostRepository.count();
+        long unreadMessages = contactInquiryRepository.countByIsReadFalse();
+        long chatbotInteractions30d = chatInteractionRepository.countByCreatedAtAfter(LocalDateTime.now().minusDays(30));
+        long pendingAppointments = appointmentRepository.countByStatus(AppointmentStatus.PENDING);
 
         // Calculate Profile Completeness Score (0 - 100)
         int profileScore = calculateProfileScore(projects, skills, experiences, educations, certificates);
@@ -55,6 +73,11 @@ public class DashboardService {
                 .applications(applications)
                 .profileScore(profileScore)
                 .atsScore(atsScore)
+                .testimonials(testimonials)
+                .blogPosts(blogPosts)
+                .unreadMessages(unreadMessages)
+                .chatbotInteractions30d(chatbotInteractions30d)
+                .pendingAppointments(pendingAppointments)
                 .build();
     }
 

@@ -62,4 +62,8 @@ public class EducationService {
 
         educationRepository.delete(education);
     }
+
+    public void bulkDelete(List<Long> ids) {
+        educationRepository.deleteAllByIdInBatch(ids);
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.jaimin.portfolio_backend.security.JwtAuthenticationFilter;
+import com.jaimin.portfolio_backend.security.RestAuthenticationEntryPoint;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
@@ -25,7 +27,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
+                        // Must precede the /api/auth/** permitAll below: refreshing a
+                        // session requires an already-valid token.
+                        .requestMatchers("/api/auth/refresh").authenticated()
                         // Public authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
                         // Public error endpoint (allows returning actual validation/exception messages instead of masking as 403)

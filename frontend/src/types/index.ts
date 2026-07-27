@@ -111,3 +111,21 @@ export interface Certificate {
   issueDate?: string;
   certificateUrl: string;
 }
+
+export type AppointmentStatus = "PENDING" | "APPROVED" | "REJECTED" | "COMPLETED";
+
+export interface Appointment {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  purpose?: string;
+  message?: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  status: AppointmentStatus;
+  meetingLink?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

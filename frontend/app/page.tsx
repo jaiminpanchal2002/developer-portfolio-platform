@@ -7,6 +7,7 @@ import Experience from "@/components/Experience";
 import Education from "@/components/Education";
 import Certificates from "@/components/Certificates";
 import Contact from "@/components/Contact";
+import AppointmentBooking from "@/components/AppointmentBooking";
 import Footer from "@/components/Footer";
 import AtsMatcher from "@/components/AtsMatcher";
 import Testimonials from "@/components/Testimonials";
@@ -145,6 +146,10 @@ export default async function Home() {
 
         <SectionWrapper id="contact">
           <Contact profile={profile} />
+        </SectionWrapper>
+
+        <SectionWrapper id="appointment">
+          <AppointmentBooking />
         </SectionWrapper>
       </main>
 

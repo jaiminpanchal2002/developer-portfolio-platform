@@ -8,7 +8,6 @@ import {
   updateApplication,
   deleteApplication,
 } from "@/services/jobApplicationService";
-import Swal from "sweetalert2";
 import {
   Plus,
   Calendar,
@@ -18,6 +17,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import AnimatedModal from "@/components/admin/AnimatedModal";
+import { confirmDelete, toastError, toastSuccess } from "@/lib/toast";
+import { stickyFooterClass, stickyHeaderClass } from "@/components/admin/form/formStyles";
 import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 
 interface JobApplication {
@@ -56,14 +57,7 @@ export default function ApplicationsPage() {
       setApplications(data);
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        title: "Error!",
-        text: "Failed to load applications. Please verify backend connection.",
-        icon: "error",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)",
-        confirmButtonColor: "var(--noir-accent)",
-      });
+      toastError("Failed to load applications. Please verify backend connection.");
     } finally {
       setLoading(false);
     }
@@ -106,92 +100,38 @@ export default function ApplicationsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.jobTitle || !formData.company) {
-      Swal.fire({
-        title: "Validation Error",
-        text: "Job Title and Company are required.",
-        icon: "warning",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)",
-        confirmButtonColor: "var(--noir-accent)",
-      });
+      toastError("Job Title and Company are required");
       return;
     }
 
     try {
       if (currentApp?.id) {
         await updateApplication(currentApp.id, formData);
-        Swal.fire({
-          title: "Updated!",
-          text: "Application details have been updated successfully.",
-          icon: "success",
-          background: "var(--noir-bg-elevated)",
-          color: "var(--noir-fg)",
-          confirmButtonColor: "var(--noir-accent)",
-        });
+        toastSuccess("Application updated successfully");
       } else {
         await createApplication(formData);
-        Swal.fire({
-          title: "Created!",
-          text: "New job application has been tracked.",
-          icon: "success",
-          background: "var(--noir-bg-elevated)",
-          color: "var(--noir-fg)",
-          confirmButtonColor: "var(--noir-accent)",
-        });
+        toastSuccess("Application tracked successfully");
       }
       setModalOpen(false);
       loadApplications();
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        title: "Error!",
-        text: "Failed to save application.",
-        icon: "error",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)",
-        confirmButtonColor: "#ef4444",
-      });
+      toastError("Failed to save application");
     }
   };
 
-  const handleDelete = async (id: number) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You will not be able to recover this application!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "No, keep it",
-      background: "var(--noir-bg-elevated)",
-      color: "var(--noir-fg)",
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "var(--noir-bg-surface-3)",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await deleteApplication(id);
-          Swal.fire({
-            title: "Deleted!",
-            text: "Your application has been deleted.",
-            icon: "success",
-            background: "var(--noir-bg-elevated)",
-            color: "var(--noir-fg)",
-            confirmButtonColor: "var(--noir-accent)",
-          });
-          loadApplications();
-        } catch (error) {
-          console.error(error);
-          Swal.fire({
-            title: "Error!",
-            text: "Failed to delete application.",
-            icon: "error",
-            background: "var(--noir-bg-elevated)",
-            color: "var(--noir-fg)",
-            confirmButtonColor: "#ef4444",
-          });
-        }
-      }
-    });
+  const handleDelete = async (app: JobApplication) => {
+    const confirmed = await confirmDelete(`${app.jobTitle} at ${app.company}`);
+    if (!confirmed) return;
+
+    try {
+      await deleteApplication(app.id!);
+      toastSuccess("Application deleted successfully");
+      loadApplications();
+    } catch (error) {
+      console.error(error);
+      toastError("Failed to delete application");
+    }
   };
 
   // Group applications by status
@@ -279,7 +219,7 @@ export default function ApplicationsPage() {
                             <Edit2 size={14} />
                           </button>
                           <button
-                            onClick={() => handleDelete(app.id!)}
+                            onClick={() => handleDelete(app)}
                             className="p-1 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg-muted)] hover:text-red-400 transition-colors cursor-pointer"
                             title="Delete"
                           >
@@ -342,9 +282,9 @@ export default function ApplicationsPage() {
       <AnimatedModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        className="w-full max-w-lg rounded-3xl bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+        className="max-w-lg"
       >
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className={stickyHeaderClass}>
           {currentApp ? "Edit Application" : "Track New Application"}
         </h2>
 
@@ -465,7 +405,7 @@ export default function ApplicationsPage() {
                 />
               </div>
 
-              <div className="flex gap-4 justify-end pt-4 border-t border-[var(--noir-border)]/80 mt-6">
+              <div className={stickyFooterClass}>
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}

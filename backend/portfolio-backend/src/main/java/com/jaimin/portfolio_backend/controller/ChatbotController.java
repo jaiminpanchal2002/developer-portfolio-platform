@@ -1,5 +1,6 @@
 package com.jaimin.portfolio_backend.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jaimin.portfolio_backend.dto.ChatMessage;
 import com.jaimin.portfolio_backend.dto.ChatRequest;
+import com.jaimin.portfolio_backend.entity.ChatInteraction;
 import com.jaimin.portfolio_backend.entity.Profile;
 import com.jaimin.portfolio_backend.repository.CertificateRepository;
+import com.jaimin.portfolio_backend.repository.ChatInteractionRepository;
 import com.jaimin.portfolio_backend.repository.EducationRepository;
 import com.jaimin.portfolio_backend.repository.ExperienceRepository;
 import com.jaimin.portfolio_backend.repository.ProjectRepository;
@@ -48,6 +51,7 @@ public class ChatbotController {
     private final ExperienceRepository experienceRepository;
     private final EducationRepository educationRepository;
     private final CertificateRepository certificateRepository;
+    private final ChatInteractionRepository chatInteractionRepository;
 
     private final Map<String, ConcurrentLinkedDeque<Long>> requestLog = new ConcurrentHashMap<>();
 
@@ -75,6 +79,7 @@ public class ChatbotController {
 
         try {
             String reply = geminiService.generateText(prompt, 0.7);
+            chatInteractionRepository.save(ChatInteraction.builder().createdAt(LocalDateTime.now()).build());
             return ResponseEntity.ok(Map.of("reply", reply.trim()));
         } catch (GeminiService.GeminiUnavailableException e) {
             return ResponseEntity.ok(Map.of(

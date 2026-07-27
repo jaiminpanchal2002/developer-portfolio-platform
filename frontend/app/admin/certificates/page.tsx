@@ -6,6 +6,7 @@ import CertificateTable from "@/components/admin/CertificateTable";
 import CertificateForm from "@/components/admin/CertificateForm";
 import EditCertificateForm from "@/components/admin/EditCertificateForm";
 import AnimatedModal from "@/components/admin/AnimatedModal";
+import { stickyHeaderClass } from "@/components/admin/form/formStyles";
 
 import { getCertificates } from "@/services/certificateService";
 import { Certificate } from "@/types";
@@ -70,11 +71,12 @@ export default function CertificatesPage() {
       <CertificateTable
         certificates={certificates}
         onEdit={handleEdit}
+        onRefresh={fetchCertificates}
       />
 
       {/* Add Modal */}
       <AnimatedModal isOpen={showAddModal} onClose={() => setShowAddModal(false)}>
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className={stickyHeaderClass}>
           Add Certificate
         </h2>
 
@@ -88,7 +90,7 @@ export default function CertificatesPage() {
       <AnimatedModal isOpen={showEditModal && !!selectedCertificate} onClose={() => setShowEditModal(false)}>
         {selectedCertificate && (
           <>
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className={stickyHeaderClass}>
               Edit Certificate
             </h2>
 

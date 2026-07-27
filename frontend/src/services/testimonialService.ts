@@ -31,3 +31,18 @@ export const updateTestimonial = async (
 export const deleteTestimonial = async (id: number) => {
   return api.delete(`/testimonials/${id}`);
 };
+
+export const bulkDeleteTestimonials = async (ids: number[]) => {
+  const response = await api.post("/testimonials/bulk-delete", { ids });
+  return response.data;
+};
+
+export const bulkPublishTestimonials = async (ids: number[]) => {
+  const response = await api.patch("/testimonials/bulk-publish", { ids });
+  return response.data;
+};
+
+export const bulkUnpublishTestimonials = async (ids: number[]) => {
+  const response = await api.patch("/testimonials/bulk-unpublish", { ids });
+  return response.data;
+};

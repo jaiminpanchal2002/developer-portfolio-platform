@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { updateEducation } from "@/services/educationService";
 import { Education } from "@/types";
+import { educationSchema, EducationFormValues } from "@/lib/validation/educationSchema";
+import { toastError, toastSuccess } from "@/lib/toast";
+import Field from "@/components/admin/form/Field";
+import { inputClass, primaryButtonClass, secondaryButtonClass, stickyFooterClass } from "@/components/admin/form/formStyles";
 
 interface Props {
   education: Education;
@@ -15,124 +20,98 @@ export default function EditEducationForm({
   onClose,
   onSuccess,
 }: Props) {
-  const [formData, setFormData] = useState({
-    institution: education.institution || "",
-    degree: education.degree || "",
-    fieldOfStudy: education.fieldOfStudy || "",
-    startYear: education.startYear || 2020,
-    endYear: education.endYear || 2024,
-    grade: education.grade || "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<EducationFormValues>({
+    resolver: zodResolver(educationSchema),
+    defaultValues: {
+      institution: education.institution || "",
+      degree: education.degree || "",
+      fieldOfStudy: education.fieldOfStudy || "",
+      startYear: education.startYear || new Date().getFullYear() - 4,
+      endYear: education.endYear || new Date().getFullYear(),
+      grade: education.grade || "",
+    },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name === "startYear" ||
-        name === "endYear"
-          ? Number(value)
-          : value,
-    }));
-  };
-
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
-
+  const onSubmit = async (values: EducationFormValues) => {
     try {
-      await updateEducation(
-        education.id,
-        formData
-      );
-
-      alert("Education Updated");
-
+      await updateEducation(education.id, values);
+      toastSuccess("Education updated successfully");
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Update Failed");
+      toastError("Failed to update education");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4"
-    >
-      <input
-        type="text"
-        name="institution"
-        placeholder="Institution"
-        value={formData.institution}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <Field label="Institution" htmlFor="edit-institution" required error={errors.institution?.message}>
+        <input
+          id="edit-institution"
+          {...register("institution")}
+          aria-invalid={!!errors.institution}
+          className={inputClass(!!errors.institution)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="degree"
-        placeholder="Degree"
-        value={formData.degree}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="Degree" htmlFor="edit-degree" required error={errors.degree?.message}>
+        <input
+          id="edit-degree"
+          {...register("degree")}
+          aria-invalid={!!errors.degree}
+          className={inputClass(!!errors.degree)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="fieldOfStudy"
-        placeholder="Field Of Study"
-        value={formData.fieldOfStudy}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="Field of Study" htmlFor="edit-fieldOfStudy" error={errors.fieldOfStudy?.message}>
+        <input
+          id="edit-fieldOfStudy"
+          {...register("fieldOfStudy")}
+          aria-invalid={!!errors.fieldOfStudy}
+          className={inputClass(!!errors.fieldOfStudy)}
+        />
+      </Field>
 
-      <input
-        type="number"
-        name="startYear"
-        placeholder="Start Year"
-        value={formData.startYear}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="Start Year" htmlFor="edit-startYear" required error={errors.startYear?.message}>
+        <input
+          id="edit-startYear"
+          type="number"
+          {...register("startYear", { valueAsNumber: true })}
+          aria-invalid={!!errors.startYear}
+          className={inputClass(!!errors.startYear)}
+        />
+      </Field>
 
-      <input
-        type="number"
-        name="endYear"
-        placeholder="End Year"
-        value={formData.endYear}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="End Year" htmlFor="edit-endYear" required error={errors.endYear?.message}>
+        <input
+          id="edit-endYear"
+          type="number"
+          {...register("endYear", { valueAsNumber: true })}
+          aria-invalid={!!errors.endYear}
+          className={inputClass(!!errors.endYear)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="grade"
-        placeholder="Grade / CGPA"
-        value={formData.grade}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="Grade / CGPA" htmlFor="edit-grade" error={errors.grade?.message}>
+        <input
+          id="edit-grade"
+          {...register("grade")}
+          aria-invalid={!!errors.grade}
+          className={inputClass(!!errors.grade)}
+        />
+      </Field>
 
-      <div className="flex justify-end gap-3">
-        <button
-          type="button"
-          onClick={onClose}
-          className="bg-[var(--noir-bg-surface-3)] px-4 py-2 rounded"
-        >
+      <div className={stickyFooterClass}>
+        <button type="button" onClick={onClose} className={secondaryButtonClass}>
           Cancel
         </button>
-
-        <button
-          type="submit"
-          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
-        >
-          Update Education
+        <button type="submit" disabled={isSubmitting} className={primaryButtonClass}>
+          {isSubmitting ? "Saving…" : "Update Education"}
         </button>
       </div>
     </form>

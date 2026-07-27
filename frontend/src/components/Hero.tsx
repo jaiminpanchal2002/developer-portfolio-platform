@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { ArrowUpRight, ArrowDown, Download } from "lucide-react";
+import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import { getImageUrl } from "../lib/api";
 import { useLocale } from "@/lib/localeContext";
 import { Profile } from "@/types";
@@ -96,22 +97,11 @@ export default function Hero({ profile }: HeroProps) {
             />
           </motion.p>
 
-          {/* About */}
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.42, duration: 0.7, ease: easeOut }}
-            className="font-[family-name:var(--font-sans)] mt-6 text-base leading-relaxed max-w-lg"
-            style={{ color: "var(--noir-fg-muted)" }}
-          >
-            {profile.about}
-          </motion.p>
-
           {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.52, duration: 0.7, ease: easeOut }}
+            transition={{ delay: 0.42, duration: 0.7, ease: easeOut }}
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <MagneticButton
@@ -145,9 +135,23 @@ export default function Hero({ profile }: HeroProps) {
               </a>
             )}
 
-            {profile.profileImageUrl && (
-              <div className="flex items-center gap-3 ml-2">
-                <div className="relative w-11 h-11 rounded-full overflow-hidden border" style={{ borderColor: "var(--noir-border)" }}>
+          </motion.div>
+
+          {/* Social row — always visible when a URL is set, not gated
+              behind the profile photo. Prominent circular icon buttons
+              with a hover glow instead of the old buried text links. */}
+          {(profile.githubUrl || profile.linkedinUrl || profile.profileImageUrl) && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.62, duration: 0.7, ease: easeOut }}
+              className="mt-8 flex items-center gap-4"
+            >
+              {profile.profileImageUrl && (
+                <div
+                  className="relative w-11 h-11 rounded-full overflow-hidden border shrink-0"
+                  style={{ borderColor: "var(--noir-border)" }}
+                >
                   <Image
                     src={imageError ? getFallbackAvatar() : getImageUrl(profile.profileImageUrl)}
                     onError={() => setImageError(true)}
@@ -157,33 +161,49 @@ export default function Hero({ profile }: HeroProps) {
                     className="object-cover"
                   />
                 </div>
-                <div className="flex flex-col text-xs">
-                  {profile.githubUrl && (
-                    <a
-                      href={profile.githubUrl.startsWith("http") ? profile.githubUrl : `https://${profile.githubUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium hover:opacity-70 transition-opacity"
-                      style={{ color: "var(--noir-fg-muted)" }}
-                    >
-                      GitHub
-                    </a>
-                  )}
-                  {profile.linkedinUrl && (
-                    <a
-                      href={profile.linkedinUrl.startsWith("http") ? profile.linkedinUrl : `https://${profile.linkedinUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium hover:opacity-70 transition-opacity"
-                      style={{ color: "var(--noir-fg-muted)" }}
-                    >
-                      LinkedIn
-                    </a>
-                  )}
-                </div>
+              )}
+
+              <div className="flex items-center gap-3">
+                {profile.githubUrl && (
+                  <MagneticButton
+                    href={profile.githubUrl.startsWith("http") ? profile.githubUrl : `https://${profile.githubUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="GitHub profile"
+                    className="group relative w-12 h-12 rounded-full border border-[var(--noir-border)] cursor-pointer overflow-hidden transition-colors duration-200 hover:border-[var(--noir-accent)]/50"
+                  >
+                    <span
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      style={{ background: "radial-gradient(circle, rgba(201,168,118,0.35), transparent 70%)" }}
+                    />
+                    <FaGithub
+                      size={18}
+                      className="relative text-[var(--noir-fg-muted)] transition-colors duration-200 group-hover:text-[var(--noir-accent)]"
+                    />
+                  </MagneticButton>
+                )}
+
+                {profile.linkedinUrl && (
+                  <MagneticButton
+                    href={profile.linkedinUrl.startsWith("http") ? profile.linkedinUrl : `https://${profile.linkedinUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn profile"
+                    className="group relative w-12 h-12 rounded-full border border-[var(--noir-border)] cursor-pointer overflow-hidden transition-colors duration-200 hover:border-[var(--noir-accent)]/50"
+                  >
+                    <span
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      style={{ background: "radial-gradient(circle, rgba(201,168,118,0.35), transparent 70%)" }}
+                    />
+                    <FaLinkedinIn
+                      size={18}
+                      className="relative text-[var(--noir-fg-muted)] transition-colors duration-200 group-hover:text-[var(--noir-accent)]"
+                    />
+                  </MagneticButton>
+                )}
               </div>
-            )}
-          </motion.div>
+            </motion.div>
+          )}
         </motion.div>
       </div>
 

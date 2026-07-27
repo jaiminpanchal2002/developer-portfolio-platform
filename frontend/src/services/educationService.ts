@@ -32,3 +32,8 @@ export const deleteEducation = async (
 
   return response.data;
 };
+
+export const bulkDeleteEducations = async (ids: number[]) => {
+  const response = await api.post("/educations/bulk-delete", { ids });
+  return response.data;
+};

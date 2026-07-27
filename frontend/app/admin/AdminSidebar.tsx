@@ -20,6 +20,7 @@ import {
   Quote,
   PenLine,
   ShieldCheck,
+  CalendarClock,
 } from "lucide-react";
 
 const menu = [
@@ -97,6 +98,11 @@ const menu = [
     name: "Inquiries",
     href: "/admin/inquiries",
     icon: Mail,
+  },
+  {
+    name: "Appointments",
+    href: "/admin/appointments",
+    icon: CalendarClock,
   },
   {
     name: "Profile Score",

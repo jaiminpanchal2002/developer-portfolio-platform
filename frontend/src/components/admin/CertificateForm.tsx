@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createCertificate } from "@/services/certificateService";
+import { certificateDefaultValues, certificateSchema, CertificateFormValues } from "@/lib/validation/certificateSchema";
+import { toastError, toastSuccess } from "@/lib/toast";
+import Field from "@/components/admin/form/Field";
+import { inputClass, primaryButtonClass, secondaryButtonClass, stickyFooterClass } from "@/components/admin/form/formStyles";
 
 interface Props {
   onClose: () => void;
@@ -12,91 +17,73 @@ export default function CertificateForm({
   onClose,
   onSuccess,
 }: Props) {
-  const [formData, setFormData] = useState({
-    title: "",
-    issuer: "",
-    issueDate: "",
-    certificateUrl: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CertificateFormValues>({
+    resolver: zodResolver(certificateSchema),
+    defaultValues: certificateDefaultValues,
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
-
+  const onSubmit = async (values: CertificateFormValues) => {
     try {
-      await createCertificate(formData);
-
-      alert("Certificate Added");
-
+      await createCertificate(values);
+      toastSuccess("Certificate added successfully");
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Failed");
+      toastError("Failed to save certificate");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4"
-    >
-      <input
-        name="title"
-        placeholder="Certificate Title"
-        value={formData.title}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <Field label="Certificate Title" htmlFor="title" required error={errors.title?.message}>
+        <input
+          id="title"
+          {...register("title")}
+          aria-invalid={!!errors.title}
+          className={inputClass(!!errors.title)}
+        />
+      </Field>
 
-      <input
-        name="issuer"
-        placeholder="Issuer"
-        value={formData.issuer}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="Issuer" htmlFor="issuer" required error={errors.issuer?.message}>
+        <input
+          id="issuer"
+          {...register("issuer")}
+          aria-invalid={!!errors.issuer}
+          className={inputClass(!!errors.issuer)}
+        />
+      </Field>
 
-      <input
-        type="date"
-        name="issueDate"
-        value={formData.issueDate}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="Issue Date" htmlFor="issueDate" error={errors.issueDate?.message}>
+        <input
+          id="issueDate"
+          type="date"
+          {...register("issueDate")}
+          aria-invalid={!!errors.issueDate}
+          className={inputClass(!!errors.issueDate)}
+        />
+      </Field>
 
-      <input
-        name="certificateUrl"
-        placeholder="Certificate URL"
-        value={formData.certificateUrl}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)]"
-      />
+      <Field label="Certificate URL" htmlFor="certificateUrl" error={errors.certificateUrl?.message}>
+        <input
+          id="certificateUrl"
+          type="url"
+          {...register("certificateUrl")}
+          aria-invalid={!!errors.certificateUrl}
+          className={inputClass(!!errors.certificateUrl)}
+        />
+      </Field>
 
-      <div className="flex justify-end gap-3">
-        <button
-          type="button"
-          onClick={onClose}
-          className="bg-[var(--noir-bg-surface-3)] px-4 py-2 rounded"
-        >
+      <div className={stickyFooterClass}>
+        <button type="button" onClick={onClose} className={secondaryButtonClass}>
           Cancel
         </button>
-
-        <button
-          type="submit"
-          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
-        >
-          Save Certificate
+        <button type="submit" disabled={isSubmitting} className={primaryButtonClass}>
+          {isSubmitting ? "Saving…" : "Save Certificate"}
         </button>
       </div>
     </form>

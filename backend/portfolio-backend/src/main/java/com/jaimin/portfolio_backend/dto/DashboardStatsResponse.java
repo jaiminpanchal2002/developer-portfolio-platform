@@ -19,4 +19,9 @@ public class DashboardStatsResponse {
     private Long applications;
     private Integer profileScore;
     private Integer atsScore;
+    private Long testimonials;
+    private Long blogPosts;
+    private Long unreadMessages;
+    private Long chatbotInteractions30d;
+    private Long pendingAppointments;
 }

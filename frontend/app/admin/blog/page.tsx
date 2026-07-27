@@ -2,16 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Pencil, Trash2, Plus, ExternalLink } from "lucide-react";
-import Swal from "sweetalert2";
+import { CheckCircle2, Pencil, Trash2, Plus, ExternalLink, XCircle } from "lucide-react";
 
 import {
   getAdminBlogPosts,
   createBlogPost,
   updateBlogPost,
   deleteBlogPost,
+  bulkDeleteBlogPosts,
+  bulkPublishBlogPosts,
+  bulkUnpublishBlogPosts,
 } from "@/services/blogService";
 import AnimatedModal from "@/components/admin/AnimatedModal";
+import BulkActionBar from "@/components/admin/BulkActionBar";
+import SelectCheckbox from "@/components/admin/SelectCheckbox";
+import { useBulkSelection } from "@/lib/hooks/useBulkSelection";
+import { confirmBulkAction, confirmDelete, toastError, toastSuccess } from "@/lib/toast";
+import { stickyFooterClass, stickyHeaderClass } from "@/components/admin/form/formStyles";
 import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import { BlogPost } from "@/types";
 
@@ -34,6 +41,8 @@ export default function BlogAdminPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const selection = useBulkSelection(posts);
 
   const load = async () => {
     try {
@@ -84,56 +93,62 @@ export default function BlogAdminPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim() || !form.content.trim()) {
-      Swal.fire({
-        title: "Missing fields",
-        text: "Title and content are required.",
-        icon: "warning",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)",
-        confirmButtonColor: "var(--noir-accent)",
-      });
+      toastError("Title and content are required");
       return;
     }
     setSaving(true);
     try {
       if (editingId !== null) {
         await updateBlogPost(editingId, form);
+        toastSuccess("Post updated successfully");
       } else {
         await createBlogPost(form);
+        toastSuccess("Post published successfully");
       }
       setModalOpen(false);
       await load();
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        title: "Save failed",
-        icon: "error",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)",
-        confirmButtonColor: "#ef4444",
-      });
+      toastError("Failed to save post");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (post: BlogPost) => {
-    const result = await Swal.fire({
-      title: "Delete post?",
-      text: post.title,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Delete",
-      confirmButtonColor: "#ef4444",
-      background: "var(--noir-bg-elevated)",
-      color: "var(--noir-fg)",
-    });
-    if (!result.isConfirmed) return;
+    const confirmed = await confirmDelete(post.title);
+    if (!confirmed) return;
+
     try {
       await deleteBlogPost(post.id);
+      toastSuccess("Post deleted successfully");
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
     } catch (error) {
       console.error(error);
+      toastError("Failed to delete post");
+    }
+  };
+
+  const runBulk = async (
+    label: string,
+    action: (ids: number[]) => Promise<unknown>,
+    danger = false
+  ) => {
+    const ids = selection.selectedIdsArray as number[];
+    const confirmed = await confirmBulkAction(label, ids.length, danger);
+    if (!confirmed) return;
+
+    setBulkBusy(true);
+    try {
+      await action(ids);
+      toastSuccess(`${label} completed for ${ids.length} post${ids.length === 1 ? "" : "s"}`);
+      selection.clear();
+      await load();
+    } catch (error) {
+      console.error(error);
+      toastError(`Bulk ${label.toLowerCase()} failed`);
+    } finally {
+      setBulkBusy(false);
     }
   };
 
@@ -159,10 +174,42 @@ export default function BlogAdminPage() {
       ) : posts.length === 0 ? (
         <p className="text-sm text-[var(--noir-fg-subtle)]">No posts yet.</p>
       ) : (
+        <div>
+          <BulkActionBar
+            count={selection.count}
+            onClear={selection.clear}
+            busy={bulkBusy}
+            actions={[
+              {
+                label: "Publish",
+                icon: <CheckCircle2 size={16} />,
+                onClick: () => runBulk("Publish", (ids) => bulkPublishBlogPosts(ids)),
+              },
+              {
+                label: "Unpublish",
+                icon: <XCircle size={16} />,
+                onClick: () => runBulk("Unpublish", (ids) => bulkUnpublishBlogPosts(ids)),
+              },
+              {
+                label: "Delete",
+                icon: <Trash2 size={16} />,
+                danger: true,
+                onClick: () => runBulk("Delete", (ids) => bulkDeleteBlogPosts(ids), true),
+              },
+            ]}
+          />
         <div className="overflow-x-auto rounded-3xl border border-[var(--noir-border)]">
           <table className="w-full">
             <thead>
               <tr>
+                <th className="w-10">
+                  <SelectCheckbox
+                    checked={selection.allSelected}
+                    indeterminate={selection.someSelected}
+                    onChange={selection.toggleAll}
+                    label="Select all posts"
+                  />
+                </th>
                 <th className="p-5 text-left">Title</th>
                 <th className="p-5 text-left">Slug</th>
                 <th className="p-5 text-left">Status</th>
@@ -174,8 +221,17 @@ export default function BlogAdminPage() {
                 <motion.tr
                   key={post.id}
                   variants={staggerItem}
-                  className="border-t border-[var(--noir-border)]/60 transition-colors hover:bg-[var(--noir-bg-surface-2)]/60"
+                  className={`border-t border-[var(--noir-border)]/60 transition-colors hover:bg-[var(--noir-bg-surface-2)]/60 ${
+                    selection.isSelected(post.id) ? "bg-[var(--noir-accent-soft)]" : ""
+                  }`}
                 >
+                  <td>
+                    <SelectCheckbox
+                      checked={selection.isSelected(post.id)}
+                      onChange={() => selection.toggle(post.id)}
+                      label={`Select ${post.title}`}
+                    />
+                  </td>
                   <td className="p-5">
                     <div className="font-semibold">{post.title}</div>
                     {post.readMinutes ? (
@@ -230,15 +286,16 @@ export default function BlogAdminPage() {
             </motion.tbody>
           </table>
         </div>
+        </div>
       )}
 
       <AnimatedModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         align="top"
-        className="my-8 w-full max-w-2xl rounded-2xl bg-[var(--noir-bg-elevated)] p-6"
+        className="my-8 max-w-2xl"
       >
-        <h2 className="mb-6 text-2xl font-bold">
+        <h2 className={stickyHeaderClass}>
           {editingId !== null ? "Edit" : "New"} Post
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -296,7 +353,7 @@ export default function BlogAdminPage() {
                 </span>
               </label>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className={stickyFooterClass}>
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}

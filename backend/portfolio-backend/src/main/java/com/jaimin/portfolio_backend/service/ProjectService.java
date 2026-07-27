@@ -103,4 +103,14 @@ public Project getProjectById(Long id) {
     projectRepository.delete(project);
 }
 
+    public void bulkDelete(List<Long> ids) {
+        projectRepository.deleteAllByIdInBatch(ids);
+    }
+
+    public void bulkSetPublished(List<Long> ids, boolean published) {
+        List<Project> projects = projectRepository.findAllById(ids);
+        projects.forEach(p -> p.setPublished(published));
+        projectRepository.saveAll(projects);
+    }
+
 }

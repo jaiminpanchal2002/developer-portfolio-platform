@@ -2,144 +2,140 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createProject } from "@/services/projectService";
 import { uploadImage } from "@/services/uploadService";
 import { getImageUrl } from "@/lib/api";
+import { projectDefaultValues, projectSchema, ProjectFormValues } from "@/lib/validation/projectSchema";
+import { toastError, toastSuccess } from "@/lib/toast";
+import Field from "@/components/admin/form/Field";
+import { inputClass, primaryButtonClass, secondaryButtonClass, stickyFooterClass } from "@/components/admin/form/formStyles";
 
 interface ProjectFormProps {
   onClose: () => void;
   onSuccess: () => void;
 }
 
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
 export default function ProjectForm({
   onClose,
   onSuccess,
 }: ProjectFormProps) {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    technologies: "",
-    githubUrl: "",
-    liveUrl: "",
-    imageUrl: "",
-    featured: false,
-    published: true,
-    problemStatement: "",
-    solution: "",
-    architecture: "",
-    challenges: "",
-    learnings: "",
-    metrics: "",
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<ProjectFormValues>({
+    resolver: zodResolver(projectSchema),
+    defaultValues: projectDefaultValues,
   });
+
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const featured = watch("featured");
+  const published = watch("published");
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!file.type.startsWith("image/")) {
+      toastError("Please choose an image file");
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      toastError("Image must be smaller than 5MB");
+      return;
+    }
+
     setPreview(URL.createObjectURL(file));
     setUploading(true);
     try {
       const imageUrl = await uploadImage(file);
-      setFormData((prev) => ({ ...prev, imageUrl }));
+      setValue("imageUrl", imageUrl, { shouldValidate: true });
     } catch (error) {
       console.error(error);
-      alert("Image upload failed");
+      toastError("Image upload failed");
     } finally {
       setUploading(false);
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      featured: e.target.checked,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = async (values: ProjectFormValues) => {
     try {
-      await createProject(formData);
-
-      alert("Project Added Successfully");
-
+      await createProject(values);
+      toastSuccess("Project added successfully");
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Failed to save project");
+      toastError("Failed to save project");
     }
   };
 
+  const busy = isSubmitting || uploading;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <Field label="Project Title" htmlFor="title" required error={errors.title?.message}>
+        <input
+          id="title"
+          type="text"
+          {...register("title")}
+          aria-invalid={!!errors.title}
+          className={inputClass(!!errors.title)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="title"
-        placeholder="Project Title"
-        value={formData.title}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-        required
-      />
+      <Field label="Description" htmlFor="description" required error={errors.description?.message}>
+        <textarea
+          id="description"
+          {...register("description")}
+          aria-invalid={!!errors.description}
+          rows={4}
+          className={inputClass(!!errors.description)}
+        />
+      </Field>
 
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={formData.description}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-        rows={4}
-        required
-      />
+      <Field label="Technologies" htmlFor="technologies" error={errors.technologies?.message} hint="Comma-separated, e.g. React, Spring Boot, PostgreSQL">
+        <input
+          id="technologies"
+          type="text"
+          {...register("technologies")}
+          className={inputClass(!!errors.technologies)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="technologies"
-        placeholder="React, Spring Boot, PostgreSQL"
-        value={formData.technologies}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-      />
+      <Field label="GitHub URL" htmlFor="githubUrl" error={errors.githubUrl?.message}>
+        <input
+          id="githubUrl"
+          type="url"
+          {...register("githubUrl")}
+          aria-invalid={!!errors.githubUrl}
+          className={inputClass(!!errors.githubUrl)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="githubUrl"
-        placeholder="GitHub URL"
-        value={formData.githubUrl}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-      />
-
-      <input
-        type="text"
-        name="liveUrl"
-        placeholder="Live URL"
-        value={formData.liveUrl}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-      />
+      <Field label="Live URL" htmlFor="liveUrl" error={errors.liveUrl?.message}>
+        <input
+          id="liveUrl"
+          type="url"
+          {...register("liveUrl")}
+          aria-invalid={!!errors.liveUrl}
+          className={inputClass(!!errors.liveUrl)}
+        />
+      </Field>
 
       <div className="space-y-3">
-        <label className="block text-sm font-semibold text-[var(--noir-fg-muted)]">
+        <label htmlFor="projectImage" className="block text-sm font-medium text-[var(--noir-fg-muted)]">
           Project Image
         </label>
         <input
+          id="projectImage"
           type="file"
           accept="image/*"
           onChange={handleImageUpload}
@@ -155,8 +151,8 @@ export default function ProjectForm({
       <label className="flex items-center gap-2">
         <input
           type="checkbox"
-          checked={formData.featured}
-          onChange={handleCheckbox}
+          checked={featured}
+          onChange={(e) => setValue("featured", e.target.checked)}
         />
         Featured Project
       </label>
@@ -164,10 +160,8 @@ export default function ProjectForm({
       <label className="flex items-center gap-2">
         <input
           type="checkbox"
-          checked={formData.published}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, published: e.target.checked }))
-          }
+          checked={published}
+          onChange={(e) => setValue("published", e.target.checked)}
         />
         Published
         <span className="text-xs text-[var(--noir-fg-muted)]">
@@ -181,75 +175,70 @@ export default function ProjectForm({
           Case Study (optional)
         </summary>
         <div className="mt-3 space-y-3">
-          <textarea
-            name="problemStatement"
-            placeholder="The Problem — what pain did this project solve?"
-            value={formData.problemStatement}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-            rows={3}
-          />
-          <textarea
-            name="solution"
-            placeholder="The Solution — how did you solve it?"
-            value={formData.solution}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-            rows={3}
-          />
-          <textarea
-            name="architecture"
-            placeholder="Architecture — stack decisions, data flow, infrastructure"
-            value={formData.architecture}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-            rows={3}
-          />
-          <textarea
-            name="challenges"
-            placeholder="Challenges — the hard parts and how you got through them"
-            value={formData.challenges}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-            rows={3}
-          />
-          <textarea
-            name="learnings"
-            placeholder="Learnings — what you'd do differently"
-            value={formData.learnings}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-            rows={3}
-          />
-          <textarea
-            name="metrics"
-            placeholder={"Metrics — one per line, e.g.\n40% faster page loads\n99.9% uptime over 6 months"}
-            value={formData.metrics}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-            rows={3}
-          />
+          <Field label="The Problem" htmlFor="problemStatement" error={errors.problemStatement?.message}>
+            <textarea
+              id="problemStatement"
+              placeholder="What pain did this project solve?"
+              {...register("problemStatement")}
+              className={inputClass(!!errors.problemStatement)}
+              rows={3}
+            />
+          </Field>
+          <Field label="The Solution" htmlFor="solution" error={errors.solution?.message}>
+            <textarea
+              id="solution"
+              placeholder="How did you solve it?"
+              {...register("solution")}
+              className={inputClass(!!errors.solution)}
+              rows={3}
+            />
+          </Field>
+          <Field label="Architecture" htmlFor="architecture" error={errors.architecture?.message}>
+            <textarea
+              id="architecture"
+              placeholder="Stack decisions, data flow, infrastructure"
+              {...register("architecture")}
+              className={inputClass(!!errors.architecture)}
+              rows={3}
+            />
+          </Field>
+          <Field label="Challenges" htmlFor="challenges" error={errors.challenges?.message}>
+            <textarea
+              id="challenges"
+              placeholder="The hard parts and how you got through them"
+              {...register("challenges")}
+              className={inputClass(!!errors.challenges)}
+              rows={3}
+            />
+          </Field>
+          <Field label="Learnings" htmlFor="learnings" error={errors.learnings?.message}>
+            <textarea
+              id="learnings"
+              placeholder="What you'd do differently"
+              {...register("learnings")}
+              className={inputClass(!!errors.learnings)}
+              rows={3}
+            />
+          </Field>
+          <Field label="Metrics" htmlFor="metrics" error={errors.metrics?.message}>
+            <textarea
+              id="metrics"
+              placeholder={"One per line, e.g.\n40% faster page loads\n99.9% uptime over 6 months"}
+              {...register("metrics")}
+              className={inputClass(!!errors.metrics)}
+              rows={3}
+            />
+          </Field>
         </div>
       </details>
 
-      <div className="flex gap-3 justify-end">
-
-        <button
-          type="button"
-          onClick={onClose}
-          className="px-5 py-2 rounded-lg bg-[var(--noir-bg-surface-3)]"
-        >
+      <div className={stickyFooterClass}>
+        <button type="button" onClick={onClose} className={secondaryButtonClass}>
           Cancel
         </button>
-
-        <button
-          type="submit"
-          disabled={uploading}
-          className="px-5 py-2 rounded-lg bg-[var(--noir-accent)] text-[var(--noir-bg)] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {uploading ? "Uploading image…" : "Save Project"}
+        <button type="submit" disabled={busy} className={primaryButtonClass}>
+          {uploading ? "Uploading image…" : isSubmitting ? "Saving…" : "Save Project"}
         </button>
-
       </div>
     </form>
   );

@@ -59,4 +59,8 @@ public class CertificateService {
 
         certificateRepository.delete(certificate);
     }
+
+    public void bulkDelete(List<Long> ids) {
+        certificateRepository.deleteAllByIdInBatch(ids);
+    }
 }

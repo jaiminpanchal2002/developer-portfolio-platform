@@ -6,6 +6,7 @@ import ExperienceTable from "@/components/admin/ExperienceTable";
 import ExperienceForm from "@/components/admin/ExperienceForm";
 import EditExperienceForm from "@/components/admin/EditExperienceForm";
 import AnimatedModal from "@/components/admin/AnimatedModal";
+import { stickyHeaderClass } from "@/components/admin/form/formStyles";
 
 import { getExperiences } from "@/services/experienceService";
 import { Experience } from "@/types";
@@ -69,11 +70,12 @@ export default function ExperiencePage() {
       <ExperienceTable
         experiences={experiences}
         onEdit={handleEdit}
+        onRefresh={fetchExperiences}
       />
 
       {/* Add Modal */}
       <AnimatedModal isOpen={showAddModal} onClose={() => setShowAddModal(false)}>
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className={stickyHeaderClass}>
           Add Experience
         </h2>
 
@@ -87,7 +89,7 @@ export default function ExperiencePage() {
       <AnimatedModal isOpen={showEditModal && !!selectedExperience} onClose={() => setShowEditModal(false)}>
         {selectedExperience && (
           <>
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className={stickyHeaderClass}>
               Edit Experience
             </h2>
 

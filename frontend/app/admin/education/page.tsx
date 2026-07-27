@@ -6,6 +6,7 @@ import EducationTable from "@/components/admin/EducationTable";
 import EducationForm from "@/components/admin/EducationForm";
 import EditEducationForm from "@/components/admin/EditEducationForm";
 import AnimatedModal from "@/components/admin/AnimatedModal";
+import { stickyHeaderClass } from "@/components/admin/form/formStyles";
 
 import { getEducations } from "@/services/educationService";
 import { Education } from "@/types";
@@ -71,11 +72,12 @@ export default function EducationPage() {
       <EducationTable
         educations={educations}
         onEdit={handleEdit}
+        onRefresh={fetchEducations}
       />
 
       {/* Add Modal */}
       <AnimatedModal isOpen={showAddModal} onClose={() => setShowAddModal(false)}>
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className={stickyHeaderClass}>
           Add Education
         </h2>
 
@@ -89,7 +91,7 @@ export default function EducationPage() {
       <AnimatedModal isOpen={showEditModal && !!selectedEducation} onClose={() => setShowEditModal(false)}>
         {selectedEducation && (
           <>
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className={stickyHeaderClass}>
               Edit Education
             </h2>
 

@@ -101,6 +101,21 @@ public class BlogPostService {
         blogPostRepository.delete(getById(id));
     }
 
+    public void bulkDelete(List<Long> ids) {
+        blogPostRepository.deleteAllByIdInBatch(ids);
+    }
+
+    public void bulkSetPublished(List<Long> ids, boolean published) {
+        List<BlogPost> posts = blogPostRepository.findAllById(ids);
+        LocalDateTime now = LocalDateTime.now();
+        posts.forEach(p -> {
+            p.setPublished(published);
+            p.setPublishedAt(published ? (p.getPublishedAt() != null ? p.getPublishedAt() : now) : null);
+            p.setUpdatedAt(now);
+        });
+        blogPostRepository.saveAll(posts);
+    }
+
     private String resolveSlug(BlogPostRequest request) {
         String base = (request.getSlug() != null && !request.getSlug().isBlank())
                 ? request.getSlug()

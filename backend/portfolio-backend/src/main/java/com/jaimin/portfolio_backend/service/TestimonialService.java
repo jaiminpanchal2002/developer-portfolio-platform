@@ -63,4 +63,14 @@ public class TestimonialService {
                 .orElseThrow(() -> new RuntimeException("Testimonial with ID " + id + " not found"));
         testimonialRepository.delete(testimonial);
     }
+
+    public void bulkDelete(List<Long> ids) {
+        testimonialRepository.deleteAllByIdInBatch(ids);
+    }
+
+    public void bulkSetPublished(List<Long> ids, boolean published) {
+        List<Testimonial> testimonials = testimonialRepository.findAllById(ids);
+        testimonials.forEach(t -> t.setPublished(published));
+        testimonialRepository.saveAll(testimonials);
+    }
 }

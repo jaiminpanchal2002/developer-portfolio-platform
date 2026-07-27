@@ -16,12 +16,9 @@ public class WebConfig implements WebMvcConfigurer {
                         "file:uploads/");
     }
 
-    @Override
-    public void addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
+    // CORS is configured once, in CorsConfig's CorsConfigurationSource bean,
+    // which Spring Security's .cors(Customizer.withDefaults()) picks up. A
+    // second, narrower MVC-level mapping here previously allowed only
+    // GET/POST/PUT/DELETE/OPTIONS (no PATCH) and could silently diverge from
+    // the security-layer config, so it's been removed.
 }

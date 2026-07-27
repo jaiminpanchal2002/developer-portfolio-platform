@@ -63,4 +63,8 @@ public class ExperienceService {
 
         experienceRepository.delete(experience);
     }
+
+    public void bulkDelete(List<Long> ids) {
+        experienceRepository.deleteAllByIdInBatch(ids);
+    }
 }

@@ -39,3 +39,18 @@ export const deleteProject = async (
 ) => {
   return api.delete(`/projects/${id}`);
 };
+
+export const bulkDeleteProjects = async (ids: number[]) => {
+  const response = await api.post("/projects/bulk-delete", { ids });
+  return response.data;
+};
+
+export const bulkPublishProjects = async (ids: number[]) => {
+  const response = await api.patch("/projects/bulk-publish", { ids });
+  return response.data;
+};
+
+export const bulkUnpublishProjects = async (ids: number[]) => {
+  const response = await api.patch("/projects/bulk-unpublish", { ids });
+  return response.data;
+};

@@ -8,7 +8,7 @@ import {
   generateCoverLetter,
   generateRecruiterEmail
 } from "@/services/aiService";
-import Swal from "sweetalert2";
+import { toastError, toastSuccess } from "@/lib/toast";
 import {
   Briefcase,
   MapPin,
@@ -50,14 +50,7 @@ export default function JobsPage() {
       setJobs(data);
     } catch (error) {
       console.error("Failed to load jobs:", error);
-      Swal.fire({
-        title: "Error!",
-        text: "Could not fetch recommendations. Ensure backend is running.",
-        icon: "error",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)",
-        confirmButtonColor: "#ef4444",
-      });
+      toastError("Could not fetch recommendations. Ensure backend is running.");
     } finally {
       setLoading(false);
     }
@@ -137,17 +130,7 @@ export default function JobsPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    Swal.fire({
-      title: "Copied!",
-      text: "Content copied to clipboard.",
-      icon: "success",
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 2000,
-      background: "var(--noir-bg-elevated)",
-      color: "var(--noir-fg)",
-    });
+    toastSuccess("Copied to clipboard");
   };
 
   const getScoreColor = (score: number) => {

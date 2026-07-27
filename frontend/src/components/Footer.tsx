@@ -1,4 +1,5 @@
-import { Mail, Globe, Link as LinkIcon } from "lucide-react";
+import { Mail } from "lucide-react";
+import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import { Profile } from "@/types";
 
 interface FooterProps {
@@ -10,12 +11,12 @@ export default function Footer({ profile }: FooterProps) {
         profile?.githubUrl && {
             href: profile.githubUrl.startsWith("http") ? profile.githubUrl : `https://${profile.githubUrl}`,
             label: "GitHub",
-            icon: Globe,
+            icon: FaGithub,
         },
         profile?.linkedinUrl && {
             href: profile.linkedinUrl.startsWith("http") ? profile.linkedinUrl : `https://${profile.linkedinUrl}`,
             label: "LinkedIn",
-            icon: LinkIcon,
+            icon: FaLinkedinIn,
         },
         profile?.email && {
             href: `mailto:${profile.email}`,
@@ -40,7 +41,7 @@ export default function Footer({ profile }: FooterProps) {
                 </p>
 
                 {links.length > 0 && (
-                    <div className="flex justify-center gap-6 mt-8">
+                    <div className="flex justify-center gap-4 mt-8">
                         {links.map(({ href, label, icon: Icon }) => (
                             <a
                                 key={label}
@@ -48,10 +49,10 @@ export default function Footer({ profile }: FooterProps) {
                                 target={href.startsWith("mailto:") ? undefined : "_blank"}
                                 rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                                 aria-label={label}
-                                className="transition-colors hover:opacity-70"
-                                style={{ color: "var(--noir-fg-muted)" }}
+                                className="flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-200 hover:border-[var(--noir-accent)]/50 hover:text-[var(--noir-accent)] hover:-translate-y-0.5"
+                                style={{ borderColor: "var(--noir-border)", color: "var(--noir-fg-muted)" }}
                             >
-                                <Icon size={22} />
+                                <Icon size={18} />
                             </a>
                         ))}
                     </div>

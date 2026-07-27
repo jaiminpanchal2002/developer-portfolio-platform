@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ContactInquiryRepository extends JpaRepository<ContactInquiry, Long> {
     List<ContactInquiry> findAllByOrderByCreatedAtDesc();
+    long countByIsReadFalse();
 }

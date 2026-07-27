@@ -2,16 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Pencil, Trash2, Plus } from "lucide-react";
-import Swal from "sweetalert2";
+import { CheckCircle2, Pencil, Trash2, Plus, XCircle } from "lucide-react";
 
 import {
   getAdminTestimonials,
   createTestimonial,
   updateTestimonial,
   deleteTestimonial,
+  bulkDeleteTestimonials,
+  bulkPublishTestimonials,
+  bulkUnpublishTestimonials,
 } from "@/services/testimonialService";
 import AnimatedModal from "@/components/admin/AnimatedModal";
+import BulkActionBar from "@/components/admin/BulkActionBar";
+import SelectCheckbox from "@/components/admin/SelectCheckbox";
+import { useBulkSelection } from "@/lib/hooks/useBulkSelection";
+import { confirmBulkAction, confirmDelete, toastError, toastSuccess } from "@/lib/toast";
+import { stickyFooterClass, stickyHeaderClass } from "@/components/admin/form/formStyles";
 import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import { Testimonial } from "@/types";
 
@@ -34,6 +41,8 @@ export default function TestimonialsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const selection = useBulkSelection(testimonials);
 
   const load = async () => {
     try {
@@ -84,56 +93,62 @@ export default function TestimonialsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.authorName.trim() || !form.quote.trim()) {
-      Swal.fire({
-        title: "Missing fields",
-        text: "Author name and quote are required.",
-        icon: "warning",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)",
-        confirmButtonColor: "var(--noir-accent)",
-      });
+      toastError("Author name and quote are required");
       return;
     }
     setSaving(true);
     try {
       if (editingId !== null) {
         await updateTestimonial(editingId, form);
+        toastSuccess("Testimonial updated successfully");
       } else {
         await createTestimonial(form);
+        toastSuccess("Testimonial added successfully");
       }
       setModalOpen(false);
       await load();
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        title: "Save failed",
-        icon: "error",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)",
-        confirmButtonColor: "#ef4444",
-      });
+      toastError("Failed to save testimonial");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (item: Testimonial) => {
-    const result = await Swal.fire({
-      title: "Delete testimonial?",
-      text: `From ${item.authorName}`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Delete",
-      confirmButtonColor: "#ef4444",
-      background: "var(--noir-bg-elevated)",
-      color: "var(--noir-fg)",
-    });
-    if (!result.isConfirmed) return;
+    const confirmed = await confirmDelete(`Testimonial from ${item.authorName}`);
+    if (!confirmed) return;
+
     try {
       await deleteTestimonial(item.id);
+      toastSuccess("Testimonial deleted successfully");
       setTestimonials((prev) => prev.filter((t) => t.id !== item.id));
     } catch (error) {
       console.error(error);
+      toastError("Failed to delete testimonial");
+    }
+  };
+
+  const runBulk = async (
+    label: string,
+    action: (ids: number[]) => Promise<unknown>,
+    danger = false
+  ) => {
+    const ids = selection.selectedIdsArray as number[];
+    const confirmed = await confirmBulkAction(label, ids.length, danger);
+    if (!confirmed) return;
+
+    setBulkBusy(true);
+    try {
+      await action(ids);
+      toastSuccess(`${label} completed for ${ids.length} testimonial${ids.length === 1 ? "" : "s"}`);
+      selection.clear();
+      await load();
+    } catch (error) {
+      console.error(error);
+      toastError(`Bulk ${label.toLowerCase()} failed`);
+    } finally {
+      setBulkBusy(false);
     }
   };
 
@@ -161,10 +176,42 @@ export default function TestimonialsPage() {
       ) : testimonials.length === 0 ? (
         <p className="text-sm text-[var(--noir-fg-subtle)]">No testimonials yet.</p>
       ) : (
+        <div>
+          <BulkActionBar
+            count={selection.count}
+            onClear={selection.clear}
+            busy={bulkBusy}
+            actions={[
+              {
+                label: "Publish",
+                icon: <CheckCircle2 size={16} />,
+                onClick: () => runBulk("Publish", (ids) => bulkPublishTestimonials(ids)),
+              },
+              {
+                label: "Unpublish",
+                icon: <XCircle size={16} />,
+                onClick: () => runBulk("Unpublish", (ids) => bulkUnpublishTestimonials(ids)),
+              },
+              {
+                label: "Delete",
+                icon: <Trash2 size={16} />,
+                danger: true,
+                onClick: () => runBulk("Delete", (ids) => bulkDeleteTestimonials(ids), true),
+              },
+            ]}
+          />
         <div className="overflow-x-auto rounded-3xl border border-[var(--noir-border)]">
           <table className="w-full">
             <thead>
               <tr>
+                <th className="w-10">
+                  <SelectCheckbox
+                    checked={selection.allSelected}
+                    indeterminate={selection.someSelected}
+                    onChange={selection.toggleAll}
+                    label="Select all testimonials"
+                  />
+                </th>
                 <th className="p-5 text-left">Author</th>
                 <th className="p-5 text-left">Quote</th>
                 <th className="p-5 text-left">Order</th>
@@ -177,8 +224,17 @@ export default function TestimonialsPage() {
                 <motion.tr
                   key={item.id}
                   variants={staggerItem}
-                  className="border-t border-[var(--noir-border)]/60 transition-colors hover:bg-[var(--noir-bg-surface-2)]/60"
+                  className={`border-t border-[var(--noir-border)]/60 transition-colors hover:bg-[var(--noir-bg-surface-2)]/60 ${
+                    selection.isSelected(item.id) ? "bg-[var(--noir-accent-soft)]" : ""
+                  }`}
                 >
+                  <td>
+                    <SelectCheckbox
+                      checked={selection.isSelected(item.id)}
+                      onChange={() => selection.toggle(item.id)}
+                      label={`Select testimonial from ${item.authorName}`}
+                    />
+                  </td>
                   <td className="p-5">
                     <div className="font-semibold">{item.authorName}</div>
                     {item.authorRole && (
@@ -225,14 +281,15 @@ export default function TestimonialsPage() {
             </motion.tbody>
           </table>
         </div>
+        </div>
       )}
 
       <AnimatedModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        className="w-full max-w-lg rounded-2xl bg-[var(--noir-bg-elevated)] p-6 max-h-[90vh] overflow-y-auto"
+        className="max-w-lg"
       >
-        <h2 className="mb-6 text-2xl font-bold">
+        <h2 className={stickyHeaderClass}>
           {editingId !== null ? "Edit" : "Add"} Testimonial
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -296,7 +353,7 @@ export default function TestimonialsPage() {
                 </span>
               </label>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className={stickyFooterClass}>
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}

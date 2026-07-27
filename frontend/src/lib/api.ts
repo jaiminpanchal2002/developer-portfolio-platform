@@ -1,4 +1,5 @@
 import axios from "axios";
+import Swal from "sweetalert2";
 
 // Configure api client with dynamic baseURL and automatic '/api' suffix enforcement
 const getBaseURL = () => {
@@ -32,10 +33,57 @@ const api = axios.create({
 
 
 
-api.interceptors.request.use((config) => {
+/** Decodes a JWT's `exp` claim (seconds since epoch) without a library — it's just base64. */
+function getTokenExpiryMs(token: string): number | null {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return typeof decoded.exp === "number" ? decoded.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
+const REFRESH_MARGIN_MS = 2 * 60 * 1000;
+let refreshPromise: Promise<string | null> | null = null;
+
+/** Proactively renews the token when it's near expiry, so the first mutating
+ *  request after a period of idle/typing time isn't the one that discovers
+ *  the session went stale. Coalesced so concurrent requests share one call. */
+async function ensureFreshToken(token: string): Promise<string> {
+  const expiryMs = getTokenExpiryMs(token);
+  if (expiryMs === null || expiryMs - Date.now() > REFRESH_MARGIN_MS) {
+    return token;
+  }
+
+  if (!refreshPromise) {
+    refreshPromise = axios
+      .post(`${getBaseURL()}/auth/refresh`, {}, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => {
+        const newToken = res.data?.token as string | undefined;
+        if (newToken) {
+          localStorage.setItem("token", newToken);
+          return newToken;
+        }
+        return null;
+      })
+      .catch(() => null)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  const refreshed = await refreshPromise;
+  return refreshed ?? token;
+}
+
+api.interceptors.request.use(async (config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token");
+    let token = localStorage.getItem("token");
     if (token && token !== "undefined" && token !== "null") {
+      if (window.location.pathname.startsWith("/admin")) {
+        token = await ensureFreshToken(token);
+      }
       config.headers.Authorization = `Bearer ${token}`;
     }
     const savedLocale = localStorage.getItem("portfolio_locale") || "en";
@@ -51,10 +99,21 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    // 401 = genuinely unauthenticated (missing/invalid/expired token) — the
+    // one case that means "please sign in again". 403 means the request was
+    // rejected for another reason and must not bounce the admin out of a
+    // page they're actively working on; let the caller show its own error.
+    if (error.response && error.response.status === 401) {
       if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        Swal.fire({
+          icon: "info",
+          title: "Session expired",
+          text: "Please sign in again to continue.",
+          confirmButtonColor: "#d4af37",
+        }).then(() => {
+          window.location.href = "/login";
+        });
       }
     }
     return Promise.reject(error);

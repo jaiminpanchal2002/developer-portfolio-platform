@@ -30,3 +30,8 @@ export const deleteExperience = async (id: number) => {
 
   return response.data;
 };
+
+export const bulkDeleteExperiences = async (ids: number[]) => {
+  const response = await api.post("/experiences/bulk-delete", { ids });
+  return response.data;
+};

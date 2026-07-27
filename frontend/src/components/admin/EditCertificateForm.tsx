@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { updateCertificate } from "@/services/certificateService";
 import { Certificate } from "@/types";
+import { certificateSchema, CertificateFormValues } from "@/lib/validation/certificateSchema";
+import { toastError, toastSuccess } from "@/lib/toast";
+import Field from "@/components/admin/form/Field";
+import { inputClass, primaryButtonClass, secondaryButtonClass, stickyFooterClass } from "@/components/admin/form/formStyles";
 
 interface Props {
   certificate: Certificate;
@@ -15,97 +20,78 @@ export default function EditCertificateForm({
   onClose,
   onSuccess,
 }: Props) {
-  const [formData, setFormData] = useState({
-    title: certificate.title || "",
-    issuer: certificate.issuer || "",
-    issueDate: certificate.issueDate || "",
-    certificateUrl: certificate.certificateUrl || "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CertificateFormValues>({
+    resolver: zodResolver(certificateSchema),
+    defaultValues: {
+      title: certificate.title || "",
+      issuer: certificate.issuer || "",
+      issueDate: certificate.issueDate || "",
+      certificateUrl: certificate.certificateUrl || "",
+    },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
-
+  const onSubmit = async (values: CertificateFormValues) => {
     try {
-      await updateCertificate(
-        certificate.id,
-        formData
-      );
-
-      alert("Certificate Updated");
-
+      await updateCertificate(certificate.id, values);
+      toastSuccess("Certificate updated successfully");
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Update Failed");
+      toastError("Failed to update certificate");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4"
-    >
-      <input
-        type="text"
-        name="title"
-        placeholder="Certificate Title"
-        value={formData.title}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <Field label="Certificate Title" htmlFor="edit-title" required error={errors.title?.message}>
+        <input
+          id="edit-title"
+          {...register("title")}
+          aria-invalid={!!errors.title}
+          className={inputClass(!!errors.title)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="issuer"
-        placeholder="Issuer"
-        value={formData.issuer}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-      />
+      <Field label="Issuer" htmlFor="edit-issuer" required error={errors.issuer?.message}>
+        <input
+          id="edit-issuer"
+          {...register("issuer")}
+          aria-invalid={!!errors.issuer}
+          className={inputClass(!!errors.issuer)}
+        />
+      </Field>
 
-      <input
-        type="date"
-        name="issueDate"
-        value={formData.issueDate}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-      />
+      <Field label="Issue Date" htmlFor="edit-issueDate" error={errors.issueDate?.message}>
+        <input
+          id="edit-issueDate"
+          type="date"
+          {...register("issueDate")}
+          aria-invalid={!!errors.issueDate}
+          className={inputClass(!!errors.issueDate)}
+        />
+      </Field>
 
-      <input
-        type="text"
-        name="certificateUrl"
-        placeholder="Certificate URL"
-        value={formData.certificateUrl}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)]"
-      />
+      <Field label="Certificate URL" htmlFor="edit-certificateUrl" error={errors.certificateUrl?.message}>
+        <input
+          id="edit-certificateUrl"
+          type="url"
+          {...register("certificateUrl")}
+          aria-invalid={!!errors.certificateUrl}
+          className={inputClass(!!errors.certificateUrl)}
+        />
+      </Field>
 
-      <div className="flex justify-end gap-3">
-        <button
-          type="button"
-          onClick={onClose}
-          className="bg-[var(--noir-bg-surface-3)] px-4 py-2 rounded"
-        >
+      <div className={stickyFooterClass}>
+        <button type="button" onClick={onClose} className={secondaryButtonClass}>
           Cancel
         </button>
-
-        <button
-          type="submit"
-          className="bg-[var(--noir-accent)] text-[var(--noir-bg)] px-4 py-2 rounded"
-        >
-          Update Certificate
+        <button type="submit" disabled={isSubmitting} className={primaryButtonClass}>
+          {isSubmitting ? "Saving…" : "Update Certificate"}
         </button>
       </div>
     </form>

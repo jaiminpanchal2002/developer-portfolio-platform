@@ -14,15 +14,25 @@ import {
   ExternalLink,
   Inbox
 } from "lucide-react";
-import Swal from "sweetalert2";
-import { getInquiries, markInquiryAsRead, deleteInquiry } from "@/services/contactService";
+import {
+  getInquiries,
+  markInquiryAsRead,
+  deleteInquiry,
+  bulkDeleteInquiries,
+  bulkMarkInquiriesAsRead,
+} from "@/services/contactService";
 import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
+import { useBulkSelection } from "@/lib/hooks/useBulkSelection";
+import BulkActionBar from "@/components/admin/BulkActionBar";
+import SelectCheckbox from "@/components/admin/SelectCheckbox";
+import { confirmBulkAction, confirmDelete, toastError, toastSuccess } from "@/lib/toast";
 import { ContactInquiry } from "@/types";
 
 export default function InquiriesPage() {
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "counselling" | "messages">("all");
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,63 +56,24 @@ export default function InquiriesPage() {
     try {
       await markInquiryAsRead(id);
       setInquiries(prev => prev.map(inq => inq.id === id ? { ...inq, isRead: true } : inq));
-      Swal.fire({
-        title: "Success",
-        text: "Inquiry marked as read.",
-        icon: "success",
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 2000,
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)"
-      });
+      toastSuccess("Inquiry marked as read");
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        title: "Error",
-        text: "Failed to mark inquiry as read.",
-        icon: "error",
-        background: "var(--noir-bg-elevated)",
-        color: "var(--noir-fg)"
-      });
+      toastError("Failed to mark inquiry as read");
     }
   };
 
-  const handleDelete = async (id: number) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "This inquiry will be permanently deleted.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "var(--noir-bg-surface-3)",
-      confirmButtonText: "Yes, delete it",
-      background: "var(--noir-bg-elevated)",
-      color: "var(--noir-fg)"
-    });
+  const handleDelete = async (inquiry: ContactInquiry) => {
+    const confirmed = await confirmDelete(`Message from ${inquiry.name}`);
+    if (!confirmed) return;
 
-    if (result.isConfirmed) {
-      try {
-        await deleteInquiry(id);
-        setInquiries(prev => prev.filter(inq => inq.id !== id));
-        Swal.fire({
-          title: "Deleted",
-          text: "Inquiry has been deleted.",
-          icon: "success",
-          background: "var(--noir-bg-elevated)",
-          color: "var(--noir-fg)"
-        });
-      } catch (error) {
-        console.error(error);
-        Swal.fire({
-          title: "Error",
-          text: "Failed to delete inquiry.",
-          icon: "error",
-          background: "var(--noir-bg-elevated)",
-          color: "var(--noir-fg)"
-        });
-      }
+    try {
+      await deleteInquiry(inquiry.id);
+      setInquiries(prev => prev.filter(inq => inq.id !== inquiry.id));
+      toastSuccess("Inquiry deleted successfully");
+    } catch (error) {
+      console.error(error);
+      toastError("Failed to delete inquiry");
     }
   };
 
@@ -111,6 +82,35 @@ export default function InquiriesPage() {
     if (activeTab === "messages") return !inq.scheduleMeeting;
     return true;
   });
+
+  const selection = useBulkSelection(filteredInquiries);
+
+  const runBulk = async (
+    label: string,
+    action: (ids: number[]) => Promise<unknown>,
+    danger = false
+  ) => {
+    const ids = selection.selectedIdsArray as number[];
+    const confirmed = await confirmBulkAction(label, ids.length, danger);
+    if (!confirmed) return;
+
+    setBulkBusy(true);
+    try {
+      await action(ids);
+      if (label === "Delete") {
+        setInquiries(prev => prev.filter(inq => !ids.includes(inq.id)));
+      } else {
+        setInquiries(prev => prev.map(inq => ids.includes(inq.id) ? { ...inq, isRead: true } : inq));
+      }
+      toastSuccess(`${label} completed for ${ids.length} inquir${ids.length === 1 ? "y" : "ies"}`);
+      selection.clear();
+    } catch (error) {
+      console.error(error);
+      toastError(`Bulk ${label.toLowerCase()} failed`);
+    } finally {
+      setBulkBusy(false);
+    }
+  };
 
   const unreadCount = inquiries.filter(inq => !inq.isRead).length;
 
@@ -181,6 +181,25 @@ export default function InquiriesPage() {
           <p className="text-sm text-[var(--noir-fg-subtle)] mt-1">When visitors fill out your contact form, they will appear here.</p>
         </div>
       ) : (
+        <>
+        <BulkActionBar
+          count={selection.count}
+          onClear={selection.clear}
+          busy={bulkBusy}
+          actions={[
+            {
+              label: "Mark as read",
+              icon: <Check size={16} />,
+              onClick: () => runBulk("Mark as read", (ids) => bulkMarkInquiriesAsRead(ids)),
+            },
+            {
+              label: "Delete",
+              icon: <Trash2 size={16} />,
+              danger: true,
+              onClick: () => runBulk("Delete", (ids) => bulkDeleteInquiries(ids), true),
+            },
+          ]}
+        />
         <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid gap-6">
           {filteredInquiries.map((inq) => (
             <motion.div
@@ -188,12 +207,19 @@ export default function InquiriesPage() {
               variants={staggerItem}
               className={`rounded-3xl border p-6 md:p-8 transition-all flex flex-col gap-6 bg-[var(--noir-bg-elevated)]/70 backdrop-blur-md relative ${
                 inq.isRead ? "border-[var(--noir-border)]/80" : "border-[var(--noir-accent)]/35 shadow-lg shadow-black/20"
-              }`}
+              } ${selection.isSelected(inq.id) ? "ring-2 ring-[var(--noir-accent)]/50" : ""}`}
             >
-              {/* Unread dot */}
-              {!inq.isRead && (
-                <div className="absolute top-6 right-6 w-3 h-3 bg-[var(--noir-accent)] rounded-full animate-ping" />
-              )}
+              {/* Select + unread dot */}
+              <div className="absolute top-4 right-4 flex items-center gap-3">
+                {!inq.isRead && (
+                  <div className="w-3 h-3 bg-[var(--noir-accent)] rounded-full animate-ping" />
+                )}
+                <SelectCheckbox
+                  checked={selection.isSelected(inq.id)}
+                  onChange={() => selection.toggle(inq.id)}
+                  label={`Select message from ${inq.name}`}
+                />
+              </div>
 
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                 <div className="space-y-2">
@@ -282,7 +308,7 @@ export default function InquiriesPage() {
                   </button>
                 )}
                 <button
-                  onClick={() => handleDelete(inq.id)}
+                  onClick={() => handleDelete(inq)}
                   className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-semibold rounded-xl transition-colors cursor-pointer"
                 >
                   <Trash2 size={16} />
@@ -292,6 +318,7 @@ export default function InquiriesPage() {
             </motion.div>
           ))}
         </motion.div>
+        </>
       )}
     </div>
   );

@@ -1,9 +1,12 @@
 package com.jaimin.portfolio_backend.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.jaimin.portfolio_backend.dto.BulkIdsRequest;
 import com.jaimin.portfolio_backend.dto.CertificateRequest;
 import com.jaimin.portfolio_backend.entity.Certificate;
 import com.jaimin.portfolio_backend.service.CertificateService;
@@ -74,5 +77,11 @@ public class CertificateController {
         certificateService.deleteCertificate(id);
 
         return "Certificate Deleted Successfully";
+    }
+
+    @PostMapping("/bulk-delete")
+    public ResponseEntity<Map<String, Object>> bulkDelete(@RequestBody BulkIdsRequest request) {
+        certificateService.bulkDelete(request.getIds());
+        return ResponseEntity.ok(Map.of("deleted", request.getIds().size()));
     }
 }
