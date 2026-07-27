@@ -44,28 +44,40 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const isTouch = useSyncExternalStore(emptySubscribe, isTouchSnapshot, () => true);
 
   useEffect(() => {
-    // Initialize Lenis smooth scroll
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-    });
+    // Lenis's global smooth-scroll hijacks wheel/touch input for its own
+    // virtual scrolling and doesn't know about nested scrollable overlays
+    // (e.g. admin CRUD modals) unless each one opts out individually. The
+    // admin panel is a utility app that never wanted cinematic smooth
+    // scroll in the first place, so it's simplest and most robust to just
+    // never initialize Lenis there at all — this is what was silently
+    // breaking mouse-wheel scrolling inside every admin popup.
+    let lenis: Lenis | undefined;
+    let tick: ((time: number) => void) | undefined;
 
-    if ("scrollRestoration" in window.history) {
-      window.history.scrollRestoration = "manual";
+    if (isPublicPage) {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: "vertical",
+        gestureOrientation: "vertical",
+        smoothWheel: true,
+      });
+
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "manual";
+      }
+      window.scrollTo(0, 0);
+      lenis.scrollTo(0, { immediate: true });
+
+      // Drive Lenis from GSAP's own ticker (instead of a separate raw rAF
+      // loop) so ScrollTrigger — used for the persistent 3D scene's scroll
+      // sync — stays perfectly in step with the smooth-scroll position.
+      const lenisInstance = lenis;
+      tick = (time: number) => lenisInstance.raf(time * 1000);
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
     }
-    window.scrollTo(0, 0);
-    lenis.scrollTo(0, { immediate: true });
-
-    // Drive Lenis from GSAP's own ticker (instead of a separate raw rAF
-    // loop) so ScrollTrigger — used for the persistent 3D scene's scroll
-    // sync — stays perfectly in step with the smooth-scroll position.
-    const tick = (time: number) => lenis.raf(time * 1000);
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
 
     const isHoverCapable = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
@@ -131,14 +143,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
 
     return () => {
-      gsap.ticker.remove(tick);
-      lenis.off("scroll", ScrollTrigger.update);
-      lenis.destroy();
+      if (lenis && tick) {
+        gsap.ticker.remove(tick);
+        lenis.off("scroll", ScrollTrigger.update);
+        lenis.destroy();
+      }
       if (cursorRafId !== undefined) cancelAnimationFrame(cursorRafId);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseover", handleMouseOver);
     };
-  }, []);
+  }, [isPublicPage]);
 
   return (
     <LocaleProvider>

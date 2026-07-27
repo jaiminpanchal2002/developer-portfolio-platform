@@ -57,8 +57,16 @@ export default function AnimatedModal({
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
+            // tabIndex makes the card itself keyboard-focusable, so Tab/click
+            // into empty space + Arrow/Page/Home/End keys scroll it natively.
+            // data-lenis-prevent is defense-in-depth: this component is
+            // admin-only today (where Lenis no longer initializes at all —
+            // see ClientLayout), but keeps working correctly if ever reused
+            // on a Lenis-driven page instead of silently breaking again.
+            tabIndex={0}
+            data-lenis-prevent
             className={cn(
-              "flex w-full max-w-2xl max-h-[90vh] flex-col overflow-y-auto overscroll-contain rounded-2xl border border-[var(--noir-border)] bg-[var(--noir-bg-elevated)]",
+              "flex w-full max-w-2xl max-h-[90vh] flex-col overflow-y-auto overscroll-contain rounded-2xl border border-[var(--noir-border)] bg-[var(--noir-bg-elevated)] outline-none",
               className
             )}
           >
