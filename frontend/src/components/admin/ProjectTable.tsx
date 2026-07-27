@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, GripVertical, Pencil, Trash2, XCircle } from "lucide-react";
+import { Archive, ArchiveRestore, CheckCircle2, GripVertical, Pencil, Trash2, XCircle } from "lucide-react";
 import {
+  bulkArchiveProjects,
   bulkDeleteProjects,
   bulkPublishProjects,
+  bulkUnarchiveProjects,
   bulkUnpublishProjects,
   deleteProject,
   updateProject,
@@ -55,6 +57,22 @@ export default function ProjectTable({
     } catch (error) {
       console.error(error);
       toastError("Failed to delete project");
+    }
+  };
+
+  const handleToggleArchive = async (project: Project) => {
+    try {
+      if (project.archived) {
+        await bulkUnarchiveProjects([project.id]);
+        toastSuccess("Project unarchived successfully");
+      } else {
+        await bulkArchiveProjects([project.id]);
+        toastSuccess("Project archived successfully");
+      }
+      onRefresh();
+    } catch (error) {
+      console.error(error);
+      toastError("Failed to update archive state");
     }
   };
 
@@ -134,6 +152,16 @@ export default function ProjectTable({
             label: "Unpublish",
             icon: <XCircle size={16} />,
             onClick: () => runBulk("Unpublish", (ids) => bulkUnpublishProjects(ids)),
+          },
+          {
+            label: "Archive",
+            icon: <Archive size={16} />,
+            onClick: () => runBulk("Archive", (ids) => bulkArchiveProjects(ids)),
+          },
+          {
+            label: "Unarchive",
+            icon: <ArchiveRestore size={16} />,
+            onClick: () => runBulk("Unarchive", (ids) => bulkUnarchiveProjects(ids)),
           },
           {
             label: "Delete",
@@ -224,24 +252,31 @@ export default function ProjectTable({
                 </td>
 
                 <td className="p-6">
-                  {project.published === false ? (
-                    <span className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
-                      Draft
-                      <a
-                        href={`/projects/${project.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline decoration-dotted"
-                        title="Preview the draft case study"
-                      >
-                        Preview
-                      </a>
-                    </span>
-                  ) : (
-                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
-                      Published
-                    </span>
-                  )}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {project.published === false ? (
+                      <span className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
+                        Draft
+                        <a
+                          href={`/projects/${project.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline decoration-dotted"
+                          title="Preview the draft case study"
+                        >
+                          Preview
+                        </a>
+                      </span>
+                    ) : (
+                      <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+                        Published
+                      </span>
+                    )}
+                    {project.archived && (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--noir-fg-muted)]">
+                        <Archive size={11} /> Archived
+                      </span>
+                    )}
+                  </div>
                 </td>
 
                 <td className="p-6 flex gap-4">
@@ -255,6 +290,20 @@ export default function ProjectTable({
                       size={20}
                       className="text-[var(--noir-accent)]"
                     />
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleToggleArchive(project)}
+                    aria-label={project.archived ? `Unarchive ${project.title}` : `Archive ${project.title}`}
+                    title={project.archived ? "Unarchive" : "Archive"}
+                  >
+                    {project.archived ? (
+                      <ArchiveRestore size={20} className="text-[var(--noir-fg-muted)]" />
+                    ) : (
+                      <Archive size={20} className="text-[var(--noir-fg-muted)]" />
+                    )}
                   </motion.button>
 
                   <motion.button

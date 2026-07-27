@@ -41,6 +41,8 @@ export interface Project extends ProjectCaseStudy {
   displayOrder?: number;
   /** false = draft (hidden from the public showcase); undefined counts as published */
   published?: boolean;
+  /** true = archived — hidden from the public showcase regardless of published, kept for records */
+  archived?: boolean;
 }
 
 export interface Experience {

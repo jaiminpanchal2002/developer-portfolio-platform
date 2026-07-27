@@ -59,6 +59,7 @@ public class ProjectController {
                 .metrics(project.getMetrics())
                 .displayOrder(project.getDisplayOrder())
                 .published(project.getPublished())
+                .archived(project.getArchived())
                 .createdAt(project.getCreatedAt())
                 .build();
     }
@@ -117,6 +118,18 @@ public class ProjectController {
     @PatchMapping("/bulk-unpublish")
     public ResponseEntity<Map<String, Object>> bulkUnpublish(@RequestBody BulkIdsRequest request) {
         projectService.bulkSetPublished(request.getIds(), false);
+        return ResponseEntity.ok(Map.of("updated", request.getIds().size()));
+    }
+
+    @PatchMapping("/bulk-archive")
+    public ResponseEntity<Map<String, Object>> bulkArchive(@RequestBody BulkIdsRequest request) {
+        projectService.bulkSetArchived(request.getIds(), true);
+        return ResponseEntity.ok(Map.of("updated", request.getIds().size()));
+    }
+
+    @PatchMapping("/bulk-unarchive")
+    public ResponseEntity<Map<String, Object>> bulkUnarchive(@RequestBody BulkIdsRequest request) {
+        projectService.bulkSetArchived(request.getIds(), false);
         return ResponseEntity.ok(Map.of("updated", request.getIds().size()));
     }
 

@@ -54,3 +54,13 @@ export const bulkUnpublishProjects = async (ids: number[]) => {
   const response = await api.patch("/projects/bulk-unpublish", { ids });
   return response.data;
 };
+
+export const bulkArchiveProjects = async (ids: number[]) => {
+  const response = await api.patch("/projects/bulk-archive", { ids });
+  return response.data;
+};
+
+export const bulkUnarchiveProjects = async (ids: number[]) => {
+  const response = await api.patch("/projects/bulk-unarchive", { ids });
+  return response.data;
+};

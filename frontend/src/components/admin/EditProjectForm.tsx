@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateProject } from "@/services/projectService";
 import { uploadImage } from "@/services/uploadService";
-import { getImageUrl } from "@/lib/api";
 import { Project } from "@/types";
 import { projectSchema, ProjectFormValues } from "@/lib/validation/projectSchema";
 import { toastError, toastSuccess } from "@/lib/toast";
 import Field from "@/components/admin/form/Field";
+import ImageDropzone from "@/components/admin/form/ImageDropzone";
 import { inputClass, primaryButtonClass, secondaryButtonClass, stickyFooterClass } from "@/components/admin/form/formStyles";
 
 interface Props {
@@ -20,6 +19,7 @@ interface Props {
 }
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const DESCRIPTION_MAX = 3000;
 
 export default function EditProjectForm({
   project,
@@ -56,11 +56,9 @@ export default function EditProjectForm({
   const [uploading, setUploading] = useState(false);
   const featured = watch("featured");
   const published = watch("published");
+  const description = watch("description");
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const handleImageUpload = async (file: File) => {
     if (!file.type.startsWith("image/")) {
       toastError("Please choose an image file");
       return;
@@ -111,12 +109,20 @@ export default function EditProjectForm({
         />
       </Field>
 
-      <Field label="Description" htmlFor="edit-description" required error={errors.description?.message}>
+      <Field
+        label="Description"
+        htmlFor="edit-description"
+        required
+        error={errors.description?.message}
+        currentLength={description?.length ?? 0}
+        maxLength={DESCRIPTION_MAX}
+      >
         <textarea
           id="edit-description"
           {...register("description")}
           aria-invalid={!!errors.description}
           rows={4}
+          maxLength={DESCRIPTION_MAX}
           className={inputClass(!!errors.description)}
         />
       </Field>
@@ -141,23 +147,17 @@ export default function EditProjectForm({
         />
       </Field>
 
-      <div className="space-y-3">
-        <label htmlFor="edit-projectImage" className="block text-sm font-medium text-[var(--noir-fg-muted)]">
-          Project Image
-        </label>
-        <input
-          id="edit-projectImage"
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="w-full text-sm text-[var(--noir-fg-muted)]"
-        />
-        {preview && (
-          <div className="relative w-full h-48 rounded-lg overflow-hidden border border-[var(--noir-border-strong)]">
-            <Image src={getImageUrl(preview)} alt="Project preview" fill sizes="400px" unoptimized className="object-cover" />
-          </div>
-        )}
-      </div>
+      <ImageDropzone
+        label="Project Image"
+        previewUrl={preview}
+        uploading={uploading}
+        onFileSelected={handleImageUpload}
+        onClear={() => {
+          setPreview(null);
+          setValue("imageUrl", "", { shouldValidate: true });
+        }}
+        hint="PNG or JPG, up to 5MB"
+      />
 
       <Field label="Technologies" htmlFor="edit-technologies" error={errors.technologies?.message} hint="Comma-separated, e.g. React, Spring Boot, PostgreSQL">
         <input

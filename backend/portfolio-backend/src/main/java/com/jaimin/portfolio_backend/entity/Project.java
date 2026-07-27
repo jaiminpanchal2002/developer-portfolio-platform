@@ -72,6 +72,10 @@ public class Project {
      */
     private Boolean published;
 
+    /** Archived work stays in the admin panel for record-keeping but is
+     *  hidden from the public showcase regardless of the published flag. */
+    private Boolean archived;
+
     private LocalDateTime createdAt;
 }
  

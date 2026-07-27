@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProject } from "@/services/projectService";
 import { uploadImage } from "@/services/uploadService";
-import { getImageUrl } from "@/lib/api";
 import { projectDefaultValues, projectSchema, ProjectFormValues } from "@/lib/validation/projectSchema";
 import { toastError, toastSuccess } from "@/lib/toast";
 import Field from "@/components/admin/form/Field";
+import ImageDropzone from "@/components/admin/form/ImageDropzone";
 import { inputClass, primaryButtonClass, secondaryButtonClass, stickyFooterClass } from "@/components/admin/form/formStyles";
+
+const DESCRIPTION_MAX = 3000;
 
 interface ProjectFormProps {
   onClose: () => void;
@@ -38,11 +39,9 @@ export default function ProjectForm({
   const [uploading, setUploading] = useState(false);
   const featured = watch("featured");
   const published = watch("published");
+  const description = watch("description");
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const handleImageUpload = async (file: File) => {
     if (!file.type.startsWith("image/")) {
       toastError("Please choose an image file");
       return;
@@ -91,12 +90,20 @@ export default function ProjectForm({
         />
       </Field>
 
-      <Field label="Description" htmlFor="description" required error={errors.description?.message}>
+      <Field
+        label="Description"
+        htmlFor="description"
+        required
+        error={errors.description?.message}
+        currentLength={description?.length ?? 0}
+        maxLength={DESCRIPTION_MAX}
+      >
         <textarea
           id="description"
           {...register("description")}
           aria-invalid={!!errors.description}
           rows={4}
+          maxLength={DESCRIPTION_MAX}
           className={inputClass(!!errors.description)}
         />
       </Field>
@@ -130,23 +137,17 @@ export default function ProjectForm({
         />
       </Field>
 
-      <div className="space-y-3">
-        <label htmlFor="projectImage" className="block text-sm font-medium text-[var(--noir-fg-muted)]">
-          Project Image
-        </label>
-        <input
-          id="projectImage"
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="w-full text-sm text-[var(--noir-fg-muted)]"
-        />
-        {preview && (
-          <div className="relative w-full h-48 rounded-lg overflow-hidden border border-[var(--noir-border-strong)]">
-            <Image src={getImageUrl(preview)} alt="Project preview" fill sizes="400px" unoptimized className="object-cover" />
-          </div>
-        )}
-      </div>
+      <ImageDropzone
+        label="Project Image"
+        previewUrl={preview}
+        uploading={uploading}
+        onFileSelected={handleImageUpload}
+        onClear={() => {
+          setPreview(null);
+          setValue("imageUrl", "", { shouldValidate: true });
+        }}
+        hint="PNG or JPG, up to 5MB"
+      />
 
       <label className="flex items-center gap-2">
         <input

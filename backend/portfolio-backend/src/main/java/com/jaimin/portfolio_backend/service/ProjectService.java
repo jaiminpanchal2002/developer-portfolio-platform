@@ -50,10 +50,11 @@ public class ProjectService {
 
     }
 
-    /** Public view: drafts hidden; legacy NULL published counts as published. */
+    /** Public view: drafts and archived work hidden; legacy NULL published counts as published. */
     public List<Project> getPublishedProjects() {
         return getAllProjects().stream()
                 .filter(p -> !Boolean.FALSE.equals(p.getPublished()))
+                .filter(p -> !Boolean.TRUE.equals(p.getArchived()))
                 .toList();
     }
 
@@ -110,6 +111,12 @@ public Project getProjectById(Long id) {
     public void bulkSetPublished(List<Long> ids, boolean published) {
         List<Project> projects = projectRepository.findAllById(ids);
         projects.forEach(p -> p.setPublished(published));
+        projectRepository.saveAll(projects);
+    }
+
+    public void bulkSetArchived(List<Long> ids, boolean archived) {
+        List<Project> projects = projectRepository.findAllById(ids);
+        projects.forEach(p -> p.setArchived(archived));
         projectRepository.saveAll(projects);
     }
 
