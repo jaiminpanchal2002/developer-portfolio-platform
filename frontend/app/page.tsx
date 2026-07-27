@@ -15,6 +15,7 @@ import SectionWrapper from "@/components/SectionWrapper";
 
 import GitHubShowcase from "@/components/GitHubShowcase";
 import { getProfile } from "@/services/profileService";
+import { getImageUrl } from "@/lib/api";
 import {
   extractGitHubUsername,
   getGitHubShowcase,
@@ -45,6 +46,7 @@ const FALLBACK_PROFILE = {
   location: "India",
   githubUrl: "",
   linkedinUrl: "",
+  profileImageUrl: undefined as string | undefined,
 };
 
 export default async function Home() {
@@ -75,16 +77,26 @@ export default async function Home() {
     ? await getGitHubShowcase(githubUsername).catch(() => null)
     : null;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jaiminpanchal.com";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Jaimin Panchal",
-    jobTitle: "Jaimin Panchal - Full Stack AI Developer",
+    name: profile.fullName,
+    jobTitle: profile.headline,
     email: profile.email,
-    url: "https://jaiminpanchal.com",
+    url: siteUrl,
+    image: profile.profileImageUrl ? getImageUrl(profile.profileImageUrl) : undefined,
+    address: profile.location
+      ? { "@type": "PostalAddress", addressLocality: profile.location }
+      : undefined,
     sameAs: [profile.githubUrl || "", profile.linkedinUrl || ""].filter(Boolean),
-    description:
-      "Full Stack AI Developer specializing in production-ready, scalable SaaS and AI systems using Spring Boot, Node.js, Python, and cloud architectures.",
+    description: profile.about,
+    knowsAbout: skills.map((s) => s.name),
+    worksFor: {
+      "@type": "Organization",
+      name: "Freelance / Independent",
+    },
   };
 
   return (

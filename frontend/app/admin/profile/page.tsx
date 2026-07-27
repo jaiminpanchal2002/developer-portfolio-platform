@@ -12,8 +12,25 @@ import {
 import Image from "next/image";
 import { uploadImage } from "@/services/uploadService";
 import { getImageUrl } from "@/lib/api";
+import { toastError, toastSuccess } from "@/lib/toast";
 import { Profile } from "@/types";
 
+
+/** The upload endpoint always returns a relative "/uploads/xxx" path, but
+ *  this field has historically also been hand-typed/pasted, which is how an
+ *  absolute dev URL (http://localhost:8080/uploads/...) ended up stored in
+ *  production. Stripping back to the relative path here means it self-heals
+ *  on the next save regardless of how the bad value got in, and getImageUrl()
+ *  already knows how to turn a relative path into the correct absolute URL
+ *  for whatever host is actually serving the site. */
+function normalizeUploadPath(url?: string): string | undefined {
+  if (!url) return url;
+  const idx = url.indexOf("/uploads/");
+  if (idx !== -1 && /^https?:\/\//i.test(url)) {
+    return url.slice(idx);
+  }
+  return url;
+}
 
 export default function ProfilePage() {
   const [profileExists, setProfileExists] =
@@ -21,6 +38,8 @@ export default function ProfilePage() {
 
   const [preview, setPreview] =
     useState("");
+
+  const [resumeUploading, setResumeUploading] = useState(false);
 
   const [profile, setProfile] =
     useState<Partial<Profile>>({
@@ -95,7 +114,29 @@ export default function ProfilePage() {
       }));
     } catch (error) {
       console.error(error);
-      alert("Image upload failed");
+      toastError("Image upload failed");
+    }
+  };
+
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      toastError("Please upload a PDF file");
+      return;
+    }
+
+    setResumeUploading(true);
+    try {
+      const url = await uploadImage(file);
+      setProfile((prev) => ({ ...prev, resumeUrl: url }));
+      toastSuccess("Resume uploaded — click Update Profile to save");
+    } catch (error) {
+      console.error(error);
+      toastError("Resume upload failed");
+    } finally {
+      setResumeUploading(false);
     }
   };
 
@@ -112,27 +153,22 @@ export default function ProfilePage() {
     if (normalizedProfile.linkedinUrl && !normalizedProfile.linkedinUrl.startsWith("http")) {
       normalizedProfile.linkedinUrl = `https://${normalizedProfile.linkedinUrl}`;
     }
+    normalizedProfile.resumeUrl = normalizeUploadPath(normalizedProfile.resumeUrl);
+    normalizedProfile.profileImageUrl = normalizeUploadPath(normalizedProfile.profileImageUrl);
 
     try {
       if (profileExists) {
         await updateProfile(normalizedProfile);
-
-        alert(
-          "Profile Updated Successfully"
-        );
+        toastSuccess("Profile updated successfully");
       } else {
         await createProfile(normalizedProfile);
-
-        alert(
-          "Profile Created Successfully"
-        );
+        toastSuccess("Profile created successfully");
       }
 
       fetchProfile();
     } catch (error) {
       console.error(error);
-
-      alert("Operation Failed");
+      toastError("Failed to save profile");
     }
   };
 
@@ -216,13 +252,42 @@ export default function ProfilePage() {
           className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
         />
 
-        <input
-          name="resumeUrl"
-          placeholder="Resume URL"
-          value={profile.resumeUrl}
-          onChange={handleChange}
-          className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
-        />
+        <div className="space-y-2 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)] p-3">
+          <label className="block text-sm font-medium text-[var(--noir-fg-muted)]">
+            Resume (PDF)
+          </label>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={handleResumeUpload}
+              className="text-sm text-[var(--noir-fg-muted)]"
+            />
+            {resumeUploading && (
+              <span className="text-xs text-[var(--noir-accent)]">Uploading…</span>
+            )}
+            {profile.resumeUrl && !resumeUploading && (
+              <a
+                href={getImageUrl(profile.resumeUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-semibold text-[var(--noir-accent)] underline decoration-dotted"
+              >
+                View current resume
+              </a>
+            )}
+          </div>
+          <p className="text-xs text-[var(--noir-fg-subtle)]">
+            Or paste a direct link (e.g. an externally hosted PDF):
+          </p>
+          <input
+            name="resumeUrl"
+            placeholder="Resume URL"
+            value={profile.resumeUrl}
+            onChange={handleChange}
+            className="w-full p-2.5 rounded bg-[var(--noir-bg)] border border-[var(--noir-border-strong)] text-sm"
+          />
+        </div>
 
         <div className="space-y-4">
 

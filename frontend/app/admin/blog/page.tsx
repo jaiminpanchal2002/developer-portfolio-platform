@@ -16,7 +16,9 @@ import {
 import AnimatedModal from "@/components/admin/AnimatedModal";
 import BulkActionBar from "@/components/admin/BulkActionBar";
 import SelectCheckbox from "@/components/admin/SelectCheckbox";
+import ImageDropzone from "@/components/admin/form/ImageDropzone";
 import { useBulkSelection } from "@/lib/hooks/useBulkSelection";
+import { uploadImage } from "@/services/uploadService";
 import { confirmBulkAction, confirmDelete, toastError, toastSuccess } from "@/lib/toast";
 import { stickyFooterClass, stickyHeaderClass } from "@/components/admin/form/formStyles";
 import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
@@ -42,7 +44,29 @@ export default function BlogAdminPage() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
   const selection = useBulkSelection(posts);
+
+  const handleCoverUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toastError("Please choose an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toastError("Image must be smaller than 5MB");
+      return;
+    }
+    setCoverUploading(true);
+    try {
+      const url = await uploadImage(file);
+      setForm((prev) => ({ ...prev, coverImageUrl: url }));
+    } catch (error) {
+      console.error(error);
+      toastError("Image upload failed");
+    } finally {
+      setCoverUploading(false);
+    }
+  };
 
   const load = async () => {
     try {
@@ -327,12 +351,20 @@ export default function BlogAdminPage() {
                 onChange={(e) => setForm({ ...form, content: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3 font-mono text-sm"
               />
+              <ImageDropzone
+                label="Cover Image"
+                previewUrl={form.coverImageUrl || null}
+                uploading={coverUploading}
+                onFileSelected={handleCoverUpload}
+                onClear={() => setForm((prev) => ({ ...prev, coverImageUrl: "" }))}
+                hint="Drag & drop, or paste a URL below (e.g. from the Media library)"
+              />
               <input
                 type="text"
-                placeholder="Cover image URL (optional — from Media library)"
+                placeholder="Cover image URL (optional)"
                 value={form.coverImageUrl}
                 onChange={(e) => setForm({ ...form, coverImageUrl: e.target.value })}
-                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
+                className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3 text-sm"
               />
               <input
                 type="text"

@@ -32,14 +32,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const post = await loadPost(slug);
   if (!post) return { title: "Post not found" };
+
+  const tags = post.tags ? post.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
+
   return {
     title: `${post.title} | Jaimin Panchal`,
     description: post.excerpt?.slice(0, 160),
+    keywords: tags,
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt?.slice(0, 160),
       type: "article",
+      publishedTime: post.publishedAt || post.createdAt,
+      tags,
       images: post.coverImageUrl ? [getImageUrl(post.coverImageUrl)] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt?.slice(0, 160),
     },
   };
 }
@@ -53,8 +65,26 @@ export default async function BlogPostPage({ params }: PageProps) {
     ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
     : [];
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jaiminpanchal.com";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    image: post.coverImageUrl ? getImageUrl(post.coverImageUrl) : undefined,
+    datePublished: post.publishedAt || post.createdAt,
+    dateModified: post.updatedAt || post.publishedAt || post.createdAt,
+    keywords: tags.join(", "),
+    author: { "@type": "Person", name: "Jaimin Panchal" },
+    mainEntityOfPage: `${siteUrl}/blog/${slug}`,
+  };
+
   return (
     <main className="relative z-10 min-h-screen" style={{ background: "var(--noir-bg)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <article className="max-w-3xl mx-auto px-6 md:px-10 py-16 md:py-24">
         <Link
           href="/blog"
