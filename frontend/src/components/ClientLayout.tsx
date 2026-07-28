@@ -25,6 +25,13 @@ if (typeof window !== "undefined") {
 const emptySubscribe = () => () => {};
 const isTouchSnapshot = () =>
   "ontouchstart" in window || navigator.maxTouchPoints > 0;
+// Mirrors PersistentScene's own internal gate — checked here too so the
+// dynamic import's chunk (Three.js + drei, ~900KB) is never even requested
+// for visitors who'd never see it, instead of downloading it just to have
+// the component immediately return null after the fact.
+const sceneEnabledSnapshot = () =>
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+  window.matchMedia("(min-width: 768px)").matches;
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -42,6 +49,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // Server snapshot assumes touch so the custom cursor never flashes
   // during SSR/hydration; the client snapshot corrects it immediately.
   const isTouch = useSyncExternalStore(emptySubscribe, isTouchSnapshot, () => true);
+  const sceneEnabled = useSyncExternalStore(emptySubscribe, sceneEnabledSnapshot, () => false);
 
   useEffect(() => {
     // Lenis's global smooth-scroll hijacks wheel/touch input for its own
@@ -181,7 +189,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         {/* Home-only: mounted after children so its effect runs once the
             Hero/Skills anchors exist in the DOM; the wrapper's explicit
             z-index keeps it visually behind real content. */}
-        {isHome && (
+        {isHome && sceneEnabled && (
           <SceneErrorBoundary>
             <PersistentScene />
           </SceneErrorBoundary>
