@@ -1,6 +1,13 @@
 "use client";
 
-import { motion, useReducedMotion, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
+
+const easeOut = [0.16, 1, 0.3, 1] as const;
+
+const variants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.6, ease: easeOut } },
+};
 
 export default function SectionWrapper({
   children,
@@ -9,35 +16,6 @@ export default function SectionWrapper({
   children: React.ReactNode;
   id?: string;
 }) {
-  const shouldReduceMotion = useReducedMotion();
-
-  // If prefers-reduced-motion is true, display a simple fade reveal.
-  const variants: Variants = shouldReduceMotion
-    ? {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { duration: 0.6 } },
-      }
-    : {
-        hidden: { 
-          opacity: 0, 
-          y: 60,
-          scale: 0.95,
-          rotateX: 10
-        },
-        visible: { 
-          opacity: 1, 
-          y: 0, 
-          scale: 1,
-          rotateX: 0,
-          transition: { 
-            type: "spring",
-            stiffness: 70,
-            damping: 15,
-            mass: 0.8
-          } 
-        },
-      };
-
   return (
     <motion.section
       id={id}

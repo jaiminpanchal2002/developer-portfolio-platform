@@ -27,9 +27,9 @@ export default function BulkActionBar({ count, onClear, actions, busy }: Props) 
     <AnimatePresence>
       {count > 0 && (
         <motion.div
-          initial={{ opacity: 0, y: -8, height: 0 }}
-          animate={{ opacity: 1, y: 0, height: "auto" }}
-          exit={{ opacity: 0, y: -8, height: 0 }}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.18 }}
           className="sticky top-0 z-20 mb-4 overflow-hidden"
         >

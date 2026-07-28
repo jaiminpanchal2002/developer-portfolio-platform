@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useMotionValue, useSpring, HTMLMotionProps } from "framer-motion";
+import { motion, useMotionValue, useSpring, useMotionTemplate, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type MagneticButtonProps =
@@ -19,6 +19,7 @@ export default function MagneticButton({ children, className, strength = 0.35, s
   const y = useMotionValue(0);
   const springX = useSpring(x, { stiffness: 150, damping: 15, mass: 0.4 });
   const springY = useSpring(y, { stiffness: 150, damping: 15, mass: 0.4 });
+  const transform = useMotionTemplate`translate3d(${springX}px, ${springY}px, 0)`;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
     if (!ref.current || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
@@ -33,7 +34,7 @@ export default function MagneticButton({ children, className, strength = 0.35, s
   };
 
   const mergedClassName = cn("inline-flex items-center justify-center", className);
-  const mergedStyle = { ...style, x: springX, y: springY };
+  const mergedStyle = { ...style, transform, willChange: "transform" };
 
   if (props.href) {
     return (

@@ -99,11 +99,10 @@ export default function Navbar({ profile, showBlog }: NavbarProps) {
                                     >
                                         {item.label}
                                         <span
-                                            className="absolute bottom-0 left-0 h-px transition-all duration-300 group-hover:w-full"
-                                            style={{
-                                                background: "var(--noir-accent)",
-                                                width: isActive ? "100%" : "0%",
-                                            }}
+                                            className={`absolute bottom-0 left-0 h-px w-full origin-left transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                                                isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                                            }`}
+                                            style={{ background: "var(--noir-accent)" }}
                                         />
                                     </a>
                                 </li>

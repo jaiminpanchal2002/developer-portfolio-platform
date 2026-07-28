@@ -154,7 +154,7 @@ export default function ApplicationsPage() {
         </div>
         <button
           onClick={handleOpenAdd}
-          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold hover:scale-105 transition-all shadow-lg shadow-[var(--noir-accent)]/20 cursor-pointer"
+          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold hover:scale-105 transition-transform shadow-lg shadow-[var(--noir-accent)]/20 cursor-pointer"
         >
           <Plus size={20} />
           Add Application

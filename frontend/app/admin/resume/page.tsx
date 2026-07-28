@@ -255,7 +255,7 @@ export default function ResumePage() {
 
                 <button
                   onClick={handleDeleteResume}
-                  className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-[var(--noir-fg)] rounded-xl transition-all cursor-pointer"
+                  className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-[var(--noir-fg)] rounded-xl transition-colors cursor-pointer"
                   title="Delete Resume"
                 >
                   <Trash2 size={18} />

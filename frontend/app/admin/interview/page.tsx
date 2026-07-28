@@ -4,7 +4,7 @@ import { useState } from "react";
 import { getInterviewQuestions } from "@/services/interviewService";
 import Swal from "sweetalert2";
 import { motion, AnimatePresence } from "framer-motion";
-import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
+import { easeOut, staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import {
   HelpCircle,
   ChevronDown,
@@ -201,7 +201,7 @@ export default function InterviewPage() {
                       initial={{ height: 0 }}
                       animate={{ height: "auto" }}
                       exit={{ height: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.2, ease: easeOut }}
                       className="overflow-hidden"
                     >
                       <div className="px-5 pb-5 pt-2 border-t border-[var(--noir-border)]/50 bg-[var(--noir-bg)]/40">

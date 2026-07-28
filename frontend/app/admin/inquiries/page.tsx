@@ -21,7 +21,7 @@ import {
   bulkDeleteInquiries,
   bulkMarkInquiriesAsRead,
 } from "@/services/contactService";
-import { staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
+import { easeOut, staggerContainer, staggerItem } from "@/lib/motion/adminMotion";
 import { useBulkSelection } from "@/lib/hooks/useBulkSelection";
 import BulkActionBar from "@/components/admin/BulkActionBar";
 import SelectCheckbox from "@/components/admin/SelectCheckbox";
@@ -175,11 +175,16 @@ export default function InquiriesPage() {
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--noir-accent)]" />
         </div>
       ) : filteredInquiries.length === 0 ? (
-        <div className="bg-[var(--noir-bg-elevated)]/50 border border-[var(--noir-border)] rounded-3xl p-12 text-center text-[var(--noir-fg-muted)]">
-          <Inbox className="mx-auto text-[var(--noir-fg-subtle)] mb-4 animate-bounce" size={48} />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: easeOut }}
+          className="bg-[var(--noir-bg-elevated)]/50 border border-[var(--noir-border)] rounded-3xl p-12 text-center text-[var(--noir-fg-muted)]"
+        >
+          <Inbox className="mx-auto text-[var(--noir-fg-subtle)] mb-4" size={48} />
           <p className="text-lg font-medium">No inquiries found</p>
           <p className="text-sm text-[var(--noir-fg-subtle)] mt-1">When visitors fill out your contact form, they will appear here.</p>
-        </div>
+        </motion.div>
       ) : (
         <>
         <BulkActionBar
@@ -212,7 +217,7 @@ export default function InquiriesPage() {
               {/* Select + unread dot */}
               <div className="absolute top-4 right-4 flex items-center gap-3">
                 {!inq.isRead && (
-                  <div className="w-3 h-3 bg-[var(--noir-accent)] rounded-full animate-ping" />
+                  <div className="w-3 h-3 bg-[var(--noir-accent)] rounded-full" />
                 )}
                 <SelectCheckbox
                   checked={selection.isSelected(inq.id)}

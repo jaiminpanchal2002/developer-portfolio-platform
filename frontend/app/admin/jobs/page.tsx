@@ -185,7 +185,7 @@ export default function JobsPage() {
 
           <button
             type="submit"
-            className="px-6 py-3 rounded-xl bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold hover:scale-105 transition-all cursor-pointer"
+            className="px-6 py-3 rounded-xl bg-[var(--noir-accent)] text-[var(--noir-bg)] font-bold hover:scale-105 transition-transform cursor-pointer"
           >
             Find Jobs
           </button>
@@ -269,9 +269,9 @@ export default function JobsPage() {
               <div className="mt-5">
                 <div className="h-2 w-full bg-[var(--noir-bg-surface-2)] rounded-full overflow-hidden">
                   <motion.div
-                    className={`h-2 rounded-full ${getProgressColor(job.matchScore ?? 0)}`}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${job.matchScore}%` }}
+                    className={`h-2 w-full origin-left rounded-full ${getProgressColor(job.matchScore ?? 0)}`}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: (job.matchScore ?? 0) / 100 }}
                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                   />
                 </div>

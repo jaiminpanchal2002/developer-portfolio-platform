@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { Quote, ArrowUpRight } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
@@ -26,6 +26,7 @@ export default function Testimonials({
   testimonials: Testimonial[];
 }) {
   const { t } = useLocale();
+  const shouldReduceMotion = useReducedMotion();
 
   if (testimonials.length === 0) return null;
 
@@ -42,7 +43,7 @@ export default function Testimonials({
         {testimonials.map((item, i) => (
           <motion.figure
             key={item.id}
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55, delay: (i % 3) * 0.08, ease: easeOut }}

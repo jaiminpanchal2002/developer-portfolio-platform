@@ -7,6 +7,8 @@ import { CheckCircle2, AlertCircle, FileSearch, Sparkles, ArrowRight } from "luc
 import { useLocale } from "@/lib/localeContext";
 import SectionHeading from "@/components/ui/SectionHeading";
 
+const easeOut = [0.16, 1, 0.3, 1] as const;
+
 export default function AtsMatcher() {
   const { t } = useLocale();
   const [jd, setJd] = useState("");
@@ -111,10 +113,11 @@ export default function AtsMatcher() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: easeOut }}
                 className="flex-1 flex flex-col items-center justify-center text-center p-8 rounded-3xl border border-dashed min-h-[280px] md:min-h-[360px]"
                 style={{ borderColor: "var(--noir-border)" }}
               >
-                <Sparkles className="mb-4 animate-pulse" size={40} style={{ color: "var(--noir-fg-subtle)" }} />
+                <Sparkles className="mb-4" size={40} style={{ color: "var(--noir-fg-subtle)" }} />
                 <h4 className="font-semibold mb-1" style={{ color: "var(--noir-fg-muted)" }}>{t("ats.waiting.title", "Waiting for Scan")}</h4>
                 <p className="text-xs max-w-xs" style={{ color: "var(--noir-fg-subtle)" }}>
                   {t("ats.waiting.subtitle", "Fill in the job description details on the left and scan to see matching parameters.")}
@@ -127,6 +130,7 @@ export default function AtsMatcher() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: easeOut }}
                 className="flex-1 flex flex-col items-center justify-center text-center p-8 rounded-3xl border min-h-[280px] md:min-h-[360px] space-y-4"
                 style={{ borderColor: "var(--noir-border)" }}
               >
@@ -135,12 +139,12 @@ export default function AtsMatcher() {
                     className="absolute inset-0 rounded-full border-4 animate-spin"
                     style={{ borderColor: "var(--noir-accent-soft)", borderTopColor: "var(--noir-accent)" }}
                   />
-                  <FileSearch size={32} className="animate-bounce" style={{ color: "var(--noir-accent)" }} />
+                  <FileSearch size={32} style={{ color: "var(--noir-accent)" }} />
                 </div>
                 <h4 className="font-semibold tracking-wider font-mono" style={{ color: "var(--noir-fg)" }}>
                   {t("ats.parsing", "PARSING JOB DETAILS")}
                 </h4>
-                <p className="text-xs max-w-xs animate-pulse" style={{ color: "var(--noir-fg-muted)" }}>
+                <p className="text-xs max-w-xs" style={{ color: "var(--noir-fg-muted)" }}>
                   {t("ats.parsing.subtitle", "Checking skills inventory, project experiences, and certificates alignment...")}
                 </p>
               </motion.div>
@@ -151,6 +155,7 @@ export default function AtsMatcher() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4, ease: easeOut }}
                 className="flex-1 bento-card p-6 md:p-8 shadow-xl space-y-6"
               >
                 {/* Score Header */}
@@ -169,7 +174,7 @@ export default function AtsMatcher() {
                         strokeDasharray={2 * Math.PI * 48}
                         initial={{ strokeDashoffset: 2 * Math.PI * 48 }}
                         animate={{ strokeDashoffset: 2 * Math.PI * 48 * (1 - result.matchPercentage / 100) }}
-                        transition={{ duration: 1, ease: "easeOut" }}
+                        transition={{ duration: 1, ease: easeOut }}
                       />
                     </svg>
                     <span className="absolute text-2.5xl font-semibold font-mono" style={{ color: "var(--noir-fg)" }}>

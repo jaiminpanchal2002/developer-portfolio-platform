@@ -546,9 +546,9 @@ export default function AdminDashboard() {
 
                 <div className="h-3 bg-[var(--noir-bg-surface-3)] rounded-full overflow-hidden">
                   <motion.div
-                    className={`h-3 ${row.barColor} rounded-full`}
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${Math.min(row.value * 10, 100)}%` }}
+                    className={`h-3 w-full origin-left ${row.barColor} rounded-full`}
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: Math.min(row.value * 10, 100) / 100 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, ease: easeOut }}
                   />

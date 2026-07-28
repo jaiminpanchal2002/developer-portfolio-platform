@@ -41,14 +41,14 @@ export default function Hero({ profile }: HeroProps) {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 w-full">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: easeOut }}
           className="max-w-2xl flex flex-col"
         >
           {/* Availability badge */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.6, ease: easeOut }}
             className="inline-flex items-center gap-2.5 w-fit px-3.5 py-1.5 rounded-full border mb-8"
@@ -70,7 +70,7 @@ export default function Hero({ profile }: HeroProps) {
 
           {/* Name */}
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8, ease: easeOut }}
             className="font-[family-name:var(--font-serif)] italic font-normal text-[clamp(2.75rem,7vw,6rem)] leading-[0.98] tracking-tight"
@@ -81,7 +81,7 @@ export default function Hero({ profile }: HeroProps) {
 
           {/* Headline — rotates through roles, starting with the live one */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.32, duration: 0.7, ease: easeOut }}
             className="font-[family-name:var(--font-sans)] mt-5 text-lg md:text-xl font-medium max-w-xl"
@@ -99,7 +99,7 @@ export default function Hero({ profile }: HeroProps) {
 
           {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.42, duration: 0.7, ease: easeOut }}
             className="mt-10 flex flex-wrap items-center gap-4"
@@ -142,7 +142,7 @@ export default function Hero({ profile }: HeroProps) {
               with a hover glow instead of the old buried text links. */}
           {(profile.githubUrl || profile.linkedinUrl || profile.profileImageUrl) && (
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.62, duration: 0.7, ease: easeOut }}
               className="mt-8 flex items-center gap-4"

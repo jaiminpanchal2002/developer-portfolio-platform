@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Briefcase } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 import { Experience as ExperienceType } from "@/types";
@@ -14,6 +14,7 @@ export default function Experience({
     experiences: ExperienceType[];
 }) {
     const { t } = useLocale();
+    const shouldReduceMotion = useReducedMotion();
 
     if (experiences.length === 0) return null;
 
@@ -30,7 +31,7 @@ export default function Experience({
                 {experiences.map((exp, idx) => (
                     <motion.div
                         key={exp.id}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: idx * 0.08, ease: easeOut }}

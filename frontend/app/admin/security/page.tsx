@@ -6,6 +6,7 @@ import QRCode from "qrcode";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, ShieldOff, Copy } from "lucide-react";
 import Swal from "sweetalert2";
+import { easeOut } from "@/lib/motion/adminMotion";
 
 import {
   getTwoFactorStatus,
@@ -213,7 +214,7 @@ export default function SecurityPage() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.3, ease: easeOut }}
               className="mt-6 overflow-hidden border-t border-[var(--noir-border)] pt-6"
             >
               <ol className="space-y-5 text-sm text-[var(--noir-fg)]">

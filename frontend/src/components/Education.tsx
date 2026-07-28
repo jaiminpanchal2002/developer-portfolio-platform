@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { GraduationCap } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 import { Education as EducationType } from "@/types";
@@ -14,6 +14,7 @@ export default function Education({
     educations: EducationType[];
 }) {
     const { t } = useLocale();
+    const shouldReduceMotion = useReducedMotion();
 
     if (educations.length === 0) return null;
 
@@ -30,7 +31,7 @@ export default function Education({
                 {educations.map((edu, idx) => (
                     <motion.div
                         key={edu.id}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: idx * 0.08, ease: easeOut }}

@@ -163,7 +163,7 @@ export default function ProfileScorePage() {
         {/* Score Gauge Card */}
         <div className="lg:col-span-1 bg-[var(--noir-bg-elevated)] border border-[var(--noir-border)] rounded-3xl p-6 flex flex-col items-center justify-center text-center">
           <h3 className="font-bold text-xl mb-6 flex items-center gap-2">
-            <Sparkles className="text-[var(--noir-accent)] animate-pulse" size={20} />
+            <Sparkles className="text-[var(--noir-accent)]" size={20} />
             Completeness
           </h3>
 

@@ -39,11 +39,12 @@ export const dynamic = "force-dynamic";
 const FALLBACK_PROFILE = {
   id: 0,
   fullName: "Jaimin Panchal",
-  headline: "Full Stack AI Developer",
+  headline: "Backend & AI Engineer",
   about:
-    "Full Stack AI Developer specializing in production-ready, scalable SaaS and AI systems using Spring Boot, Node.js, Python, and cloud architectures.",
-  email: "jaiminpanchal939@gmail.com",
-  location: "India",
+    "Backend and AI Software Engineer with 2+ years shipping production SaaS, e-commerce, and fintech platforms. Strongest in Laravel/PHP and TypeScript/Next.js, with production Java/Spring Boot, Python/FastAPI, and Flutter. Builds evaluation-driven LLM systems (hybrid RAG, agentic tool calling) shipped through DevSecOps CI/CD.",
+  email: "jaiminmpanchal02@gmail.com",
+  phone: undefined as string | undefined,
+  location: "Ahmedabad, India",
   githubUrl: "",
   linkedinUrl: "",
   profileImageUrl: undefined as string | undefined,
@@ -85,6 +86,7 @@ export default async function Home() {
     name: profile.fullName,
     jobTitle: profile.headline,
     email: profile.email,
+    telephone: profile.phone || undefined,
     url: siteUrl,
     image: profile.profileImageUrl ? getImageUrl(profile.profileImageUrl) : undefined,
     address: profile.location

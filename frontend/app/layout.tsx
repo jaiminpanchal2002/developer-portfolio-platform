@@ -29,37 +29,63 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jaiminpanchal.com"
 // layered on top of this in generateMetadata below, so this list only needs
 // to carry the terms that never change.
 const BASE_KEYWORDS = [
-  "Full Stack Developer",
+  // Core identity
+  "Backend and AI Engineer",
   "Backend Developer",
   "AI Engineer",
+  "Full Stack Developer",
   "Software Engineer Portfolio",
-  "Spring Boot Developer",
+  // Primary stack — strongest, production-proven
   "Laravel Developer",
-  "React Developer",
+  "PHP Developer",
+  "TypeScript Developer",
   "Next.js Developer",
+  "Spring Boot Developer",
   "FastAPI Developer",
+  "Python Developer",
+  "Flutter Developer",
+  "React Developer",
+  "Vue.js Developer",
+  // AI / LLM specialty — the differentiator
+  "RAG Engineer",
+  "LangGraph Developer",
   "LangChain Developer",
-  "RAG AI Engineer",
+  "AI Agent Developer",
   "LLM Integration Engineer",
-  "Generative AI Developer",
-  "Hire Full Stack Developer",
-  "Hire Backend Developer",
-  "Freelance Software Engineer",
-  "Freelance Web Developer",
-  "Remote Software Engineer",
+  "Generative AI Engineer",
+  "RAG Evaluation Engineer",
+  "Prompt Engineering",
+  // DevSecOps / security
+  "DevSecOps Engineer",
+  "CI/CD Engineer",
+  "OWASP Security Engineer",
+  "SAST DAST Engineer",
+  // Domain proof — real production experience
+  "Fintech Software Engineer",
+  "E-commerce Developer",
+  "Shopify Developer",
   "SaaS Developer",
-  "REST API Developer",
-  "Microservices Developer",
+  "Mobile App Developer",
+  // Databases & cloud
+  "PostgreSQL Developer",
+  "MySQL Developer",
+  "Docker Kubernetes Engineer",
+  "AWS Developer",
+  // Hire intent
+  "Hire Backend Developer",
+  "Hire AI Engineer",
+  "Freelance Software Engineer",
+  "Remote Software Engineer",
 ];
 
 export async function generateMetadata(): Promise<Metadata> {
   const profile = await getProfile().catch(() => null);
 
   const fullName = profile?.fullName || "Jaimin Panchal";
-  const headline = profile?.headline || "Full Stack AI Developer";
+  const headline = profile?.headline || "Backend & AI Engineer";
   const about =
     profile?.about ||
-    "Full Stack AI Developer specializing in production-ready, scalable SaaS and AI systems.";
+    "Backend and AI Software Engineer with 2+ years shipping production SaaS, e-commerce, and fintech platforms. Strongest in Laravel/PHP and TypeScript/Next.js, with production Java/Spring Boot, Python/FastAPI, and Flutter. Builds evaluation-driven LLM systems (hybrid RAG, agentic tool calling) shipped through DevSecOps CI/CD.";
   const location = profile?.location;
 
   const title = `${fullName} | ${headline} Portfolio`;

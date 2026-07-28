@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Line, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
@@ -36,7 +36,7 @@ function mulberry32(seed: number) {
   };
 }
 
-function DustField({ count = 140 }: { count?: number }) {
+function DustField({ count = 140, reduceMotion }: { count?: number; reduceMotion: boolean }) {
   const positions = useMemo(() => {
     const rand = mulberry32(20260727);
     const arr = new Float32Array(count * 3);
@@ -53,7 +53,7 @@ function DustField({ count = 140 }: { count?: number }) {
 
   const points = useRef<THREE.Points>(null);
   useFrame((_, delta) => {
-    if (points.current) points.current.rotation.y += delta * 0.015;
+    if (points.current && !reduceMotion) points.current.rotation.y += delta * 0.015;
   });
 
   return (
@@ -221,49 +221,72 @@ export default function SkillGalaxy({ skills, activeCategory, onSkillHover, onSk
     return [...map.entries()];
   }, [skills]);
 
+  // Mounted once inside the Skills section and never unmounted, so without
+  // this the Canvas would keep rendering every frame forever, long after
+  // the visitor scrolls past — mirrors PersistentScene's active/inactive
+  // frameloop toggle, using IntersectionObserver instead of ScrollTrigger
+  // since this scene doesn't scrub a scroll-linked composition.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: "200px 0px", threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Canvas
-      dpr={[1, 1.5]}
-      camera={{ position: [0, 3.2, 6.4], fov: 42 }}
-      gl={{ antialias: true, alpha: true }}
-      style={{ touchAction: "pan-y" }}
-    >
-      <ambientLight intensity={0.55} />
-      <pointLight position={[3, 4, 3]} intensity={1.1} color="#ffffff" />
-      <pointLight position={[-3, -2, -3]} intensity={0.5} color="#c9a876" />
+    <div ref={containerRef} style={{ width: "100%", height: "100%" }}>
+      <Canvas
+        dpr={[1, 1.5]}
+        frameloop={inView ? "always" : "never"}
+        camera={{ position: [0, 3.2, 6.4], fov: 42 }}
+        gl={{ antialias: true, alpha: true }}
+        style={{ touchAction: "pan-y" }}
+      >
+        <ambientLight intensity={0.55} />
+        <pointLight position={[3, 4, 3]} intensity={1.1} color="#ffffff" />
+        <pointLight position={[-3, -2, -3]} intensity={0.5} color="#c9a876" />
 
-      <Suspense fallback={null}>
-        <DustField />
-        {categories.map(([category, catSkills], i) => (
-          <OrbitRing
-            key={category}
-            category={category}
-            skills={catSkills}
-            radius={BASE_RADIUS + i * RADIUS_STEP}
-            color={RING_COLORS[i % RING_COLORS.length]}
-            tilt={i % 2 === 0 ? 0.35 : -0.35}
-            speed={RING_SPEED_BASE * (i % 2 === 0 ? 1 : -1) * (1 - i * 0.08)}
-            dimmedRing={activeCategory !== null && activeCategory !== category}
-            activeCategory={activeCategory}
-            reduceMotion={reduceMotion}
-            onHover={onSkillHover}
-            onSelect={onSkillSelect}
-          />
-        ))}
-      </Suspense>
+        <Suspense fallback={null}>
+          <DustField reduceMotion={reduceMotion} />
+          {categories.map(([category, catSkills], i) => (
+            <OrbitRing
+              key={category}
+              category={category}
+              skills={catSkills}
+              radius={BASE_RADIUS + i * RADIUS_STEP}
+              color={RING_COLORS[i % RING_COLORS.length]}
+              tilt={i % 2 === 0 ? 0.35 : -0.35}
+              speed={RING_SPEED_BASE * (i % 2 === 0 ? 1 : -1) * (1 - i * 0.08)}
+              dimmedRing={activeCategory !== null && activeCategory !== category}
+              activeCategory={activeCategory}
+              reduceMotion={reduceMotion}
+              onHover={onSkillHover}
+              onSelect={onSkillSelect}
+            />
+          ))}
+        </Suspense>
 
-      <OrbitControls
-        enablePan={false}
-        enableZoom={true}
-        minDistance={4}
-        maxDistance={11}
-        minPolarAngle={Math.PI / 4}
-        maxPolarAngle={Math.PI / 1.7}
-        autoRotate={!reduceMotion}
-        autoRotateSpeed={0.4}
-        enableDamping
-        dampingFactor={0.08}
-      />
-    </Canvas>
+        <OrbitControls
+          enablePan={false}
+          enableZoom={true}
+          minDistance={4}
+          maxDistance={11}
+          minPolarAngle={Math.PI / 4}
+          maxPolarAngle={Math.PI / 1.7}
+          autoRotate={!reduceMotion}
+          autoRotateSpeed={0.4}
+          enableDamping
+          dampingFactor={0.08}
+        />
+      </Canvas>
+    </div>
   );
 }

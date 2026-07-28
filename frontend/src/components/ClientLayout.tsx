@@ -165,12 +165,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           </>
         )}
 
-        {/* Animated Aurora Background Blobs */}
-        <div className="aurora-bg">
-          <div className="aurora-glow glow-1" />
-          <div className="aurora-glow glow-2" />
-          <div className="aurora-glow glow-3" />
-        </div>
+        {/* Animated Aurora Background Blobs — public pages only; the admin
+            panel is opaque and never shows this, so it isn't worth animating
+            behind it forever. */}
+        {isPublicPage && (
+          <div className="aurora-bg">
+            <div className="aurora-glow glow-1" />
+            <div className="aurora-glow glow-2" />
+            <div className="aurora-glow glow-3" />
+          </div>
+        )}
 
         {children}
 

@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { useInView } from "framer-motion";
 import { Code, GraduationCap, Briefcase, Award, MapPin, Mail, Phone, ArrowUpRight } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 import { Profile } from "@/types";
@@ -62,6 +61,7 @@ export default function About({
   educationsCount,
 }: AboutProps) {
   const { t } = useLocale();
+  const shouldReduceMotion = useReducedMotion();
 
   const stats = [
     { label: t("about.stats.projects", "Projects Built"), value: projectsCount, icon: Code },
@@ -77,7 +77,7 @@ export default function About({
       <div className="grid lg:grid-cols-12 gap-8 items-stretch">
         {/* Bio Bento Card */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: easeOut }}
@@ -133,7 +133,7 @@ export default function About({
               return (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.08, ease: easeOut }}
@@ -161,7 +161,7 @@ export default function About({
 
           <motion.a
             href="#contact"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.32, ease: easeOut }}
