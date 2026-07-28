@@ -306,6 +306,7 @@ export default function ResumePage() {
                 onChange={(e) => setResumeText(e.target.value)}
                 rows={8}
                 placeholder="Paste the plain text of your resume here..."
+                aria-label="Resume text"
                 className="w-full bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-2xl p-4 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors text-sm resize-none"
               />
               <button

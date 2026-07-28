@@ -16,6 +16,7 @@ import SectionWrapper from "@/components/SectionWrapper";
 import GitHubShowcase from "@/components/GitHubShowcase";
 import { getProfile } from "@/services/profileService";
 import { getImageUrl } from "@/lib/api";
+import { safeJsonLd } from "@/lib/utils";
 import {
   extractGitHubUsername,
   getGitHubShowcase,
@@ -105,7 +106,7 @@ export default async function Home() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <Navbar profile={profile} showBlog={blogPosts.length > 0} />
 

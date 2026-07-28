@@ -165,6 +165,7 @@ export default function JobsPage() {
           <input
             type="text"
             placeholder="Search keywords (e.g. Java, React, Spring)..."
+            aria-label="Search keywords"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             className="flex-1 bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
@@ -173,6 +174,7 @@ export default function JobsPage() {
           <select
             value={country}
             onChange={(e) => setCountry(e.target.value)}
+            aria-label="Country"
             className="bg-[var(--noir-bg)] border border-[var(--noir-border)] rounded-xl px-4 py-3 text-[var(--noir-fg)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
           >
             <option value="in">🇮🇳 India</option>

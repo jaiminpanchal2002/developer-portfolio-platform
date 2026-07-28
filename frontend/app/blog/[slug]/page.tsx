@@ -6,6 +6,7 @@ import { ArrowLeft, Clock } from "lucide-react";
 
 import { getBlogPostBySlug } from "@/services/blogService";
 import { getImageUrl } from "@/lib/api";
+import { safeJsonLd } from "@/lib/utils";
 import { BlogPost } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -83,7 +84,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     <main className="relative z-10 min-h-screen" style={{ background: "var(--noir-bg)" }}>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <article className="max-w-3xl mx-auto px-6 md:px-10 py-16 md:py-24">
         <Link

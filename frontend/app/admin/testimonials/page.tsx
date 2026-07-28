@@ -296,6 +296,7 @@ export default function TestimonialsPage() {
               <input
                 type="text"
                 placeholder="Author name *"
+                aria-label="Author name (required)"
                 value={form.authorName}
                 onChange={(e) => setForm({ ...form, authorName: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
@@ -303,12 +304,14 @@ export default function TestimonialsPage() {
               <input
                 type="text"
                 placeholder="Role & company, e.g. Engineering Manager, Acme"
+                aria-label="Author role and company"
                 value={form.authorRole}
                 onChange={(e) => setForm({ ...form, authorRole: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <textarea
                 placeholder="Quote *"
+                aria-label="Testimonial quote (required)"
                 rows={4}
                 value={form.quote}
                 onChange={(e) => setForm({ ...form, quote: e.target.value })}
@@ -317,6 +320,7 @@ export default function TestimonialsPage() {
               <input
                 type="text"
                 placeholder="Avatar URL (optional — from Media library)"
+                aria-label="Avatar URL"
                 value={form.avatarUrl}
                 onChange={(e) => setForm({ ...form, avatarUrl: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
@@ -324,6 +328,7 @@ export default function TestimonialsPage() {
               <input
                 type="text"
                 placeholder="Profile link, e.g. LinkedIn (optional)"
+                aria-label="Profile link"
                 value={form.linkUrl}
                 onChange={(e) => setForm({ ...form, linkUrl: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
@@ -331,6 +336,7 @@ export default function TestimonialsPage() {
               <input
                 type="number"
                 placeholder="Display order (lower shows first)"
+                aria-label="Display order"
                 value={form.displayOrder ?? ""}
                 onChange={(e) =>
                   setForm({

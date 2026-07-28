@@ -160,6 +160,7 @@ export default function LoginPage() {
             autoComplete="one-time-code"
             maxLength={6}
             placeholder="000000"
+            aria-label="Six-digit authentication code"
             required
             autoFocus
             className="w-full p-3.5 rounded-xl bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)] text-[var(--noir-fg)] text-center text-2xl tracking-[0.5em] placeholder-[var(--noir-fg-subtle)] focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
@@ -212,6 +213,7 @@ export default function LoginPage() {
           <input
             type="email"
             placeholder="Enter your email"
+            aria-label="Email"
             required
             className="w-full p-3.5 rounded-xl bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)] text-[var(--noir-fg)] placeholder-[var(--noir-fg-subtle)] text-sm focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
             value={resetEmail}
@@ -222,6 +224,7 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email"
+              aria-label="Email"
               required
               className="w-full p-3.5 rounded-xl bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)] text-[var(--noir-fg)] placeholder-[var(--noir-fg-subtle)] text-sm focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
               value={formData.email}
@@ -236,6 +239,7 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Password"
+              aria-label="Password"
               required
               className="w-full p-3.5 rounded-xl bg-[var(--noir-bg-surface-2)] border border-[var(--noir-border-strong)] text-[var(--noir-fg)] placeholder-[var(--noir-fg-subtle)] text-sm focus:border-[var(--noir-accent)] focus:outline-none transition-colors"
               value={formData.password}

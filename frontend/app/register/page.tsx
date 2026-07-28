@@ -12,6 +12,7 @@ export default function RegisterPage() {
     fullName: "",
     email: "",
     password: "",
+    registrationSecret: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,6 +60,7 @@ export default function RegisterPage() {
         <input
           type="text"
           placeholder="Full Name"
+          aria-label="Full Name"
           className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)]"
           value={formData.fullName}
           onChange={(e) =>
@@ -72,6 +74,7 @@ export default function RegisterPage() {
         <input
           type="email"
           placeholder="Email"
+          aria-label="Email"
           className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)]"
           value={formData.email}
           onChange={(e) =>
@@ -85,6 +88,7 @@ export default function RegisterPage() {
         <input
           type="password"
           placeholder="Password"
+          aria-label="Password"
           className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)]"
           value={formData.password}
           onChange={(e) =>
@@ -94,6 +98,24 @@ export default function RegisterPage() {
             })
           }
         />
+
+        <input
+          type="password"
+          placeholder="Setup Key"
+          aria-label="Setup Key"
+          className="w-full p-3 rounded bg-[var(--noir-bg-surface-2)] text-[var(--noir-fg)]"
+          value={formData.registrationSecret}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              registrationSecret: e.target.value,
+            })
+          }
+        />
+        <p className="text-xs text-[var(--noir-fg)]/60 -mt-2">
+          Only the site owner can create an account — this key is set as an
+          environment variable on the server and isn&apos;t public.
+        </p>
 
         <button
           type="submit"

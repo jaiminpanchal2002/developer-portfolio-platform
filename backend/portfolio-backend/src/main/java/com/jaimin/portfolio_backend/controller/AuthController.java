@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 import com.jaimin.portfolio_backend.dto.AuthResponse;
 import com.jaimin.portfolio_backend.dto.LoginRequest;
 import com.jaimin.portfolio_backend.dto.RegisterRequest;
@@ -26,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public AuthResponse register(
-            @RequestBody RegisterRequest request) {
+            @Valid @RequestBody RegisterRequest request) {
 
         String message = authService.register(request);
 
@@ -35,7 +37,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(
-            @RequestBody LoginRequest request) {
+            @Valid @RequestBody LoginRequest request) {
 
         return authService.login(request);
     }
@@ -54,7 +56,7 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<Map<String, String>> forgotPassword(
-            @RequestBody PasswordResetRequest request) {
+            @Valid @RequestBody PasswordResetRequest request) {
 
         String message = authService.forgotPassword(request.getEmail());
         Map<String, String> response = new HashMap<>();

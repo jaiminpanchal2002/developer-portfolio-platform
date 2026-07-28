@@ -1,11 +1,31 @@
 package com.jaimin.portfolio_backend.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class RegisterRequest {
 
+    @NotBlank(message = "Full name is required")
+    @Size(max = 150)
     private String fullName;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Must be a valid email address")
+    @Size(max = 255)
     private String email;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 255, message = "Password must be at least 8 characters")
     private String password;
+
+    /** Every new account is granted admin access to this portfolio's CMS, so
+     *  registration is gated behind a shared secret only the site owner
+     *  knows (set via ADMIN_REGISTRATION_SECRET) — without it, this
+     *  endpoint would otherwise let anyone on the internet create an admin
+     *  account for themselves. */
+    @NotBlank(message = "Registration secret is required")
+    private String registrationSecret;
 }

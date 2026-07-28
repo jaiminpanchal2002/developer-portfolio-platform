@@ -326,6 +326,7 @@ export default function BlogAdminPage() {
               <input
                 type="text"
                 placeholder="Title *"
+                aria-label="Post title (required)"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
@@ -333,12 +334,14 @@ export default function BlogAdminPage() {
               <input
                 type="text"
                 placeholder="Slug (auto-generated from title if left blank)"
+                aria-label="URL slug"
                 value={form.slug}
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"
               />
               <textarea
                 placeholder="Excerpt — short summary shown in the list"
+                aria-label="Excerpt"
                 rows={2}
                 value={form.excerpt}
                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
@@ -346,6 +349,7 @@ export default function BlogAdminPage() {
               />
               <textarea
                 placeholder="Content * — blank lines separate paragraphs"
+                aria-label="Post content (required)"
                 rows={12}
                 value={form.content}
                 onChange={(e) => setForm({ ...form, content: e.target.value })}
@@ -362,6 +366,7 @@ export default function BlogAdminPage() {
               <input
                 type="text"
                 placeholder="Cover image URL (optional)"
+                aria-label="Cover image URL"
                 value={form.coverImageUrl}
                 onChange={(e) => setForm({ ...form, coverImageUrl: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3 text-sm"
@@ -369,6 +374,7 @@ export default function BlogAdminPage() {
               <input
                 type="text"
                 placeholder="Tags, comma-separated (e.g. AI, Spring Boot)"
+                aria-label="Tags, comma-separated"
                 value={form.tags}
                 onChange={(e) => setForm({ ...form, tags: e.target.value })}
                 className="w-full rounded-lg border border-[var(--noir-border-strong)] bg-[var(--noir-bg-surface-2)] p-3"

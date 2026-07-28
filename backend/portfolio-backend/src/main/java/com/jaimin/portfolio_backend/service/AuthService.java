@@ -1,5 +1,9 @@
 package com.jaimin.portfolio_backend.service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.jaimin.portfolio_backend.security.JwtService;
@@ -25,9 +29,21 @@ public class AuthService {
     private final JavaMailSender mailSender;
     private final TotpService totpService;
 
+    @Value("${app.registration.secret}")
+    private String registrationSecret;
+
     private static final String ISSUER = "Jaimin Panchal Portfolio";
 
     public String register(RegisterRequest request) {
+        // Every account created here gets Role.ADMIN — gate behind a secret
+        // only the site owner knows, rather than leaving this open to
+        // anyone on the internet. Unset (blank) secret means registration
+        // is disabled entirely (fail closed), not "any secret works".
+        if (registrationSecret == null || registrationSecret.isBlank()
+                || !constantTimeEquals(registrationSecret, request.getRegistrationSecret())) {
+            throw new RuntimeException("Registration is currently disabled");
+        }
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
@@ -168,5 +184,13 @@ public class AuthService {
         }
 
         return "Temporary password has been sent to your email.";
+    }
+
+    /** Avoids leaking secret length/content via response-time differences. */
+    private static boolean constantTimeEquals(String expected, String actual) {
+        if (actual == null) return false;
+        return MessageDigest.isEqual(
+                expected.getBytes(StandardCharsets.UTF_8),
+                actual.getBytes(StandardCharsets.UTF_8));
     }
 }

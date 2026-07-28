@@ -14,6 +14,7 @@ import com.jaimin.portfolio_backend.entity.Appointment;
 import com.jaimin.portfolio_backend.service.AppointmentService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /** Public booking surface — no auth, so it's rate-limited per IP the same
@@ -43,7 +44,7 @@ public class PublicAppointmentController {
     }
 
     @PostMapping
-    public ResponseEntity<?> book(@RequestBody AppointmentRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> book(@Valid @RequestBody AppointmentRequest request, HttpServletRequest httpRequest) {
         if (!isWithinRateLimit(clientIp(httpRequest))) {
             return ResponseEntity.status(429).body(Map.of(
                     "error", "Too many booking attempts — please try again in a few minutes."));

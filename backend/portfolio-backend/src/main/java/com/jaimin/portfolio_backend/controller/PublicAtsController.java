@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jaimin.portfolio_backend.entity.Certificate;
@@ -45,6 +49,15 @@ public class PublicAtsController {
 
     private static final Logger log = LoggerFactory.getLogger(PublicAtsController.class);
 
+    // Public + unauthenticated and backed by the paid Gemini API — rate
+    // limited per IP the same way the chatbot/contact/appointment endpoints
+    // are, plus a length cap so a single request can't send an unbounded
+    // prompt.
+    private static final int MAX_JD_LENGTH = 8000;
+    private static final int RATE_LIMIT_PER_WINDOW = 10;
+    private static final long RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000L;
+    private final Map<String, ConcurrentLinkedDeque<Long>> requestLog = new ConcurrentHashMap<>();
+
     private final SkillService skillService;
     private final ProjectService projectService;
     private final ExperienceService experienceService;
@@ -64,10 +77,17 @@ public class PublicAtsController {
     };
 
     @PostMapping("/ats-match")
-    public ResponseEntity<?> evaluateJobDescriptionFit(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> evaluateJobDescriptionFit(@RequestBody Map<String, String> request, HttpServletRequest httpRequest) {
         String jd = request.get("jobDescription");
         if (jd == null || jd.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Job description cannot be empty"));
+        }
+        if (jd.length() > MAX_JD_LENGTH) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Job description is too long"));
+        }
+        if (!isWithinRateLimit(clientIp(httpRequest))) {
+            return ResponseEntity.status(429).body(Map.of(
+                    "error", "Too many requests — please try again in a few minutes."));
         }
 
         Profile profile = profileService.getProfile();
@@ -209,5 +229,26 @@ public class PublicAtsController {
             }
             return sb.toString();
         }
+    }
+
+    private boolean isWithinRateLimit(String clientIp) {
+        long now = System.currentTimeMillis();
+        ConcurrentLinkedDeque<Long> timestamps = requestLog.computeIfAbsent(clientIp, k -> new ConcurrentLinkedDeque<>());
+        while (!timestamps.isEmpty() && now - timestamps.peekFirst() > RATE_LIMIT_WINDOW_MS) {
+            timestamps.pollFirst();
+        }
+        if (timestamps.size() >= RATE_LIMIT_PER_WINDOW) {
+            return false;
+        }
+        timestamps.addLast(now);
+        return true;
+    }
+
+    private static String clientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            return forwarded.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 }

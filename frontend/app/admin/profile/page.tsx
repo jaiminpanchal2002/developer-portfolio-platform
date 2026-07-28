@@ -190,6 +190,7 @@ export default function ProfilePage() {
         <input
           name="fullName"
           placeholder="Full Name"
+          aria-label="Full Name"
           value={profile.fullName}
           onChange={handleChange}
           className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
@@ -198,6 +199,7 @@ export default function ProfilePage() {
         <input
           name="headline"
           placeholder="Headline"
+          aria-label="Headline"
           value={profile.headline}
           onChange={handleChange}
           className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
@@ -206,6 +208,7 @@ export default function ProfilePage() {
         <textarea
           name="about"
           placeholder="About"
+          aria-label="About"
           rows={5}
           value={profile.about}
           onChange={handleChange}
@@ -215,6 +218,7 @@ export default function ProfilePage() {
         <input
           name="email"
           placeholder="Email"
+          aria-label="Email"
           value={profile.email}
           onChange={handleChange}
           className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
@@ -223,6 +227,7 @@ export default function ProfilePage() {
         <input
           name="phone"
           placeholder="Phone"
+          aria-label="Phone"
           value={profile.phone}
           onChange={handleChange}
           className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
@@ -231,6 +236,7 @@ export default function ProfilePage() {
         <input
           name="location"
           placeholder="Location"
+          aria-label="Location"
           value={profile.location}
           onChange={handleChange}
           className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
@@ -239,6 +245,7 @@ export default function ProfilePage() {
         <input
           name="linkedinUrl"
           placeholder="LinkedIn URL"
+          aria-label="LinkedIn URL"
           value={profile.linkedinUrl}
           onChange={handleChange}
           className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
@@ -247,6 +254,7 @@ export default function ProfilePage() {
         <input
           name="githubUrl"
           placeholder="GitHub URL"
+          aria-label="GitHub URL"
           value={profile.githubUrl}
           onChange={handleChange}
           className="w-full p-3 rounded bg-[var(--noir-bg-elevated)] border border-[var(--noir-border-strong)]"
@@ -283,6 +291,7 @@ export default function ProfilePage() {
           <input
             name="resumeUrl"
             placeholder="Resume URL"
+            aria-label="Resume URL"
             value={profile.resumeUrl}
             onChange={handleChange}
             className="w-full p-2.5 rounded bg-[var(--noir-bg)] border border-[var(--noir-border-strong)] text-sm"

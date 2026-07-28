@@ -3,25 +3,37 @@ package com.jaimin.portfolio_backend.controller;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.HtmlUtils;
 
+import com.jaimin.portfolio_backend.dto.ContactRequest;
 import com.jaimin.portfolio_backend.entity.ContactInquiry;
 import com.jaimin.portfolio_backend.repository.ContactInquiryRepository;
 
+/** Public, unauthenticated form — rate-limited per IP the same way the
+ *  appointment booking and chatbot endpoints are, since every submission
+ *  triggers two live outbound emails. */
 @RestController
 @RequestMapping("/api/public")
 public class PublicContactController {
+
+    private static final int RATE_LIMIT_PER_WINDOW = 5;
+    private static final long RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000L;
+    private final Map<String, ConcurrentLinkedDeque<Long>> requestLog = new ConcurrentHashMap<>();
 
     @Autowired
     private JavaMailSender mailSender;
@@ -32,23 +44,21 @@ public class PublicContactController {
     @Value("${spring.mail.username:your-email@gmail.com}")
     private String senderEmail;
 
-    // A customizable permanent Google Meet link (unused if Jitsi is generated). 
+    // A customizable permanent Google Meet link (unused if Jitsi is generated).
     @Value("${jaimin.meet.link:https://meet.google.com/ira-yipn-ihu}")
     private String defaultMeetLink;
 
     @PostMapping("/contact")
-    public ResponseEntity<?> submitContactInquiry(@RequestBody Map<String, Object> request) {
-        String name = (String) request.get("name");
-        String email = (String) request.get("email");
-        String message = (String) request.get("message");
-
-        Object scheduleMeetingObj = request.get("scheduleMeeting");
-        boolean scheduleMeeting = false;
-        if (scheduleMeetingObj instanceof Boolean) {
-            scheduleMeeting = (Boolean) scheduleMeetingObj;
-        } else if (scheduleMeetingObj instanceof String) {
-            scheduleMeeting = Boolean.parseBoolean((String) scheduleMeetingObj);
+    public ResponseEntity<?> submitContactInquiry(@Valid @RequestBody ContactRequest request, HttpServletRequest httpRequest) {
+        if (!isWithinRateLimit(clientIp(httpRequest))) {
+            return ResponseEntity.status(429).body(Map.of(
+                    "error", "Too many submissions — please try again in a few minutes."));
         }
+
+        String name = request.getName();
+        String email = request.getEmail();
+        String message = request.getMessage();
+        boolean scheduleMeeting = Boolean.TRUE.equals(request.getScheduleMeeting());
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "Inquiry received. Thank you for connecting!");
@@ -66,8 +76,8 @@ public class PublicContactController {
         if (scheduleMeeting) {
             String cleanName = name != null ? name.replaceAll("[^a-zA-Z0-9]", "") : "Guest";
             meetLink = "https://meet.jit.si/DeveloperCounselling-" + cleanName + "-" + (System.currentTimeMillis() % 1000000);
-            date = (String) request.get("meetingDate");
-            time = (String) request.get("meetingTime");
+            date = request.getMeetingDate();
+            time = request.getMeetingTime();
             response.put("googleMeetLink", meetLink);
 
             System.out.println("-------------------------------------------------");
@@ -122,6 +132,27 @@ public class PublicContactController {
         return ResponseEntity.ok(response);
     }
 
+    private boolean isWithinRateLimit(String clientIp) {
+        long now = System.currentTimeMillis();
+        ConcurrentLinkedDeque<Long> timestamps = requestLog.computeIfAbsent(clientIp, k -> new ConcurrentLinkedDeque<>());
+        while (!timestamps.isEmpty() && now - timestamps.peekFirst() > RATE_LIMIT_WINDOW_MS) {
+            timestamps.pollFirst();
+        }
+        if (timestamps.size() >= RATE_LIMIT_PER_WINDOW) {
+            return false;
+        }
+        timestamps.addLast(now);
+        return true;
+    }
+
+    private static String clientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            return forwarded.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
+
     private void sendRealEmail(String to, String subject, String htmlBody) {
         try {
             if (senderEmail == null || senderEmail.equals("your-email@gmail.com") || !senderEmail.contains("@")) {
@@ -143,9 +174,17 @@ public class PublicContactController {
     }
 
     private String buildVisitorEmailHtml(String name, String message, boolean scheduled, String date, String time, String meetLink) {
+        // Visitor-supplied text goes straight into an HTML email body sent
+        // in HTML mode (see sendRealEmail) — escape it so a submission can't
+        // inject markup/links into the confirmation email.
+        name = HtmlUtils.htmlEscape(name);
+        message = HtmlUtils.htmlEscape(message);
+        date = date != null ? HtmlUtils.htmlEscape(date) : date;
+        time = time != null ? HtmlUtils.htmlEscape(time) : time;
+
         String meetingBox = "";
         if (scheduled) {
-            meetingBox = 
+            meetingBox =
                 "      <div style=\"background-color: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; margin: 24px 0;\">" +
                 "        <p style=\"font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; font-family: monospace; letter-spacing: 0.1em; margin: 0 0 12px 0;\">" +
                 "          🎥 Virtual Meeting Confirmed" +
@@ -188,9 +227,18 @@ public class PublicContactController {
     }
 
     private String buildOwnerEmailHtml(String visitorName, String visitorEmail, String message, boolean scheduled, String date, String time, String meetLink) {
+        // Same escaping as buildVisitorEmailHtml — this HTML lands in the
+        // notification email the site owner opens, so it's the higher-value
+        // target for injected markup/links.
+        visitorName = HtmlUtils.htmlEscape(visitorName);
+        visitorEmail = HtmlUtils.htmlEscape(visitorEmail);
+        message = HtmlUtils.htmlEscape(message);
+        date = date != null ? HtmlUtils.htmlEscape(date) : date;
+        time = time != null ? HtmlUtils.htmlEscape(time) : time;
+
         String meetingBox = "";
         if (scheduled) {
-            meetingBox = 
+            meetingBox =
                 "      <div style=\"background-color: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; margin: 24px 0;\">" +
                 "        <p style=\"font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; font-family: monospace; letter-spacing: 0.1em; margin: 0 0 12px 0;\">" +
                 "          📅 CONFIRMED MEETING DETAILS" +

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import com.jaimin.portfolio_backend.dto.AppointmentRequest;
 import com.jaimin.portfolio_backend.entity.Appointment;
@@ -172,7 +173,12 @@ public class AppointmentService {
         }
     }
 
+    // Every visitor-supplied field below (name/company/purpose/message) is
+    // HTML-escaped before interpolation — these emails are sent in HTML mode
+    // (see sendEmail), so unescaped input could inject markup/links into
+    // both the visitor's own confirmation email and the owner's inbox.
     private String visitorEmailHtml(Appointment a, String headline, boolean includeMeetingLink) {
+        String name = HtmlUtils.htmlEscape(a.getName());
         String meetingBox = includeMeetingLink && a.getMeetingLink() != null
                 ? "<div style=\"background:#020617;border:1px solid #1e293b;border-radius:12px;padding:20px;margin:20px 0;\">"
                         + "<p style=\"font-size:12px;color:#64748b;text-transform:uppercase;font-weight:800;margin:0 0 10px;\">Meeting Link</p>"
@@ -182,7 +188,7 @@ public class AppointmentService {
         return "<html><body style=\"background:#090d16;color:#cbd5e1;font-family:sans-serif;padding:32px;\">"
                 + "<div style=\"max-width:560px;margin:0 auto;background:#0b1329;border:1px solid #1e293b;border-radius:16px;padding:32px;\">"
                 + "<h2 style=\"color:#fff;margin-top:0;\">" + headline + "</h2>"
-                + "<p>Hi " + a.getName() + ",</p>"
+                + "<p>Hi " + name + ",</p>"
                 + "<p style=\"font-size:14px;color:#94a3b8;\">Date: <b>" + a.getAppointmentDate() + "</b> at <b>" + a.getAppointmentTime() + "</b></p>"
                 + meetingBox
                 + "<p style=\"font-size:13px;color:#64748b;margin-top:24px;border-top:1px solid #1e293b;padding-top:16px;\">Automated notification from the portfolio appointment system.</p>"
@@ -190,15 +196,21 @@ public class AppointmentService {
     }
 
     private String ownerEmailHtml(Appointment a, String headline) {
+        String name = HtmlUtils.htmlEscape(a.getName());
+        String email = HtmlUtils.htmlEscape(a.getEmail());
+        String phone = a.getPhone() != null ? HtmlUtils.htmlEscape(a.getPhone()) : null;
+        String company = a.getCompany() != null ? HtmlUtils.htmlEscape(a.getCompany()) : null;
+        String purpose = a.getPurpose() != null ? HtmlUtils.htmlEscape(a.getPurpose()) : null;
+        String message = a.getMessage() != null ? HtmlUtils.htmlEscape(a.getMessage()) : "";
         return "<html><body style=\"background:#090d16;color:#cbd5e1;font-family:sans-serif;padding:32px;\">"
                 + "<div style=\"max-width:560px;margin:0 auto;background:#0b1329;border:1px solid #1e293b;border-radius:16px;padding:32px;\">"
                 + "<h2 style=\"color:#fff;margin-top:0;\">" + headline + "</h2>"
-                + "<p><b>" + a.getName() + "</b> (" + a.getEmail() + (a.getPhone() != null && !a.getPhone().isBlank() ? ", " + a.getPhone() : "") + ")</p>"
-                + (a.getCompany() != null && !a.getCompany().isBlank() ? "<p>Company: " + a.getCompany() + "</p>" : "")
-                + (a.getPurpose() != null && !a.getPurpose().isBlank() ? "<p>Purpose: " + a.getPurpose() + "</p>" : "")
+                + "<p><b>" + name + "</b> (" + email + (phone != null && !phone.isBlank() ? ", " + phone : "") + ")</p>"
+                + (company != null && !company.isBlank() ? "<p>Company: " + company + "</p>" : "")
+                + (purpose != null && !purpose.isBlank() ? "<p>Purpose: " + purpose + "</p>" : "")
                 + "<p style=\"font-size:14px;color:#94a3b8;\">Requested: <b>" + a.getAppointmentDate() + "</b> at <b>" + a.getAppointmentTime() + "</b></p>"
                 + "<div style=\"background:#020617;border-left:3px solid #06b6d4;padding:14px;margin:16px 0;border-radius:4px;\">"
-                + "<p style=\"font-size:13px;color:#e2e8f0;margin:0;\">" + (a.getMessage() != null ? a.getMessage() : "") + "</p>"
+                + "<p style=\"font-size:13px;color:#e2e8f0;margin:0;\">" + message + "</p>"
                 + "</div>"
                 + "</div></body></html>";
     }
