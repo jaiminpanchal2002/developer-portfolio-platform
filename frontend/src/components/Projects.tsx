@@ -4,6 +4,7 @@ import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Globe, ArrowUpRight } from "lucide-react";
 import { useLocale } from "@/lib/localeContext";
 import { getImageUrl } from "../lib/api";
@@ -17,9 +18,13 @@ const easeOut = [0.16, 1, 0.3, 1] as const;
 
 function ProjectCard({ project, onImageClick }: { project: Project; onImageClick: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const [imgError, setImgError] = useState(false);
+
+  const caseStudyHref = `/projects/${project.id}`;
+  const goToCaseStudy = () => router.push(caseStudyHref);
 
   const getFallbackBanner = () => {
     return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200"><rect width="100%" height="100%" fill="%230a0a0b"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20" fill="%23c9a876">&lt;Code /&gt;</text></svg>`;
@@ -54,6 +59,16 @@ function ProjectCard({ project, onImageClick }: { project: Project; onImageClick
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onClick={goToCaseStudy}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          goToCaseStudy();
+        }
+      }}
+      role="link"
+      tabIndex={0}
+      aria-label={`Open case study: ${project.title}`}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
       className="bento-card group flex flex-col justify-between h-full min-h-[460px] cursor-pointer shadow-2xl p-6 overflow-hidden"
     >
@@ -121,6 +136,7 @@ function ProjectCard({ project, onImageClick }: { project: Project; onImageClick
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="flex items-center gap-1.5 text-xs font-semibold transition-opacity hover:opacity-70"
                 style={{ color: "var(--noir-fg-muted)" }}
               >
@@ -134,6 +150,7 @@ function ProjectCard({ project, onImageClick }: { project: Project; onImageClick
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="flex items-center gap-1.5 text-xs font-semibold transition-opacity hover:opacity-70"
                 style={{ color: "var(--noir-accent)" }}
               >
@@ -143,7 +160,8 @@ function ProjectCard({ project, onImageClick }: { project: Project; onImageClick
             )}
 
             <Link
-              href={`/projects/${project.id}`}
+              href={caseStudyHref}
+              onClick={(e) => e.stopPropagation()}
               className="ml-auto flex items-center gap-1.5 text-xs font-semibold transition-opacity hover:opacity-70"
               style={{ color: "var(--noir-fg)" }}
             >
