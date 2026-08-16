@@ -194,8 +194,9 @@ function BranchLines({
 function GitGraph() {
   const branchA = useRef<THREE.Group>(null);
   const branchB = useRef<THREE.Group>(null);
+  const ring2 = useRef<THREE.Mesh>(null);
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     // Branches fold toward the trunk as the scene settles — a merge.
     const progress = heroSceneProgress.value;
     const foldA = THREE.MathUtils.lerp(0, -0.9, progress);
@@ -207,6 +208,12 @@ function GitGraph() {
     if (branchB.current) {
       branchB.current.rotation.z = THREE.MathUtils.damp(
         branchB.current.rotation.z, foldB, 4, delta);
+    }
+    // Outer ring drifts on its own axis, counter to the inner ring, so the
+    // composition keeps breathing even once the scroll morph has settled.
+    if (ring2.current) {
+      ring2.current.rotation.z += delta * 0.08;
+      ring2.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.25;
     }
   });
 
@@ -265,8 +272,37 @@ function GitGraph() {
           opacity={0.4}
         />
       </mesh>
+
+      {/* A second, wider orbit on a different plane — self-animated above.
+          Cool-toned so it reads as depth against the warm inner ring. */}
+      <mesh ref={ring2} rotation={[Math.PI / 3, 0, Math.PI / 5]}>
+        <torusGeometry args={[2.55, 0.008, 10, 128]} />
+        <meshStandardMaterial
+          color="#8fa3b3"
+          roughness={0.5}
+          metalness={0.2}
+          emissive="#8fa3b3"
+          emissiveIntensity={0.3}
+          transparent
+          opacity={0.28}
+        />
+      </mesh>
     </group>
   );
+}
+
+// A quiet accent light that swells and ebbs, giving the metals a slow
+// highlight sweep so the settled composition never looks frozen.
+function BreathingAccent() {
+  const light = useRef<THREE.PointLight>(null);
+  useFrame((state) => {
+    if (!light.current) return;
+    const t = state.clock.elapsedTime;
+    light.current.intensity = 0.3 + (Math.sin(t * 0.8) * 0.5 + 0.5) * 0.5;
+    light.current.position.x = Math.sin(t * 0.25) * 2.5;
+    light.current.position.y = Math.cos(t * 0.2) * 1.5 + 1;
+  });
+  return <pointLight ref={light} color="#c9a876" intensity={0.4} distance={12} />;
 }
 
 // Mounted once, fixed behind the whole page. Its composition morphs (via
@@ -369,6 +405,7 @@ export default function PersistentScene() {
         <pointLight position={[-2, 3, -3]} intensity={0.3} color="#c9a876" />
         <Suspense fallback={null}>
           <ParticleField />
+          <BreathingAccent />
           <FloatingComposition />
           <ContactShadows position={[0, -1.6, 0]} opacity={0.4} scale={10} blur={2.4} far={3} />
         </Suspense>
