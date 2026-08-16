@@ -24,13 +24,24 @@ const SkillGalaxy = dynamic(() => import("@/components/ui/skills3d/SkillGalaxy")
 const easeOut = [0.16, 1, 0.3, 1] as const;
 
 const FALLBACK_SKILLS: Skill[] = [
-  { id: 1, name: "Java", category: "Backend", proficiency: 90 },
-  { id: 2, name: "Spring Boot", category: "Backend", proficiency: 85 },
-  { id: 3, name: "React", category: "Frontend", proficiency: 88 },
-  { id: 4, name: "Next.js", category: "Frontend", proficiency: 80 },
-  { id: 5, name: "PostgreSQL", category: "Database", proficiency: 82 },
-  { id: 6, name: "Docker", category: "DevOps", proficiency: 75 },
-  { id: 7, name: "AWS", category: "DevOps", proficiency: 70 },
+  { id: 1, name: "PHP", category: "Backend", proficiency: 92 },
+  { id: 2, name: "Laravel", category: "Backend", proficiency: 92 },
+  { id: 3, name: "FastAPI", category: "Backend", proficiency: 84 },
+  { id: 4, name: "Node.js / NestJS", category: "Backend", proficiency: 82 },
+  { id: 5, name: "Spring Boot", category: "Backend", proficiency: 78 },
+  { id: 6, name: "TypeScript", category: "Frontend", proficiency: 85 },
+  { id: 7, name: "React", category: "Frontend", proficiency: 85 },
+  { id: 8, name: "Next.js", category: "Frontend", proficiency: 82 },
+  { id: 9, name: "Vue.js", category: "Frontend", proficiency: 78 },
+  { id: 10, name: "MySQL", category: "Database", proficiency: 88 },
+  { id: 11, name: "PostgreSQL", category: "Database", proficiency: 84 },
+  { id: 12, name: "Redis", category: "Database", proficiency: 80 },
+  { id: 13, name: "RAG / LangChain", category: "AI", proficiency: 85 },
+  { id: 14, name: "LangGraph / Agents", category: "AI", proficiency: 80 },
+  { id: 15, name: "pgvector / Embeddings", category: "AI", proficiency: 82 },
+  { id: 16, name: "Docker", category: "DevOps", proficiency: 80 },
+  { id: 17, name: "AWS (EC2, S3)", category: "DevOps", proficiency: 72 },
+  { id: 18, name: "GitHub Actions / CI-CD", category: "DevOps", proficiency: 80 },
 ];
 
 const RING_COLORS = ["#c9a876", "#8b7fd6", "#4fb8a8", "#d68f6b", "#6f9fd6", "#d66f9f"];

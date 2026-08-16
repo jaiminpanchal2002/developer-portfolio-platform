@@ -14,6 +14,7 @@ import Testimonials from "@/components/Testimonials";
 import SectionWrapper from "@/components/SectionWrapper";
 
 import GitHubShowcase from "@/components/GitHubShowcase";
+import TechMarquee from "@/components/TechMarquee";
 import { getProfile } from "@/services/profileService";
 import { getImageUrl } from "@/lib/api";
 import { safeJsonLd } from "@/lib/utils";
@@ -42,7 +43,7 @@ const FALLBACK_PROFILE = {
   fullName: "Jaimin Panchal",
   headline: "Backend & AI Engineer",
   about:
-    "Backend and AI Software Engineer with 2+ years shipping production SaaS, e-commerce, and fintech platforms. Strongest in Laravel/PHP and TypeScript/Next.js, with production Java/Spring Boot, Python/FastAPI, and Flutter. Builds evaluation-driven LLM systems (hybrid RAG, agentic tool calling) shipped through DevSecOps CI/CD.",
+    "I build and ship production backends — SaaS, e-commerce, and fintech. 2.5+ years in Laravel/PHP and MySQL, including a Shopify order backend handling 10,000+ orders/month and five live client products. I also build LLM/RAG systems (LangChain, LangGraph, pgvector) and full-stack apps with FastAPI, Node.js, and Next.js — shipped through Docker and CI/CD.",
   email: "jaiminmpanchal02@gmail.com",
   phone: undefined as string | undefined,
   location: "Ahmedabad, India",
@@ -112,6 +113,10 @@ export default async function Home() {
 
       <main className="relative z-10 overflow-x-hidden">
         <Hero profile={profile} />
+
+        {/* Full-bleed stack marquee — bridges the hero into the page and
+            states the toolset at a glance before any prose. */}
+        <TechMarquee />
 
         <SectionWrapper id="about">
           <About

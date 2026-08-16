@@ -6,6 +6,7 @@ import { Code, GraduationCap, Briefcase, Award, MapPin, Mail, Phone, ArrowUpRigh
 import { useLocale } from "@/lib/localeContext";
 import { Profile } from "@/types";
 import SectionHeading from "@/components/ui/SectionHeading";
+import AnimatedText from "@/components/ui/AnimatedText";
 
 interface AboutProps {
   profile: Profile;
@@ -83,12 +84,11 @@ export default function About({
           transition={{ duration: 0.6, ease: easeOut }}
           className="lg:col-span-7 flex flex-col justify-between bento-card p-8 md:p-10 shadow-2xl"
         >
-          <p
+          <AnimatedText
+            text={profile.about}
             className="font-[family-name:var(--font-sans)] text-base md:text-lg leading-relaxed"
             style={{ color: "var(--noir-fg-muted)" }}
-          >
-            {profile.about}
-          </p>
+          />
 
           {/* Quick Details Table */}
           <div className="flex flex-wrap justify-between gap-6 mt-12 pt-8 border-t text-sm" style={{ borderColor: "var(--noir-border)" }}>

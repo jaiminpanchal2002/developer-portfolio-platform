@@ -90,9 +90,9 @@ export default function Hero({ profile }: HeroProps) {
             <RotatingRoles
               roles={[
                 profile.headline,
-                t("hero.role.fullstack", "Full Stack Engineer"),
-                t("hero.role.ai", "AI & LLM Integration Specialist"),
-                t("hero.role.backend", "Spring Boot & Cloud Architect"),
+                t("hero.role.backend", "Laravel & FastAPI Backends"),
+                t("hero.role.ai", "LLM · RAG & Agents"),
+                t("hero.role.fullstack", "Full-Stack · Next.js & TypeScript"),
               ].filter((r, i, arr) => Boolean(r) && arr.indexOf(r) === i)}
             />
           </motion.p>
