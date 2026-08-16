@@ -27,11 +27,10 @@ const isTouchSnapshot = () =>
   "ontouchstart" in window || navigator.maxTouchPoints > 0;
 // Mirrors PersistentScene's own internal gate — checked here too so the
 // dynamic import's chunk (Three.js + drei, ~900KB) is never even requested
-// for visitors who'd never see it, instead of downloading it just to have
-// the component immediately return null after the fact.
+// for visitors who'd never see it. The hero scene now runs on mobile as
+// well (tuned lighter there), so the only opt-out left is reduced-motion.
 const sceneEnabledSnapshot = () =>
-  !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
-  window.matchMedia("(min-width: 768px)").matches;
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const cursorRef = useRef<HTMLDivElement>(null);

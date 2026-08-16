@@ -39,7 +39,11 @@ const PARTICLE_POSITIONS = (() => {
   return positions;
 })();
 
-function ParticleField() {
+// A thinned constellation for phones — fewer points to rasterise keeps the
+// fill-rate down on mobile GPUs without changing the look meaningfully.
+const MOBILE_PARTICLE_POSITIONS = PARTICLE_POSITIONS.slice(0, 150 * 3);
+
+function ParticleField({ positions }: { positions: Float32Array }) {
   const points = useRef<THREE.Points>(null);
 
   useFrame((state, delta) => {
@@ -55,7 +59,7 @@ function ParticleField() {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          args={[PARTICLE_POSITIONS, 3]}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -75,10 +79,18 @@ const SETTLE_X = 2.6;
 const SETTLE_Y = -1.4;
 const SETTLE_SCALE = 0.5;
 
-function FloatingComposition() {
+function FloatingComposition({ isMobile }: { isMobile: boolean }) {
   const group = useRef<THREE.Group>(null);
   const { pointer } = useThree();
   const parallax = useRef({ x: 0, y: 0 });
+
+  // On phones the composition centres and shrinks so it reads as a backdrop
+  // behind the full-width hero copy, instead of being pushed off the right
+  // edge the way the desktop (text-left) layout wants it.
+  const restX = isMobile ? 0 : REST_X;
+  const restY = isMobile ? -0.35 : 0;
+  const settleX = isMobile ? 1.4 : SETTLE_X;
+  const baseScale = isMobile ? 0.72 : 1;
 
   useFrame((_, delta) => {
     if (!group.current) return;
@@ -91,9 +103,9 @@ function FloatingComposition() {
     group.current.rotation.y = parallax.current.x + progress * 0.7;
     group.current.rotation.x = -parallax.current.y;
 
-    const targetX = THREE.MathUtils.lerp(REST_X, SETTLE_X, progress);
-    const targetY = THREE.MathUtils.lerp(0, SETTLE_Y, progress);
-    const targetScale = THREE.MathUtils.lerp(1, SETTLE_SCALE, progress);
+    const targetX = THREE.MathUtils.lerp(restX, settleX, progress);
+    const targetY = THREE.MathUtils.lerp(restY, SETTLE_Y, progress);
+    const targetScale = THREE.MathUtils.lerp(baseScale, SETTLE_SCALE, progress);
 
     group.current.position.x = THREE.MathUtils.damp(group.current.position.x, targetX, 4, delta);
     group.current.position.y = THREE.MathUtils.damp(group.current.position.y, targetY, 4, delta);
@@ -103,7 +115,7 @@ function FloatingComposition() {
   });
 
   return (
-    <group ref={group} position={[REST_X, 0, 0]}>
+    <group ref={group} position={[restX, restY, 0]} scale={baseScale}>
       <Float speed={1.2} rotationIntensity={0.35} floatIntensity={0.7}>
         <GitGraph />
       </Float>
@@ -309,9 +321,11 @@ function BreathingAccent() {
 // heroSceneProgress, driven by a ScrollTrigger spanning Hero -> Skills) as
 // the user scrolls, instead of each section owning its own WebGL context.
 const emptySubscribe = () => () => {};
+// Runs on every motion-allowed device now, phones included — the width gate
+// was dropped so the hero 3D shows on mobile. Reduced-motion still opts out.
 const enabledSnapshot = () =>
-  !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
-  window.matchMedia("(min-width: 768px)").matches;
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const mobileSnapshot = () => window.innerWidth < 768;
 
 export default function PersistentScene() {
   // Media-query gate lives outside React state: the server snapshot is
@@ -319,6 +333,9 @@ export default function PersistentScene() {
   // once at hydration — same behavior as the old setEnabled-in-effect,
   // without a cascading render.
   const enabled = useSyncExternalStore(emptySubscribe, enabledSnapshot, () => false);
+  // Phone tier: lighter Canvas settings (no shadows, dpr 1, thinned
+  // particles) and a re-centred, smaller composition, decided once at mount.
+  const isMobile = useSyncExternalStore(emptySubscribe, mobileSnapshot, () => false);
   const [active, setActive] = useState(true);
 
   useEffect(() => {
@@ -381,18 +398,20 @@ export default function PersistentScene() {
       // kept a live fixed layer that could still surface in screenshots,
       // print, and some compositor edge cases.
       style={{
-        opacity: active ? 1 : 0,
+        // Slightly dimmer on phones so the centred composition stays a
+        // backdrop behind the full-width hero copy rather than competing.
+        opacity: active ? (isMobile ? 0.65 : 1) : 0,
         visibility: active ? "visible" : "hidden",
         transitionProperty: "opacity, visibility",
       }}
       aria-hidden="true"
     >
       <Canvas
-        dpr={[1, 1.5]}
-        shadows
+        dpr={isMobile ? [1, 1] : [1, 1.5]}
+        shadows={!isMobile}
         frameloop={active ? "always" : "never"}
         camera={{ position: [0, 0, 6.5], fov: 38 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: "high-performance" }}
       >
         {/* Self-contained 3-point studio lighting — deliberately not using
             drei's <Environment>, which fetches an HDR map from a remote
@@ -404,10 +423,14 @@ export default function PersistentScene() {
         <directionalLight position={[-4, -1, 2]} intensity={0.4} color="#8fa3b3" />
         <pointLight position={[-2, 3, -3]} intensity={0.3} color="#c9a876" />
         <Suspense fallback={null}>
-          <ParticleField />
+          <ParticleField positions={isMobile ? MOBILE_PARTICLE_POSITIONS : PARTICLE_POSITIONS} />
           <BreathingAccent />
-          <FloatingComposition />
-          <ContactShadows position={[0, -1.6, 0]} opacity={0.4} scale={10} blur={2.4} far={3} />
+          <FloatingComposition isMobile={isMobile} />
+          {/* Contact shadow needs the shadow map — skipped on the phone tier
+              where shadows are off, so it wouldn't render anyway. */}
+          {!isMobile && (
+            <ContactShadows position={[0, -1.6, 0]} opacity={0.4} scale={10} blur={2.4} far={3} />
+          )}
         </Suspense>
       </Canvas>
     </div>
