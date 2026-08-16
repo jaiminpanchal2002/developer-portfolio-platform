@@ -1,6 +1,14 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useAnimationFrame,
+  useMotionValue,
+  useTransform,
+  wrap,
+} from "framer-motion";
 import type { IconType } from "react-icons";
 import {
   SiLaravel,
@@ -92,33 +100,40 @@ function Chip({ name, Icon }: Tech) {
 function Row({
   items,
   direction,
-  duration,
+  speed,
   reduce,
 }: {
   items: Tech[];
   direction: "left" | "right";
-  duration: number;
+  /** Scroll speed in percent of one copy-width per second. */
+  speed: number;
   reduce: boolean;
 }) {
-  // Duplicate the set so the -50% translate lands exactly one copy over,
-  // giving a seamless loop with no visible seam or snap.
+  // Duplicate the set so wrapping at -50% lands exactly one copy over,
+  // giving a seamless loop. Frame-driven (not a keyframe tween) so hover
+  // can freeze it in place and release it without snapping back.
   const doubled = [...items, ...items];
+  const baseX = useMotionValue(0);
+  const x = useTransform(baseX, (v) => `${wrap(-50, 0, v)}%`);
+  const hovered = useRef(false);
+  const dir = direction === "left" ? -1 : 1;
+
+  useAnimationFrame((_, delta) => {
+    if (reduce || hovered.current) return;
+    baseX.set(baseX.get() + dir * speed * (delta / 1000));
+  });
 
   return (
-    <div className="relative overflow-hidden">
-      <motion.div
-        className="flex w-max gap-3"
-        animate={
-          reduce
-            ? undefined
-            : { x: direction === "left" ? ["0%", "-50%"] : ["-50%", "0%"] }
-        }
-        transition={
-          reduce
-            ? undefined
-            : { duration, ease: "linear", repeat: Infinity }
-        }
-      >
+    <div
+      className="relative overflow-hidden"
+      onPointerEnter={() => {
+        hovered.current = true;
+      }}
+      onPointerLeave={() => {
+        hovered.current = false;
+      }}
+    >
+      <motion.div className="flex w-max gap-3" style={reduce ? undefined : { x }}>
         {doubled.map((tech, i) => (
           <Chip key={`${tech.name}-${i}`} {...tech} />
         ))}
@@ -153,8 +168,8 @@ export default function TechMarquee() {
       />
 
       <div className="flex flex-col gap-3">
-        <Row items={ROW_A} direction="left" duration={48} reduce={reduce} />
-        <Row items={ROW_B} direction="right" duration={42} reduce={reduce} />
+        <Row items={ROW_A} direction="left" speed={1.1} reduce={reduce} />
+        <Row items={ROW_B} direction="right" speed={1.3} reduce={reduce} />
       </div>
     </section>
   );

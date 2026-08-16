@@ -254,7 +254,7 @@ function StackCard({
     <div
       ref={container}
       className="sticky flex justify-center"
-      style={{ top: `calc(7rem + ${index * 1.85}rem)`, marginBottom: "2.75rem" }}
+      style={{ top: `calc(7rem + ${index * 1.05}rem)`, marginBottom: "2rem" }}
     >
       <motion.div style={{ scale }} className="w-full origin-top will-change-transform">
         {children}

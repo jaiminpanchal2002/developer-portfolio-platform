@@ -41,9 +41,9 @@ export const dynamic = "force-dynamic";
 const FALLBACK_PROFILE = {
   id: 0,
   fullName: "Jaimin Panchal",
-  headline: "Software Engineer — Backend · Full-Stack · AI/LLM",
+  headline: "Backend & AI Engineer",
   about:
-    "Software engineer with 2.5+ years building and shipping production backend and full-stack systems across SaaS, e-commerce, and fintech. Strongest in Laravel/PHP and MySQL — including a Shopify order backend sustaining 10,000+ orders/month and five live client products — with hands-on delivery in Python/FastAPI, Node.js/TypeScript, and Java/Spring Boot. Builds production LLM/RAG systems (LangChain, LangGraph, pgvector) alongside REST APIs, event-driven queues, Docker, and CI/CD.",
+    "I build and ship production backends — SaaS, e-commerce, and fintech. 2.5+ years in Laravel/PHP and MySQL, including a Shopify order backend handling 10,000+ orders/month and five live client products. I also build LLM/RAG systems (LangChain, LangGraph, pgvector) and full-stack apps with FastAPI, Node.js, and Next.js — shipped through Docker and CI/CD.",
   email: "jaiminmpanchal02@gmail.com",
   phone: undefined as string | undefined,
   location: "Ahmedabad, India",
