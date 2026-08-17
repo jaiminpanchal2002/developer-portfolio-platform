@@ -161,6 +161,28 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     };
   }, [isPublicPage]);
 
+  // R3F canvases (the persistent hero scene and the skills galaxy) size
+  // themselves from a ResizeObserver on their container. When that container
+  // mounts at its final size and never changes afterwards — which is exactly
+  // the mobile case, where nothing incidentally fires a resize — the observer
+  // has no change to react to and the canvas stays stuck at the browser's
+  // default 300×150, drawing the whole scene into a tiny invisible box. That
+  // was why mobile appeared to have "no 3D / no motion" at all. Dispatching a
+  // few window resize events as the lazily-imported canvases come online
+  // forces R3F to re-measure to the real container size. Verified live: a
+  // single resize snaps the hero canvas from 300×150 to the full viewport.
+  useEffect(() => {
+    const nudge = () => window.dispatchEvent(new Event("resize"));
+    const raf = requestAnimationFrame(nudge);
+    const t1 = setTimeout(nudge, 300);
+    const t2 = setTimeout(nudge, 900);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [pathname]);
+
   return (
     <LocaleProvider>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
